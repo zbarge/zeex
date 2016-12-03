@@ -6,12 +6,11 @@ Created on Fri Dec  2 13:47:27 2016
 """
 import os
 from PySide import QtGui
-from core.views.uis.settings_ui import Ui_settingsDialog 
+from core.views.settings_ui import Ui_settingsDialog
 from core.utility.widgets import configureComboBox
 from core.utility.collection import SettingsINI
 from core.models.main import FieldsListModel 
 
-here = os.path.dirname(__file__)
 
 class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
 
@@ -20,7 +19,6 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.setupUi(self)
         self.Config = SettingsINI(filename)
         self._settings_filename = filename
-
         self.configure_settings(self.Config)
         
     def configure_settings(self, config):

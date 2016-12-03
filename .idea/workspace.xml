@@ -2,36 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dbb3601b-3afa-499d-b6ba-4a00f124cd9e" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/configs/default.ini" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/compat/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/compat/compat.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/ctrls/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/ctrls/main.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/main.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/models/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/models/config.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/models/fieldnames.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/models/filetree.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/models/main.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/utility/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/utility/collection.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/utility/dataframe.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/utility/settings.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/utility/uiloader.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/utility/widgets.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/file.ui" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/filetree.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/main.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/main.ui" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/project/main.ui" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/project/new.ui" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/settings.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/core/views/settings.ui" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/gui.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/gui_new.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dbtrix/zeex_app.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/zeex/core/views/project/uis/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/zeex/core/views/uis/__init__.py" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/project/uis/main.ui" afterPath="$PROJECT_DIR$/zeex/core/views/project/main.ui" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/project/uis/main_ui.py" afterPath="$PROJECT_DIR$/zeex/core/views/project/main_ui.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/project/uis/new.ui" afterPath="$PROJECT_DIR$/zeex/core/views/project/new.ui" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/project/uis/new_ui.py" afterPath="$PROJECT_DIR$/zeex/core/views/project/new_ui.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/uis/file.ui" afterPath="$PROJECT_DIR$/zeex/core/views/file.ui" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/uis/file_ui.py" afterPath="$PROJECT_DIR$/zeex/core/views/file_ui.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/uis/main.ui" afterPath="$PROJECT_DIR$/zeex/core/views/main.ui" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/uis/main_ui.py" afterPath="$PROJECT_DIR$/zeex/core/views/main_ui.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/uis/settings.ui" afterPath="$PROJECT_DIR$/zeex/core/views/settings.ui" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/zeex/core/views/uis/settings_ui.py" afterPath="$PROJECT_DIR$/zeex/core/views/settings_ui.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/zeex.iml" afterPath="$PROJECT_DIR$/.idea/zeex.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/zeex/configs/default.ini" afterPath="$PROJECT_DIR$/zeex/configs/default.ini" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/zeex/core/views/main.py" afterPath="$PROJECT_DIR$/zeex/core/views/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/zeex/core/views/project/new.py" afterPath="$PROJECT_DIR$/zeex/core/views/project/new.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/zeex/core/views/settings.py" afterPath="$PROJECT_DIR$/zeex/core/views/settings.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/zeex/zeex_app.py" afterPath="$PROJECT_DIR$/zeex/zeex_app.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -45,24 +34,24 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="new.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/zeex/core/views/project/new.py">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="zeex_app.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/zeex/zeex_app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="3" lean-forward="true" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
+            <state relative-caret-position="153">
+              <caret line="9" column="29" lean-forward="true" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
               <folding>
-                <element signature="e#84#108#0" expanded="true" />
+                <element signature="e#85#95#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/zeex/core/views/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="595">
-              <caret line="35" column="8" lean-forward="true" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
+            <state relative-caret-position="368">
+              <caret line="32" column="31" lean-forward="true" selection-start-line="32" selection-start-column="31" selection-end-line="32" selection-end-column="31" />
               <folding>
                 <element signature="e#83#92#0" expanded="true" />
               </folding>
@@ -70,29 +59,60 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="zeex_app.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/zeex/zeex_app.py">
+      <file leaf-file-name="new.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/zeex/core/views/project/new.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="35" column="0" lean-forward="true" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+            <state relative-caret-position="323">
+              <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
               <folding>
-                <element signature="e#375#385#0" expanded="true" />
+                <element signature="e#83#92#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="new_ui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/zeex/core/views/project/uis/new_ui.py">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/zeex/core/views/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+            <state relative-caret-position="357">
+              <caret line="21" column="44" lean-forward="true" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="44" />
+              <folding>
+                <element signature="e#83#92#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/zeex/core/views/project/main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="23" column="45" lean-forward="true" selection-start-line="23" selection-start-column="45" selection-end-line="23" selection-end-column="45" />
+              <folding>
+                <element signature="e#1#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="default.ini" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/zeex/configs/default.ini">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="408">
+              <caret line="24" column="10" lean-forward="true" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="10" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -101,9 +121,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/zeex/core/views/project/uis/new_ui.py" />
-        <option value="$PROJECT_DIR$/zeex/core/views/project/new.py" />
-        <option value="$PROJECT_DIR$/zeex/core/views/main.py" />
+        <option value="$PROJECT_DIR$/zeex/configs/default.ini" />
         <option value="$PROJECT_DIR$/zeex/zeex_app.py" />
+        <option value="$PROJECT_DIR$/zeex/core/views/main.py" />
+        <option value="$PROJECT_DIR$/zeex/core/views/project/new.py" />
+        <option value="$PROJECT_DIR$/zeex/core/views/settings.py" />
+        <option value="$PROJECT_DIR$/zeex/core/views/project/main.py" />
       </list>
     </option>
   </component>
@@ -128,7 +151,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -195,14 +218,38 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="zeex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="zeex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="zeex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="configs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="Errors" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Zeke\Google Drive\dev\python\zeex\zeex\core\views\project" />
+      <recent name="C:\Users\Zeke\Google Drive\dev\python\zeex\zeex\core\views" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.zeex_app">
     <configuration default="false" name="zeex_app" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -220,6 +267,9 @@
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/zeex/zeex_app.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
       <method />
     </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
@@ -388,24 +438,24 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1109375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -423,25 +473,43 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/zeex/core/views/project/new.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="3" lean-forward="true" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
+        <state relative-caret-position="272">
+          <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
           <folding>
-            <element signature="e#84#108#0" expanded="true" />
+            <element signature="e#83#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/core/views/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#83#92#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/zeex/zeex_app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="35" column="0" lean-forward="true" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+        <state relative-caret-position="408">
+          <caret line="24" column="10" lean-forward="true" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="10" />
           <folding>
-            <element signature="e#375#385#0" expanded="true" />
+            <element signature="e#85#95#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/zeex/core/views/project/uis/new_ui.py">
+    <entry file="file://$PROJECT_DIR$/zeex/configs/default.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/core/views/project/new_ui.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
@@ -449,12 +517,86 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/core/views/project/new_ui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/core/views/project/main_ui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="22" lean-forward="false" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2016.3/system/python_stubs/-980236402/PySide/QtGui/QFileDialog.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding>
+            <element signature="e#157#196#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/configs/default.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="10" lean-forward="true" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/zeex_app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="29" lean-forward="true" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
+          <folding>
+            <element signature="e#85#95#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/zeex/core/views/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="35" column="8" lean-forward="true" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
+        <state relative-caret-position="368">
+          <caret line="32" column="31" lean-forward="true" selection-start-line="32" selection-start-column="31" selection-end-line="32" selection-end-column="31" />
           <folding>
             <element signature="e#83#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/core/views/project/new.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+          <folding>
+            <element signature="e#83#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/core/views/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="44" lean-forward="true" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="44" />
+          <folding>
+            <element signature="e#83#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zeex/core/views/project/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="45" lean-forward="true" selection-start-line="23" selection-start-column="45" selection-end-line="23" selection-end-column="45" />
+          <folding>
+            <element signature="e#1#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
