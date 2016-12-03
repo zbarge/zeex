@@ -5,25 +5,23 @@ Created on Fri Dec  2 13:47:27 2016
 @author: Zeke
 """
 import os
-from core.utility.uiloader import loadUiWidget   
+from PySide import QtGui
+from core.views.uis.settings_ui import Ui_settingsDialog 
 from core.utility.widgets import configureComboBox
 from core.utility.collection import SettingsINI
 from core.models.main import FieldsListModel 
 
 here = os.path.dirname(__file__)
 
-class MainSettings(object):
-    ui_path = os.path.join(here, "settings.ui").replace("\\","/")
-    def __init__(self, parent=None, defaults=None):
-        super(MainSettings, self).__init__()
-        self.Config = (SettingsINI() if defaults is None else defaults)
-        self._ui = loadUiWidget(self.ui_path, parent)
+class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
+
+    def __init__(self, filename=None):
+        QtGui.QDialog.__init__(self)
+        self.setupUi(self)
+        self.Config = SettingsINI(filename)
+        self._settings_filename = filename
+
         self.configure_settings(self.Config)
-    
-    @property
-    def ui(self):
-        """The connection to the user interface. """
-        return self._ui
         
     def configure_settings(self, config):
         """
@@ -75,23 +73,23 @@ class MainSettings(object):
         DATE_FIELDS   =   config.getlist('FIELDS', 'INTEGER',fallback=['insertdate','updatedate'])
         
         #LINE EDITS
-        self.ui.rootDirectoryLineEdit.setText(      ROOT_DIR)
-        self.ui.logDirectoryLineEdit.setText(       LOG_DIR)
-        self.ui.fileNamePrefixLineEdit.setText(     FILENAME_PFX)
-        self.ui.chartSettingsFileLineEdit.setText(  CHART_FILE)
-        self.ui.urlLineEdit.setText(                DB_URL)
-        self.ui.defaultDatabaseLineEdit.setText(    DB_NAME)
-        self.ui.usernameLineEdit.setText(           DB_USERNAME)
-        self.ui.passwordLineEdit.setText(           DB_PASSWORD)
-        self.ui.portLineEdit.setText(               DB_PORT)
+        self.rootDirectoryLineEdit.setText(      ROOT_DIR)
+        self.logDirectoryLineEdit.setText(       LOG_DIR)
+        self.fileNamePrefixLineEdit.setText(     FILENAME_PFX)
+        self.chartSettingsFileLineEdit.setText(  CHART_FILE)
+        self.urlLineEdit.setText(                DB_URL)
+        self.defaultDatabaseLineEdit.setText(    DB_NAME)
+        self.usernameLineEdit.setText(           DB_USERNAME)
+        self.passwordLineEdit.setText(           DB_PASSWORD)
+        self.portLineEdit.setText(               DB_PORT)
         
         #COMBO BOXES
-        configureComboBox(self.ui.logLevelComboBox,      ['Low', 'Medium', 'High'],         LOG_LEVEL)
-        configureComboBox(self.ui.cloudProviderComboBox, ['Google Drive', 'S3', 'DropBox'], CLOUD_PROVIDER)
-        configureComboBox(self.ui.headerCaseComboBox,    ['lower', 'UPPER', 'Proper'],      HEADER_CASE)
-        configureComboBox(self.ui.headerSpacesComboBox,  [' ', '_'],                        HEADER_SPACE)
-        configureComboBox(self.ui.fileFormatComboBox,    ['.xlsx', '.csv', '.txt'],         OUTPUT_FORMAT)
-        configureComboBox(self.ui.flavorComboBox,        ['SQLite', 'PostgreSQL', 'MySQL'], DB_FLAVOR)
+        configureComboBox(self.logLevelComboBox,      ['Low', 'Medium', 'High'],         LOG_LEVEL)
+        configureComboBox(self.cloudProviderComboBox, ['Google Drive', 'S3', 'DropBox'], CLOUD_PROVIDER)
+        configureComboBox(self.headerCaseComboBox,    ['lower', 'UPPER', 'Proper'],      HEADER_CASE)
+        configureComboBox(self.headerSpacesComboBox,  [' ', '_'],                        HEADER_SPACE)
+        configureComboBox(self.fileFormatComboBox,    ['.xlsx', '.csv', '.txt'],         OUTPUT_FORMAT)
+        configureComboBox(self.flavorComboBox,        ['SQLite', 'PostgreSQL', 'MySQL'], DB_FLAVOR)
         
         #Field Models
         self.dedupeFieldsModel = FieldsListModel(items=DEDUPE_FIELDS)
@@ -100,10 +98,20 @@ class MainSettings(object):
         self.intFieldsModel    = FieldsListModel(items=INTEGER_FIELDS)
         self.dateFieldsModel   = FieldsListModel(items=DATE_FIELDS)
         
-        self.ui.dedupeFieldsListView.setModel(self.dedupeFieldsModel)
-        self.ui.sortFieldsColumnView.setModel(self.sortFieldsModel)
-        self.ui.strFieldsListView.setModel(   self.strFieldsModel)
-        self.ui.intFieldsListView.setModel(   self.intFieldsModel)
-        self.ui.dateFieldsListView.setModel(  self.dateFieldsModel)
-       
+        self.dedupeFieldsListView.setModel(self.dedupeFieldsModel)
+        self.sortFieldsColumnView.setModel(self.sortFieldsModel)
+        self.strFieldsListView.setModel(   self.strFieldsModel)
+        self.intFieldsListView.setModel(   self.intFieldsModel)
+        self.dateFieldsListView.setModel(  self.dateFieldsModel)
+        
+    def save_settings(self):
+        self.Config.update('GENERAL', 'ROOT_DIRECTORY', self.rootDirectoryLineEdit.text())
+        self.Config.update('GENERAL', 'LOG_DIRECTORY', self.logDirectoryLineEdit.text())
+        self.Config.update('GENERAL', 'LOG_LEVEL', self.rootDirectoryLineEdit.text())
+        self.Config.update('GENERAL', 'CLOUD_PROVIDER', self.rootDirectoryLineEdit.text())
+        self.Config.update('INPUT', 'HEADER_CASE', self.rootDirectoryLineEdit.text())
+        self.Config.update('INPUT', 'HEADER_SPACE', self.rootDirectoryLineEdit.text())
+        self.Config.update('INPUT', 'AUTO_SORT', self.rootDirectoryLineEdit.text())
+        self.Config.update('INPUT', 'AUTO_DEDUPE', self.rootDirectoryLineEdit.text())
+        self.Config.update('OUTPUT', 'OUTPUT_FORMAT', self.rootDirectoryLineEdit.text())
         

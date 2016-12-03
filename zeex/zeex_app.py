@@ -35,6 +35,7 @@ from core.main import ZeexApp
 if __name__ == '__main__':
 
     app = ZeexApp(sys.argv)
+
     sys.exit(app.exec_())        
         
 
