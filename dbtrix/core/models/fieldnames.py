@@ -18,7 +18,7 @@ engine = create_engine(db_path)
 Session = sessionmaker(bind=engine)
 
 class Field(Base):
-     """Access for orig_name & new_name"""
+     """Storage for orig_name & new_name"""
      __tablename__ = 'users'
     
      id = Column(Integer, primary_key=True)
@@ -47,21 +47,33 @@ class FieldNames:
         self.session.commit()
         return field
         
-    def add_entries(self, names: dict, source=None):
+    def add_entries(self, names: dict, source=None) -> list:
+        entries = []
         for oname, nname in names.items():
-            self.session.add(Field(orig_name=oname, new_name=nname, source=source))
+            field = Field(orig_name=oname, new_name=nname, source=source)
+            self.session.add(field)
+            entries.append(field)
         self.session.commit()
+        return entries
         
-    def get_renames(self, names: list):
+    def get_renames(self, names: list) -> dict:
+        """
+        Returns all names in the list
+        as a dictionary like:
+        {name:new_name}
+        the value is None if no match is found.
+        """
         renames = {}
+        
         for n in names:
             try:
-                field = self.session.query(Field).filter(Field.orig_name.ilike("{}".format(n))).one()
+                field = self.session.query(Field).filter(
+                        Field.orig_name.ilike("{}".format(n))
+                        ).one()
                 renames[n] = field.new_name
-            except Exception as e:
-                print("Ignored exception getting rename for {}: {}".format(n, e))
-                renames[n] = n
-        renames = {key: (value if value is not None else key) for key, value in renames.items()}
+            except:
+                renames[n] = None
+                   
         return renames
         
     def delete_entry(self, orig_name: str):

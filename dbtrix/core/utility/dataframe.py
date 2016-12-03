@@ -17,20 +17,29 @@ class DataFrameManager:
         self._file_paths = {}
         self._file_updates = defaultdict(list)
     
-    def save_file(self, filepath, **kwargs):
+    def save_file(self, filepath, save_as=None, **kwargs):
         df = self._file_paths[filepath]
         ext = os.path.splitext(filepath)[1].lower()
         
         kwargs['index'] = kwargs.get('index', False)
-        
+        if save_as is not None:
+            to_path = save_as
+        else:
+            to_path = filepath
+            
         if ext == ".xlsx":
-            df.to_excel(filepath, **kwargs)
+            df.to_excel(to_path, **kwargs)
             
         elif ext in ['.csv','.txt']:
             df.to_csv(filepath, **kwargs)
             
         else:
             raise NotImplementedError("Cannot save file of type {}".format(ext))
+        
+        if save_as is not None:
+            self._file_paths.pop(filepath)
+            self._file_paths[to_path] = df
+        
 
             
     def update_file(self, filepath, df, notes=None):
