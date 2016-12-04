@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Dec  3 13:12:59 2016
+# Created: Sun Dec  4 09:46:04 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,6 +26,8 @@ class Ui_ProjectWindow(object):
         self.menuFile.setObjectName("menuFile")
         self.menuSettings = QtGui.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
+        self.menuRecent_Files = QtGui.QMenu(self.menubar)
+        self.menuRecent_Files.setObjectName("menuRecent_Files")
         ProjectWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(ProjectWindow)
         self.statusbar.setObjectName("statusbar")
@@ -47,6 +49,7 @@ class Ui_ProjectWindow(object):
         self.menuSettings.addAction(self.actionPreferences)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
+        self.menubar.addAction(self.menuRecent_Files.menuAction())
 
         self.retranslateUi(ProjectWindow)
         QtCore.QMetaObject.connectSlotsByName(ProjectWindow)
@@ -55,6 +58,7 @@ class Ui_ProjectWindow(object):
         ProjectWindow.setWindowTitle(QtGui.QApplication.translate("ProjectWindow", "MyProject", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("ProjectWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSettings.setTitle(QtGui.QApplication.translate("ProjectWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuRecent_Files.setTitle(QtGui.QApplication.translate("ProjectWindow", "Recent Files", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setText(QtGui.QApplication.translate("ProjectWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setText(QtGui.QApplication.translate("ProjectWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave.setText(QtGui.QApplication.translate("ProjectWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
