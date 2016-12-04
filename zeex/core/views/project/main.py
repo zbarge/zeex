@@ -22,6 +22,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         rootdir = self.SettingsDialog.rootDirectoryLineEdit.text()
         model = FileTreeModel(root_dir=rootdir)
         self.ProjectsTreeView.setModel(model)
+        self.ProjectsTreeView.setRootIndex(model.index(rootdir))
 
     def connect_settings_dialog(self):
         self.SettingsDialog.cloudProviderComboBox.setVisible(False)
@@ -29,11 +30,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.SettingsDialog.rootDirectoryLabel.setVisible(False)
         self.SettingsDialog.rootDirectoryLineEdit.setVisible(False)
 
-    def get_ini_file(self, dirname):
-        for directory, subdirs, files in os.walk(dirname):
-            for f in files:
-                if f.endswith('.ini'):
-                    return os.path.join(directory, f)
+
 
     def open_settings_dialog(self):
         self.SettingsDialog.exec_()

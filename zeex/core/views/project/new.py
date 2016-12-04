@@ -5,11 +5,12 @@ Created on Sat Dec  3 13:38:36 2016
 @author: Zeke
 """
 import os
-from PySide import QtGui
+from PySide import QtGui, QtCore
 from core.views.project.new_ui import Ui_NewProjectDialog
-from core.views.project.main import ProjectMainWindow
+
 
 class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
+    signalProjectNew = QtCore.Signal(list) #[dirname, settings.ini]
     def __init__(self):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
@@ -17,6 +18,7 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
         self.settingsFilePushButton.clicked.connect(self.set_config_ini)
         self.buttonBox.accepted.connect(self.create_project)
         self.buttonBox.rejected.connect(self.close)
+
 
     def set_dirname(self):
         dirname = QtGui.QFileDialog.getExistingDirectory(self)
@@ -30,11 +32,11 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
         proj_dirname = self.nameLineEdit.text()
         proj_ini = self.settingsFileLineEdit.text()
 
-        [os.mkdir(p)
-         for p in [proj_dirname, proj_ini]
-         if not os.path.exists(p)]
+        if not os.path.exists(proj_dirname):
+            os.mkdir(proj_dirname)
+        self.signalProjectNew.emit([proj_dirname, proj_ini])
+        self.close()
 
-        window = ProjectMainWindow()
 
 
 
