@@ -14,25 +14,48 @@ from core.views.project.main import ProjectMainWindow
 from PySide import QtGui, QtCore
 
 
+class MainWindow(QtGui.QMainWindow):
+    def __init__(self, *args, **kwargs):
+        QtGui.QMainWindow.__init__(self, *args, **kwargs)
+
+
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
-    signalProjectOpened = QtCore.Signal(list) # [dirname, settings.ini]
+    signalProjectOpened = QtCore.Signal(list)          # [dirname, settings.ini]
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
+        from icons.icons import Icons
         self.setupUi(self)
-        
+        self.setMaximumHeight(600)
+        self.setMaximumWidth(800)
+        self.icons = Icons()
         self.SettingsDialog = SettingsDialog()
         self.NewProjectDialog = NewProjectDialog()
         self.NewProjectDialog.signalProjectNew.connect(self.open_existing_project)
         self.connect_actions()
         self.connect_filetree()
+        self.connect_icons()
         self._project_cache = {}
         
     def connect_actions(self):
-        self.actionSettings.triggered.connect(   self.open_settings)
-        self.actionOpen.triggered.connect(       self.open_existing_project)
-        self.actionNew.triggered.connect(        self.create_new_project)
+        self.actionSettings.triggered.connect(self.open_settings)
+        self.actionOpen.triggered.connect(self.open_existing_project)
+        self.actionNew.triggered.connect(self.create_new_project)
         self.actionEdit.setVisible(False)
+
+    def connect_icons(self):
+        sheet = r"C:\Users\Zeke\Google Drive\dev\python\zeex\zeex\core\views\theme2.qss"
+        with open(sheet, "r") as fh:
+            self.setStyleSheet(fh.read())
+        self.setWindowIcon(self.icons['home'])
+        self.NewProjectDialog.setWindowIcon(self.icons['folder'])
+        self.SettingsDialog.setWindowIcon(self.icons['settings'])
+
+        self.actionSettings.setIcon(self.icons['settings'])
+        self.actionNew.setIcon(self.icons['add'])
+        self.actionOpen.setIcon(self.icons['folder'])
+        self.actionEdit.setIcon(self.icons['edit'])
+        self.actionSave.setIcon(self.icons['save'])
 
     def connect_filetree(self):
         rootdir = self.SettingsDialog.rootDirectoryLineEdit.text()
@@ -72,29 +95,31 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             assert ini and os.path.exists(ini), "Need a settings.ini file for project '{}'".format(dirname)
             assert dirname and os.path.exists(dirname), "Directory '{}' needs to exist!".format(dirname)
             p = os.path.normpath
-            assert not p(dirname) == p(self.SettingsDialog.rootDirectoryLineEdit.text()), "Project directory cannot be the root!"
+            root_dir = p(self.SettingsDialog.rootDirectoryLineEdit.text())
+            assert not p(dirname) == root_dir, "Project directory cannot be the root!"
 
             # Update ROOT_DIRECTORY in settings.
-            Settings = SettingsINI(ini)
-            Settings.set('GENERAL', 'ROOT_DIRECTORY', dirname)
+            settings = SettingsINI(ini)
+            settings.set('GENERAL', 'ROOT_DIRECTORY', dirname)
             ini_name = os.path.basename(ini)
 
             # Make sure the ini file goes
             # in the home folder of the project.
             ini = os.path.join(dirname, ini_name)
             with open(ini, "w") as ns:
-                Settings.write(ns)
+                #Write settings into project directory
+                settings.write(ns)
 
-            #Build & cache window
-            window = ProjectMainWindow(dirname, ini)
+            # Build & cache window
+            window = ProjectMainWindow(ini)
             self._cache_project(dirname, window)
             self.signalProjectOpened.emit([dirname, ini])
             window.show()
 
     def display_ok_msg(self, msg):
-        msgBox = QtGui.QMessageBox(self)
-        msgBox.setText(msg)
-        msgBox.exec_()
+        box = QtGui.QMessageBox(self)
+        box.setText(msg)
+        box.exec_()
 
     def create_new_project(self):
         # Creates new project dialog and

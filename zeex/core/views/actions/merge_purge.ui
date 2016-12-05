@@ -6,91 +6,353 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>413</height>
+    <width>782</width>
+    <height>772</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Merge/Purge</string>
   </property>
-  <widget class="QWidget" name="formLayoutWidget">
+  <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>341</width>
-     <height>361</height>
+     <x>10</x>
+     <y>10</y>
+     <width>716</width>
+     <height>736</height>
     </rect>
    </property>
-   <layout class="QFormLayout" name="formLayout">
-    <property name="fieldGrowthPolicy">
-     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-    </property>
-    <item row="0" column="0">
-     <widget class="QLabel" name="sourcePathLabel">
-      <property name="text">
-       <string>Source Path</string>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>3</horstretch>
+     <verstretch>8</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="currentIndex">
+    <number>2</number>
+   </property>
+   <widget class="QWidget" name="sortDropTab">
+    <attribute name="title">
+     <string>Sort/Dedupe</string>
+    </attribute>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QFormLayout" name="formLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetNoConstraint</enum>
+       </property>
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="sourcePathLabel">
+         <property name="text">
+          <string>Source Path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="1">
+          <widget class="QPushButton" name="sourcePathSelectButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="sourcePathLineEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="destPathLabel">
+         <property name="text">
+          <string>Destination Path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="1">
+          <widget class="QPushButton" name="destPathSelectButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="destPathLineEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="sortOnLabel">
+         <property name="text">
+          <string>Sort On</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <layout class="QGridLayout" name="pushGrid">
+           <item row="0" column="3">
+            <widget class="QListView" name="sortOnRightView"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QListView" name="sortOnLeftView"/>
+           </item>
+           <item row="0" column="2">
+            <layout class="QGridLayout" name="btnGrid">
+             <item row="0" column="0">
+              <widget class="QPushButton" name="sortOnRightButton">
+               <property name="text">
+                <string>&gt;&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="sortOnLeftButton">
+               <property name="text">
+                <string>&lt;&lt;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="sortAscLabel">
+         <property name="text">
+          <string>Sort Ascending</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <layout class="QGridLayout" name="pushGrid_2">
+         <item row="0" column="2">
+          <widget class="QListView" name="sortAscRightView"/>
+         </item>
+         <item row="0" column="1">
+          <layout class="QGridLayout" name="btnGrid_2">
+           <item row="0" column="0">
+            <widget class="QPushButton" name="sortAscRightButton">
+             <property name="text">
+              <string>&gt;&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="sortAscLeftButton">
+             <property name="text">
+              <string>&lt;&lt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <widget class="QListView" name="sortAscLeftView"/>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="dedupeOnLabel">
+         <property name="text">
+          <string>Dedupe On</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="openExternalLinks">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <layout class="QGridLayout" name="pushGrid_3">
+         <item row="0" column="2">
+          <widget class="QListView" name="dedupeOnRightView"/>
+         </item>
+         <item row="0" column="1">
+          <layout class="QGridLayout" name="btnGrid_3">
+           <item row="0" column="0">
+            <widget class="QPushButton" name="dedupeOnRightButton">
+             <property name="text">
+              <string>&gt;&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="dedupeOnLeftButton">
+             <property name="text">
+              <string>&lt;&lt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <widget class="QListView" name="dedupeOnLeftView"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="mergeTab">
+    <attribute name="title">
+     <string>Merge</string>
+    </attribute>
+    <widget class="QWidget" name="formLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>681</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="sourcePathLineEdit"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="destPathLabel">
-      <property name="text">
-       <string>Destination Path</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="destPathLineEdit"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="sortOnLabel">
-      <property name="text">
-       <string>Sort On</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QColumnView" name="sortOnColumnView"/>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="dedupeOnLabel">
-      <property name="text">
-       <string>Dedupe On</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-      <property name="openExternalLinks">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QListView" name="dedupeOnListView"/>
-    </item>
-    <item row="4" column="1">
-     <layout class="QGridLayout" name="btnGridLayout">
-      <item row="0" column="1">
-       <widget class="QPushButton" name="btnCancel">
+      <item row="0" column="0">
+       <widget class="QLabel" name="addMergeFileLabel">
         <property name="text">
-         <string>PushButton</string>
+         <string>Add File</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="btnExecute">
-        <property name="text">
-         <string>PushButton</string>
-        </property>
-       </widget>
+      <item row="0" column="1">
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="addMergeFileLineEdit"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="addMergeFilePushButton">
+          <property name="text">
+           <string>Browse</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
-    </item>
-   </layout>
+    </widget>
+    <widget class="QWidget" name="mergeWidget" native="true">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>681</width>
+       <height>591</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="suppressTab">
+    <attribute name="title">
+     <string>Suppress</string>
+    </attribute>
+    <widget class="QWidget" name="formLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>681</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="addSFileLabel">
+        <property name="text">
+         <string>Add File</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="addSFileLineEdit"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="addSFilePushButton">
+          <property name="text">
+           <string>Browse</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="gridLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>140</y>
+       <width>461</width>
+       <height>501</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <widget class="QTableView" name="sRenameTable"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QTableView" name="sFileTable"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="fieldsTab">
+    <attribute name="title">
+     <string>Fields</string>
+    </attribute>
+    <widget class="QWidget" name="horizontalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>691</width>
+       <height>691</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QTableView" name="fieldsTableView"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
   </widget>
  </widget>
  <resources/>
