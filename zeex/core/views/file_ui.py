@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'file.ui'
 #
-# Created: Sat Dec  3 13:09:51 2016
+# Created: Sun Dec  4 16:04:08 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,29 +12,21 @@ from PySide import QtCore, QtGui
 class Ui_FileWindow(object):
     def setupUi(self, FileWindow):
         FileWindow.setObjectName("FileWindow")
-        FileWindow.resize(800, 600)
+        FileWindow.resize(758, 571)
         self.centralwidget = QtGui.QWidget(FileWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 771, 541))
-        self.tabWidget.setObjectName("tabWidget")
-        self.tab1 = QtGui.QWidget()
-        self.tab1.setObjectName("tab1")
-        self.treeView = QtGui.QTreeView(self.tab1)
-        self.treeView.setGeometry(QtCore.QRect(10, 0, 751, 501))
-        self.treeView.setObjectName("treeView")
-        self.horizontalScrollBar = QtGui.QScrollBar(self.tab1)
-        self.horizontalScrollBar.setGeometry(QtCore.QRect(10, 500, 741, 20))
-        self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalScrollBar.setObjectName("horizontalScrollBar")
-        self.verticalScrollBar = QtGui.QScrollBar(self.tab1)
-        self.verticalScrollBar.setGeometry(QtCore.QRect(750, -1, 20, 511))
-        self.verticalScrollBar.setOrientation(QtCore.Qt.Vertical)
-        self.verticalScrollBar.setObjectName("verticalScrollBar")
-        self.tabWidget.addTab(self.tab1, "")
+        self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(9, 9, 741, 511))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.widget = QtGui.QWidget(self.verticalLayoutWidget)
+        self.widget.setObjectName("widget")
+        self.verticalLayout.addWidget(self.widget)
         FileWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(FileWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 758, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -66,12 +58,10 @@ class Ui_FileWindow(object):
         self.menubar.addAction(self.menuAction.menuAction())
 
         self.retranslateUi(FileWindow)
-        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(FileWindow)
 
     def retranslateUi(self, FileWindow):
         FileWindow.setWindowTitle(QtGui.QApplication.translate("FileWindow", "MyFile", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1), QtGui.QApplication.translate("FileWindow", "MainFileName", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("FileWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuAction.setTitle(QtGui.QApplication.translate("FileWindow", "Action", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave.setText(QtGui.QApplication.translate("FileWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))

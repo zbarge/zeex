@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MergePurgeDialog</class>
+ <widget class="QDialog" name="MergePurgeDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>421</width>
+    <height>413</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Merge/Purge</string>
+  </property>
+  <widget class="QWidget" name="formLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>341</width>
+     <height>361</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="sourcePathLabel">
+      <property name="text">
+       <string>Source Path</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="sourcePathLineEdit"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="destPathLabel">
+      <property name="text">
+       <string>Destination Path</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="destPathLineEdit"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="sortOnLabel">
+      <property name="text">
+       <string>Sort On</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QColumnView" name="sortOnColumnView"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="dedupeOnLabel">
+      <property name="text">
+       <string>Dedupe On</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="openExternalLinks">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QListView" name="dedupeOnListView"/>
+    </item>
+    <item row="4" column="1">
+     <layout class="QGridLayout" name="btnGridLayout">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="btnCancel">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="btnExecute">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
