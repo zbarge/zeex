@@ -6,16 +6,18 @@ Created on Mon Nov 28 13:09:50 2016
 """
 import os
 import datetime
+from PySide import QtGui
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (Column, Integer, String, DateTime, create_engine)
 from sqlalchemy.orm import sessionmaker
-from config import config
+from core.models.config import config
 
 
 Base = declarative_base()
 db_path = "sqlite:///" + os.path.join(config['DATA_DIR'], "fieldnames.db")
 engine = create_engine(db_path)
 Session = sessionmaker(bind=engine)
+
 
 class Field(Base):
      """Storage for orig_name & new_name"""
@@ -88,8 +90,15 @@ class FieldNames:
             self.session.delete(entry)
         if entries:
             self.session.commit()
-        
-        
+
+
+class FieldRenameModel(QtGui.QStandardItemModel):
+    def __init__(self, *args, **kwargs):
+        QtGui.QStandardItemModel.__init__(self, *args, **kwargs)
+        self.setHorizontalHeaderLabels(['original_name', 'new_name'])
+
+
+
 def test_fieldnames():
     renames = {"first name-dv":"first_name",
                "last name-dv":"last_name"}

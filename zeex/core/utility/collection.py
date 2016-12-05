@@ -2,6 +2,13 @@ import os
 from configparser import ConfigParser
 from core.compat.compat import string_to_list
 
+
+def get_ini_file(dirname):
+    for directory, subdirs, files in os.walk(dirname):
+        for f in files:
+            if f.endswith('.ini'):
+                return os.path.join(directory, f)
+
 def get_default_config_path():
     f = __file__
     for i in range(0,3):
@@ -29,6 +36,6 @@ class SettingsINI(ConfigParser):
             for key, value in self.items(section=header):
                 if self.has_option(header, key):
                     print("Key {} - Option {}".format(key, value))
-
-s = SettingsINI()
-s.drop_empty_settings()
+if __name__ == '__main__':
+    s = SettingsINI()
+    s.drop_empty_settings()
