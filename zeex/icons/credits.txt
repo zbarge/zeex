@@ -10,3 +10,7 @@ https://icons8.com/web-app/6675/Suppression
 <a href="https://icons8.com">Icon pack by Icons8</a>
 <a href="https://icons8.com/web-app/19383/Export">Export icon credits</a>
 <a href="https://icons8.com/web-app/30815/Import">Import icon credits</a>
+<a href="https://icons8.com/web-app/12587/Send-File">Send file icon credits</a>
+<a href="https://icons8.com/web-app/49/Edit">Edit icon credits</a>
+<a href="https://icons8.com/web-app/5324/Device-Manager">Device manager icon credits</a>
+<a href="https://icons8.com">Icon pack by Icons8</a>

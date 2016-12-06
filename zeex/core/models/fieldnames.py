@@ -58,7 +58,7 @@ class FieldNames:
         self.session.commit()
         return entries
         
-    def get_renames(self, names: list) -> dict:
+    def get_renames(self, names: list, fill_missing=False) -> dict:
         """
         Returns all names in the list
         as a dictionary like:
@@ -74,7 +74,7 @@ class FieldNames:
                         ).one()
                 renames[n] = field.new_name
             except:
-                renames[n] = None
+                renames[n] = (field if fill_missing is True else None)
                    
         return renames
         
@@ -96,6 +96,20 @@ class FieldRenameModel(QtGui.QStandardItemModel):
     def __init__(self, *args, **kwargs):
         QtGui.QStandardItemModel.__init__(self, *args, **kwargs)
         self.setHorizontalHeaderLabels(['original_name', 'new_name'])
+        self.db = FieldNames()
+
+    def get_renames(self, columns: list, fill_missing=True, clear_current=True):
+        if clear_current:
+            self.clear()
+
+        renames = self.db.get_renames(columns, fill_missing=fill_missing)
+
+        for orig_name, new_name in renames.items():
+            oitem = QtGui.QStandardItem(orig_name)
+            nitem = QtGui.QStandardItemModel(new_name)
+            oitem.appendRow(nitem)
+            self.appendRow(oitem)
+
 
 
 

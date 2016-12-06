@@ -5,8 +5,10 @@ Created on Sat Dec  3 13:38:36 2016
 @author: Zeke
 """
 import os
+
 from PySide import QtGui, QtCore
-from core.views.project.new_ui import Ui_NewProjectDialog
+
+from core.ui.project.new_ui import Ui_NewProjectDialog
 
 
 class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):

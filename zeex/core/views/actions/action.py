@@ -1,11 +1,14 @@
-import pandas as pd
 from functools import partial
+
 from PySide import QtGui, QtCore
-from core.views.file import DataFrameModel
-from core.views.actions.merge_purge_ui import Ui_MergePurgeDialog
-from core.views.actions.push_grid import PushGridHandler
-from core.models.fieldnames import FieldRenameModel
 from pandasqt.utils import superReadFileToFrameModel
+
+from core.models.fieldnames import FieldRenameModel
+from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
+from core.views.actions.push_grid import PushGridHandler
+from core.views.file import DataFrameModel
+
+
 class AbstractAction(object):
     signalActionBegin = QtCore.Signal(str)
     signalActionError = QtCore.Signal(str)

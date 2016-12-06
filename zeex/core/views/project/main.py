@@ -1,16 +1,17 @@
-
 import os
-from PySide import QtGui, QtCore
-from core.views.project.main_ui import Ui_ProjectWindow
 from functools import partial
-from core.utility.collection import SettingsINI
-from core.models.filetree import FileTreeModel
-from core.views.settings import SettingsDialog
+
+from PySide import QtGui, QtCore
 from pandasqt.utils import superReadFileToFrameModel
 from pandasqt.views.CSVDialogs import _encodings, DelimiterSelectionWidget
 from pandasqt.views.MultiFileDialogs import DataFrameExportDialog, CSVImportDialog, DataFrameModel
-from core.views.file import FileTableWindow
+
+from core.models.filetree import FileTreeModel
+from core.ui.project.main_ui import Ui_ProjectWindow
 from core.utility.widgets import display_ok_msg
+from core.views.file import FileTableWindow
+from core.views.settings import SettingsDialog
+
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     signalModelChanged = QtCore.Signal(str)
@@ -182,6 +183,12 @@ class ProjectDataFrameExportDialog(DataFrameExportDialog):
         """
         self._models = kwargs.pop('models', {})
         DataFrameExportDialog.__init__(self, *args, **kwargs)
+        parent = kwargs.get('parent', None)
+        if parent is not None:
+            try:
+                parent._set_theme(self)
+            except:
+                pass
 
     def _saveModel(self):
         sourcename = self._sourceNameComboBox.currentText()

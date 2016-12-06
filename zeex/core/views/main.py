@@ -5,18 +5,16 @@ Created on Fri Dec  2 14:02:26 2016
 @author: Zeke
 """
 import os
-from core.utility.collection import get_ini_file, SettingsINI
-from core.views.settings import SettingsDialog
-from core.views.project.new import NewProjectDialog
-from core.views.main_ui import Ui_HomeWindow
-from core.models.filetree import FileTreeModel
-from core.views.project.main import ProjectMainWindow
+
 from PySide import QtGui, QtCore
 
+from core.models.filetree import FileTreeModel
+from core.ui.main_ui import Ui_HomeWindow
+from core.utility.collection import get_ini_file, SettingsINI
+from core.views.project.main import ProjectMainWindow
+from core.views.project.new import NewProjectDialog
+from core.views.settings import SettingsDialog
 
-class MainWindow(QtGui.QMainWindow):
-    def __init__(self, *args, **kwargs):
-        QtGui.QMainWindow.__init__(self, *args, **kwargs)
 
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
@@ -44,9 +42,6 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionEdit.setVisible(False)
 
     def connect_icons(self):
-        sheet = r"C:\Users\Zeke\Google Drive\dev\python\zeex\zeex\core\views\theme2.qss"
-        with open(sheet, "r") as fh:
-            self.setStyleSheet(fh.read())
         self.setWindowIcon(self.icons['home'])
         self.NewProjectDialog.setWindowIcon(self.icons['folder'])
         self.SettingsDialog.setWindowIcon(self.icons['settings'])

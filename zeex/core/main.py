@@ -42,7 +42,6 @@ class ZeexApp(QtGui.QApplication):
         super(ZeexApp, self).__init__(sys_argv)
         self.model = Model()
         self.main_ctrl = MainController(self.model)
-        
         self.main_view = ZeexMainWindow()
         self.main_view.show()
 

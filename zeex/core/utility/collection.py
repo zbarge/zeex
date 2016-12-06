@@ -1,6 +1,7 @@
 import os
 from configparser import ConfigParser
-from core.compat.compat import string_to_list
+from core.compat import string_to_list
+from ast import literal_eval as Eval
 
 
 def get_ini_file(dirname):
@@ -8,6 +9,7 @@ def get_ini_file(dirname):
         for f in files:
             if f.endswith('.ini'):
                 return os.path.join(directory, f)
+
 
 def get_default_config_path():
     f = __file__
@@ -17,25 +19,64 @@ def get_default_config_path():
     if not os.path.exists(f):
         raise OSError("Missing default config path, please create it: {}".format(f))
     return f
-    
-class SettingsINI(ConfigParser):
-    
+
+
+class _ConfParse(ConfigParser):
+    """
+    Credits: http://codereview.stackexchange.com/questions/2775/python-subclassing-configparser
+    """
+
     _default_path = get_default_config_path()
-    
+
     def __init__(self, filename=None):
         ConfigParser.__init__(self)
         if filename is None:
-            filename = self._default_path
-        self.read(filename)
-        
-    def getlist(self,*args, **kwargs):
-        item = self.get(*args, **kwargs)
-        return string_to_list(item)
-    def drop_empty_settings(self):
-        for header in self.keys():
-            for key, value in self.items(section=header):
-                if self.has_option(header, key):
-                    print("Key {} - Option {}".format(key, value))
+            self._filename = self._default_path
+        else:
+            self._filename = filename
+
+        try:
+            self.read(self._filename)
+        except IOError as Err:
+            if Err.errno == 2:
+                pass
+            else:
+                raise Err
+
+    def set_safe(self, section, option, value, **kwargs):
+        if self.has_section(section):
+            self.set(section, option, str(value), **kwargs)
+        else:
+            self.add_section(section)
+            self.set(section, option, str(value), **kwargs)
+
+    def get_safe(self, section, option, **kwargs):
+        try:
+            return Eval(self.get(section, option, **kwargs))
+        except:
+            return kwargs.pop('fallback', None)
+
+    def save(self):
+        with open(self._filename, "w") as fh:
+            self.write(fh)
+
+    def save_as(self, name, set_self=True):
+        orig = self._filename
+        self._filename = name
+        self.save()
+        if set_self is not True:
+            self._filename = orig
+
+
+
+
+    
+class SettingsINI(_ConfParse):
+    def __init__(self, filename=None):
+        _ConfParse.__init__(self, filename=filename)
+
 if __name__ == '__main__':
     s = SettingsINI()
-    s.drop_empty_settings()
+
+
+

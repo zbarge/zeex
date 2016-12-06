@@ -33,14 +33,14 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QPushButton" name="btnSave_2">
+       <widget class="QPushButton" name="btnImport">
         <property name="text">
          <string>Import</string>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QPushButton" name="btnSave_3">
+       <widget class="QPushButton" name="btnExport">
         <property name="text">
          <string>Export</string>
         </property>
@@ -109,6 +109,16 @@
          </item>
          <item row="3" column="1">
           <widget class="QComboBox" name="cloudProviderComboBox"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="themeLabel">
+           <property name="text">
+            <string>Theme</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="themeComboBox"/>
          </item>
         </layout>
        </widget>
@@ -216,6 +226,26 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="chartSettingsFileLineEdit"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="separatorLabel">
+           <property name="text">
+            <string>Separator</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="separatorComboBox"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="encodingLabel">
+           <property name="text">
+            <string>Encoding</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="encodingComboBox"/>
          </item>
         </layout>
        </widget>
