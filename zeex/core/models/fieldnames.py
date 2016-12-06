@@ -98,17 +98,51 @@ class FieldRenameModel(QtGui.QStandardItemModel):
         self.setHorizontalHeaderLabels(['original_name', 'new_name'])
         self.db = FieldNames()
 
-    def get_renames(self, columns: list, fill_missing=True, clear_current=True):
+    def set_renames(self, columns: list, fill_missing=True, include_found=False, clear_current=True):
         if clear_current:
             self.clear()
 
-        renames = self.db.get_renames(columns, fill_missing=fill_missing)
+        renames = self.db.get_renames(columns, fill_missing=False)
 
+        if include_found is False:
+            renames = {key: value for key, value in renames.items() if value is None}
+
+        if fill_missing is True:
+            renames = {key: (value if value is not None else key) for key, value in renames.items()}
+
+        idx = 0
         for orig_name, new_name in renames.items():
             oitem = QtGui.QStandardItem(orig_name)
-            nitem = QtGui.QStandardItemModel(new_name)
-            oitem.appendRow(nitem)
-            self.appendRow(oitem)
+            nitem = QtGui.QStandardItem(new_name)
+            self.setItem(idx, 0, oitem)
+            self.setItem(idx, 1, nitem)
+            idx += 1
+
+    def set_case(self, method):
+        for idx in range(self.rowCount()):
+            item = self.item(idx, 1)
+            item.setText(method(item.text()))
+
+    def set_lower(self):
+        self.set_case(str.lower)
+
+    def set_upper(self):
+        self.set_case(str.upper)
+
+    def set_proper(self):
+        self.set_case(str.title)
+
+    def clear(self):
+        super(FieldRenameModel, self).clear()
+        self.setHorizontalHeaderLabels(['original_name', 'new_name'])
+
+    def get_renames_dict(self):
+        renames = {}
+        for i in range(self.rowCount()):
+            renames[self.item(i, 0).text()] =  self.item(i, 1).text()
+        return renames
+
+
 
 
 

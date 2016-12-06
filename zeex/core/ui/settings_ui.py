@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settings.ui'
 #
-# Created: Mon Dec  5 19:18:57 2016
+# Created: Mon Dec  5 23:37:23 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,15 +45,9 @@ class Ui_settingsDialog(object):
         self.rootDirectoryLabel = QtGui.QLabel(self.formLayoutWidget)
         self.rootDirectoryLabel.setObjectName("rootDirectoryLabel")
         self.GeneralSettingsLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.rootDirectoryLabel)
-        self.rootDirectoryLineEdit = QtGui.QLineEdit(self.formLayoutWidget)
-        self.rootDirectoryLineEdit.setObjectName("rootDirectoryLineEdit")
-        self.GeneralSettingsLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.rootDirectoryLineEdit)
         self.logDirectoryLabel = QtGui.QLabel(self.formLayoutWidget)
         self.logDirectoryLabel.setObjectName("logDirectoryLabel")
         self.GeneralSettingsLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.logDirectoryLabel)
-        self.logDirectoryLineEdit = QtGui.QLineEdit(self.formLayoutWidget)
-        self.logDirectoryLineEdit.setObjectName("logDirectoryLineEdit")
-        self.GeneralSettingsLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.logDirectoryLineEdit)
         self.logLevelLabel = QtGui.QLabel(self.formLayoutWidget)
         self.logLevelLabel.setObjectName("logLevelLabel")
         self.GeneralSettingsLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.logLevelLabel)
@@ -72,6 +66,24 @@ class Ui_settingsDialog(object):
         self.themeComboBox = QtGui.QComboBox(self.formLayoutWidget)
         self.themeComboBox.setObjectName("themeComboBox")
         self.GeneralSettingsLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.themeComboBox)
+        self.gridLayout_3 = QtGui.QGridLayout()
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.btnRootDirectory = QtGui.QPushButton(self.formLayoutWidget)
+        self.btnRootDirectory.setObjectName("btnRootDirectory")
+        self.gridLayout_3.addWidget(self.btnRootDirectory, 0, 1, 1, 1)
+        self.rootDirectoryLineEdit = QtGui.QLineEdit(self.formLayoutWidget)
+        self.rootDirectoryLineEdit.setObjectName("rootDirectoryLineEdit")
+        self.gridLayout_3.addWidget(self.rootDirectoryLineEdit, 0, 0, 1, 1)
+        self.GeneralSettingsLayout.setLayout(0, QtGui.QFormLayout.FieldRole, self.gridLayout_3)
+        self.gridLayout_4 = QtGui.QGridLayout()
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.btnLogDirectory = QtGui.QPushButton(self.formLayoutWidget)
+        self.btnLogDirectory.setObjectName("btnLogDirectory")
+        self.gridLayout_4.addWidget(self.btnLogDirectory, 0, 1, 1, 1)
+        self.logDirectoryLineEdit = QtGui.QLineEdit(self.formLayoutWidget)
+        self.logDirectoryLineEdit.setObjectName("logDirectoryLineEdit")
+        self.gridLayout_4.addWidget(self.logDirectoryLineEdit, 0, 0, 1, 1)
+        self.GeneralSettingsLayout.setLayout(1, QtGui.QFormLayout.FieldRole, self.gridLayout_4)
         self.SettingsTabWidget.addTab(self.GeneralSettingsWidget, "")
         self.InputSettingsWidget = QtGui.QWidget()
         self.InputSettingsWidget.setObjectName("InputSettingsWidget")
@@ -260,6 +272,8 @@ class Ui_settingsDialog(object):
         self.logLevelLabel.setText(QtGui.QApplication.translate("settingsDialog", "Log Level", None, QtGui.QApplication.UnicodeUTF8))
         self.cloudProviderLabel.setText(QtGui.QApplication.translate("settingsDialog", "Cloud Provider", None, QtGui.QApplication.UnicodeUTF8))
         self.themeLabel.setText(QtGui.QApplication.translate("settingsDialog", "Theme", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnRootDirectory.setText(QtGui.QApplication.translate("settingsDialog", "Browse", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnLogDirectory.setText(QtGui.QApplication.translate("settingsDialog", "Browse", None, QtGui.QApplication.UnicodeUTF8))
         self.SettingsTabWidget.setTabText(self.SettingsTabWidget.indexOf(self.GeneralSettingsWidget), QtGui.QApplication.translate("settingsDialog", "General", None, QtGui.QApplication.UnicodeUTF8))
         self.headerCaseLabel.setText(QtGui.QApplication.translate("settingsDialog", "Header Case", None, QtGui.QApplication.UnicodeUTF8))
         self.headerSpacesLabel.setText(QtGui.QApplication.translate("settingsDialog", "Header Spaces", None, QtGui.QApplication.UnicodeUTF8))

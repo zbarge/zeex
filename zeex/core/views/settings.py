@@ -54,6 +54,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.btnSave.clicked.connect(func)
         self.btnExport.clicked.connect(self.export_settings)
         self.btnImport.clicked.connect(self.import_settings)
+        self.btnLogDirectory.clicked.connect(self.open_log_directory)
+        self.btnRootDirectory.clicked.connect(self.open_root_directory)
 
     def configure_settings(self, config):
         """
@@ -212,8 +214,6 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
                 print("No theme selected.")
                 theme_name = THEME_NAME2
 
-
-        print("theme name: {} theme dir: {}".format(theme_name, self._themes_dir))
         theme_path = normpath(self._themes_dir, theme_name)
 
         if os.path.exists(theme_path):
@@ -233,6 +233,14 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.Config._filename = filename
         self.clear_settings()
         self.configure_settings(self.Config)
+
+    def open_root_directory(self):
+        dirname = QtGui.QFileDialog.getExistingDirectory()
+        self.rootDirectoryLineEdit.setText(dirname)
+
+    def open_log_directory(self):
+        dirname = QtGui.QFileDialog.getExistingDirectory()
+        self.logDirectoryLineEdit.setText(dirname)
 
 
 
