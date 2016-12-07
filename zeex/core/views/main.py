@@ -5,9 +5,8 @@ Created on Fri Dec  2 14:02:26 2016
 @author: Zeke
 """
 import os
-
-from PySide import QtGui, QtCore
-
+from icons import Icons
+from core.compat import QtGui, QtCore
 from core.models.filetree import FileTreeModel
 from core.ui.main_ui import Ui_HomeWindow
 from core.utility.collection import get_ini_file, SettingsINI
@@ -16,26 +15,25 @@ from core.views.project.new import NewProjectDialog
 from core.views.settings import SettingsDialog
 
 
-
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
     signalProjectOpened = QtCore.Signal(list)          # [dirname, settings.ini]
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
-        from icons.icons import Icons
         self.setupUi(self)
         self.setMaximumHeight(600)
         self.setMaximumWidth(800)
         self.icons = Icons()
         self.SettingsDialog = SettingsDialog()
         self.NewProjectDialog = NewProjectDialog()
-        self.NewProjectDialog.signalProjectNew.connect(self.open_existing_project)
+
         self.connect_actions()
         self.connect_filetree()
         self.connect_icons()
         self._project_cache = {}
         
     def connect_actions(self):
+        self.NewProjectDialog.signalProjectNew.connect(self.open_existing_project)
         self.actionSettings.triggered.connect(self.open_settings)
         self.actionOpen.triggered.connect(self.open_existing_project)
         self.actionNew.triggered.connect(self.create_new_project)
@@ -87,7 +85,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         except KeyError:
             # Oh well, not cached...
             # Make sure the project is valid
-            assert ini and os.path.exists(ini), "Need a settings.ini file for project '{}'".format(dirname)
+            assert ini and os.path.exists(ini), "Need a settings.ini file for project '{}'- got: '{}'".format(dirname, ini)
             assert dirname and os.path.exists(dirname), "Directory '{}' needs to exist!".format(dirname)
             p = os.path.normpath
             root_dir = p(self.SettingsDialog.rootDirectoryLineEdit.text())
@@ -101,9 +99,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             # Make sure the ini file goes
             # in the home folder of the project.
             ini = os.path.join(dirname, ini_name)
-            with open(ini, "w") as ns:
-                #Write settings into project directory
-                settings.write(ns)
+            settings.save_as(ini, set_self=True)
 
             # Build & cache window
             window = ProjectMainWindow(ini)

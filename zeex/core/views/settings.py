@@ -6,7 +6,7 @@ Created on Fri Dec  2 13:47:27 2016
 """
 import os
 from functools import partial
-from PySide import QtGui, QtCore
+from core.compat import QtGui, QtCore
 from core.models.main import FieldsListModel
 from core.ui.settings_ui import Ui_settingsDialog
 from core.utility.collection import SettingsINI
@@ -27,8 +27,9 @@ CONFIG_DIR = normpath(ZEEX, 'configs')
 DEFAULT_SETTINGS_PATH = normpath(CONFIG_DIR, 'default.ini')
 THEME_NAME1 = 'theme1.qss'
 THEME_NAME2 = 'theme2.qss'
-DEFAULT_THEME = THEME_NAME2
-DEFAULT_THEME_OPTIONS = [THEME_NAME1, THEME_NAME2]
+THEME_NAME3 = 'theme3.qss'
+DEFAULT_THEME = THEME_NAME3
+DEFAULT_THEME_OPTIONS = [THEME_NAME1, THEME_NAME2, THEME_NAME3]
 DEFAULT_CODECS = ['UTF_8', 'ASCII', 'ISO-8895-1']
 DEFAULT_SEPARATORS = [',','|',r'\t',';']
 DEFAULT_FLAVORS = ['SQLite', 'PostgreSQL', 'MySQL']
@@ -40,13 +41,21 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
     signalSettingsImported = QtCore.Signal(SettingsINI, str)
     _themes_dir = THEMES_DIR
 
-    def __init__(self, filename=None):
+    def __init__(self, settings=None):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
-        self.Config = SettingsINI(filename)
-        self._settings_filename = filename
+
+        if isinstance(settings, SettingsINI):
+            self.Config = settings
+        else:
+            self.Config = SettingsINI(settings)
+
         self.configure_settings(self.Config)
         self.connect_buttons()
+
+    @property
+    def _settings_filename(self):
+        return self.Config._filename
 
     def connect_buttons(self):
         new_path = os.path.splitext(self.Config._default_path)[0] + "-test.ini"

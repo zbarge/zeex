@@ -4,6 +4,26 @@ Created on Mon Nov 28 12:51:47 2016
 
 @author: Zeke
 """
+try:
+    from PySide import QtGui, QtCore
+except ImportError:
+    try:
+        from PyQt4 import QtGui, QtCore
+    except ImportError:
+        try:
+            from PyQt5 import QtGui, QtCore, Qt
+        except ImportError:
+            raise ImportError("Cannot import PySide, PyQt4, or PyQt5, please install PySide (preferred) or one of the others.")
+
+
+
+
+
+
+
+
+
+
 TRUES = ['TRUE','YES','Y']
 UNQUOTE_OPTIONS = {'"':'',
                    "'":'', 

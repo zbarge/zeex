@@ -1,7 +1,5 @@
 from functools import partial
-
-from PySide import QtGui, QtCore
-
+from core.compat import QtGui, QtCore
 from core.views.file import DataFrameModel
 
 

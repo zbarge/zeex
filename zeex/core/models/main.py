@@ -33,7 +33,9 @@ class FieldsListModel(QtGui.QStandardItemModel):
                 self.appendRow(item)
 
     def get_data_list(self):
-        return [item.text() for item in [self.item(i) for i in range(self.rowCount())]]
+        return [item.text()
+                for item
+                in [self.item(i) for i in range(self.rowCount())]]
 
 
         

@@ -14,3 +14,4 @@ https://icons8.com/web-app/6675/Suppression
 <a href="https://icons8.com/web-app/49/Edit">Edit icon credits</a>
 <a href="https://icons8.com/web-app/5324/Device-Manager">Device manager icon credits</a>
 <a href="https://icons8.com">Icon pack by Icons8</a>
+<a href="https://icons8.com">Icon pack by Icons8</a>

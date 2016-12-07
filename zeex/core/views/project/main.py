@@ -1,11 +1,10 @@
 import os
 from functools import partial
 
-from PySide import QtGui, QtCore
-from pandasqt.utils import superReadFileToFrameModel
-from pandasqt.views.CSVDialogs import _encodings, DelimiterSelectionWidget
-from pandasqt.views.MultiFileDialogs import DataFrameExportDialog, CSVImportDialog, DataFrameModel
-
+from core.compat import QtGui, QtCore
+from qtpandas.views.CSVDialogs import _encodings, DelimiterSelectionWidget
+from qtpandas.views.MultiFileDialogs import DataFrameExportDialog, CSVImportDialog, DataFrameModel
+from qtpandas.models.DataFrameModel import DataFrameModel
 from core.models.filetree import FileTreeModel
 from core.ui.project.main_ui import Ui_ProjectWindow
 from core.utility.widgets import display_ok_msg
@@ -22,15 +21,24 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
 
-        self.SettingsDialog = SettingsDialog(filename=settings_ini)
+        self.SettingsDialog = SettingsDialog(settings=settings_ini)
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
+        self.connect_settings_dialog()
         self.current_model = None
 
         # Temp caches
         self.df_models = {}
         self.df_windows = {}
+
+    @property
+    def project_directory(self):
+        return self.ProjectsTreeView.model().rootPath()
+
+    @property
+    def log_directory(self):
+        return os.path.join(self.project_directory, 'log')
 
     def connect_window_title(self):
         root_dir = self.SettingsDialog.rootDirectoryLineEdit.text()
@@ -52,10 +60,22 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.ProjectsTreeView.setColumnWidth(0, 400)
 
     def connect_settings_dialog(self):
-        self.SettingsDialog.cloudProviderComboBox.setVisible(False)
-        self.SettingsDialog.cloudProviderLabel.setVisible(False)
-        self.SettingsDialog.rootDirectoryLabel.setVisible(False)
-        self.SettingsDialog.rootDirectoryLineEdit.setVisible(False)
+        #Adjust the box to remove irrelevant items.
+        self.SettingsDialog.cloudProviderComboBox.hide()
+        self.SettingsDialog.cloudProviderLabel.hide()
+        #self.SettingsDialog.rootDirectoryLabel.hide()
+        #self.SettingsDialog.rootDirectoryLineEdit.hide()
+        self.SettingsDialog.btnLogDirectory.hide()
+        self.SettingsDialog.btnRootDirectory.hide()
+        self.SettingsDialog.themeComboBox.hide()
+        self.SettingsDialog.themeLabel.hide()
+
+        # Override the log/root directory options
+        self.SettingsDialog.logDirectoryLineEdit.setText(self.log_directory)
+        self.SettingsDialog.rootDirectoryLineEdit.setText(self.project_directory)
+
+        self.SettingsDialog.logDirectoryLineEdit.setReadOnly(True)
+        self.SettingsDialog.rootDirectoryLineEdit.setReadOnly(True)
 
     def open_export_dialog(self):
         dialog = ProjectDataFrameExportDialog(parent=self,
@@ -101,7 +121,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
                 ext = os.path.splitext(file_path)[1].lower()
                 if ext in ['.txt', '.xlsx', '.csv']:
                     # Good to open, lets make/cache the model
-                    model = superReadFileToFrameModel(file_path)
+                    model = DataFrameModel()
+                    model.setDataFrameFromFile(file_path)
                     self.df_models[filename] = model
                     return self.df_models[filename]
         return None
@@ -177,18 +198,9 @@ class ProjectDataFrameExportDialog(DataFrameExportDialog):
         :param kwargs:
             models = {filename: df_model}
             parent = parent widget object
-
-
-
         """
         self._models = kwargs.pop('models', {})
         DataFrameExportDialog.__init__(self, *args, **kwargs)
-        parent = kwargs.get('parent', None)
-        if parent is not None:
-            try:
-                parent._set_theme(self)
-            except:
-                pass
 
     def _saveModel(self):
         sourcename = self._sourceNameComboBox.currentText()

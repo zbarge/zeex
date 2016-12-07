@@ -1,6 +1,6 @@
 from functools import partial
-from PySide import QtGui, QtCore
-from pandasqt.utils import superReadFileToFrameModel
+from core.compat import QtGui, QtCore
+from qtpandas.models.DataFrameModel import DataFrameModel
 
 from core.models.fieldnames import FieldRenameModel
 from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
@@ -97,20 +97,18 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         model.setHorizontalHeaderLabels(header)
         return model
 
-
-
-
-
     def _add_merge_file(self):
         file_path = self.mergeFileLineEdit.text()
-        model = superReadFileToFrameModel(file_path)
+        model = DataFrameModel()
+        model.setDataFrameFromFile(file_path)
         model.enableEditing(True)
         self._suppress_files.update({file_path:model})
 
 
     def _add_suppress_file(self):
         file_path = self.sFileLineEdit.text()
-        model = superReadFileToFrameModel(file_path)
+        model = DataFrameModel()
+        model.setDataFrameFromFile(file_path)
         model.enableEditing(True)
         df = model._dataFrame
         self._merge_files.update({file_path:model})

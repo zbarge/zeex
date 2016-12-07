@@ -1,5 +1,5 @@
 
-from PySide import QtGui
+from core.compat import QtGui, QtCore
 
 
 class PushGridHandler(object):

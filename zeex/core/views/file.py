@@ -1,33 +1,36 @@
 import os
-
-from PySide import QtGui, QtCore
-from pandasqt.models.DataFrameModel import DataFrameModel
-from pandasqt.utils import superReadFileToFrameModel
-from pandasqt.views.DataTableView import DataTableWidget
-
-from core.models.fieldnames import FieldRenameModel
+from icons import Icons
+from core.compat import QtGui, QtCore
+from qtpandas.models.DataFrameModel import DataFrameModel
+from qtpandas.views.DataTableView import DataTableWidget
 from core.ui.file_ui import Ui_FileWindow
-from core.views.actions.action import MergePurgeDialog
+from core.views.actions.merge_purge import MergePurgeDialog
+from core.views.actions.rename import RenameDialog
 
 
 class FileTableWidget(DataTableWidget):
     signalDataMerged = QtCore.Signal(DataFrameModel)
 
     def read_file(*args, **kwargs):
-        return FileTableWidget(superReadFileToFrameModel(*args, **kwargs))
+        model = DataFrameModel()
+        model.setDataFrameFromFile(args[0], **kwargs)
+        return FileTableWidget(model)
 
     def __init__(self, model, **kwargs):
         DataTableWidget.__init__(self, **kwargs)
         self.setModel(model)
 
-
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     def __init__(self, model, **kwargs):
         QtGui.QMainWindow.__init__(self, parent=kwargs.pop('parent', None))
         kwargs['parent'] = self
+        self.icons = Icons()
         self._widget = FileTableWidget(model, **kwargs)
         self.setupUi(self)
+        self.dialogRename = None
+        self.dialogMergePurge = None
         self.connect_actions()
+        self.connect_icons()
 
     @property
     def widget(self):
@@ -51,28 +54,35 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionMergePurge.triggered.connect(self.open_merge_purge_dialog)
         self.actionRename.triggered.connect(self.open_rename_dialog)
 
+    def connect_icons(self):
+        self.actionExecuteScript.setIcon(self.icons['edit'])
+        self.actionDelete.setIcon(self.icons['delete'])
+        self.actionMergePurge.setIcon(self.icons['merge'])
+        self.actionRename.setIcon(self.icons['edit'])
+        self.actionSave.setIcon(self.icons['save'])
+        self.actionSuppress.setIcon(self.icons['suppress'])
+        self.menuAction.setIcon(self.icons['lightning'])
+
     def open_rename_dialog(self):
-        df = self.currentDataFrame
-        current_cols = list(df.columns)
-        rename_model = FieldRenameModel()
-        rename_model.get_renames(current_cols, fill_missing=True, clear_current=True)
-        self.renameDialog = RenameDialog(self, self.widget.model(), rename_model)
-        self.renameDialog.show()
+        if self.dialogRename is None:
+            self.dialogRename = RenameDialog(parent=self, model=self.currentModel)
+        self.dialogRename.show()
 
     def open_merge_purge_dialog(self):
-        model = self.widget.model()
-        df = model._dataFrame
-        file_base, ext = os.path.splitext(model.filePath)
-        dialog = MergePurgeDialog()
+        if self.dialogMergePurge is None:
+            model = self.widget.model()
+            df = model._dataFrame
+            file_base, ext = os.path.splitext(model.filePath)
+            dialog = MergePurgeDialog()
 
-        settings = dict()
-        settings['sort_model'] = dialog.create_sort_model(df.columns)
-        settings['dedupe_model'] = dialog.create_dedupe_model(df.columns)
-        settings['source_path'] = model.filePath
-        settings['dest_path'] =  file_base + "_merged" + ext
-        dialog.configure(settings)
+            settings = dict()
+            settings['sort_model'] = dialog.create_sort_model(df.columns)
+            settings['dedupe_model'] = dialog.create_dedupe_model(df.columns)
+            settings['source_path'] = model.filePath
+            settings['dest_path'] =  file_base + "_merged" + ext
+            dialog.configure(settings)
 
-        self.dialogMergePurge = dialog
+            self.dialogMergePurge = dialog
         self.dialogMergePurge.show()
 
 
