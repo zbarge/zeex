@@ -1,6 +1,6 @@
 import os
 from functools import partial
-
+from icons import Icons
 from core.compat import QtGui, QtCore
 from qtpandas.views.CSVDialogs import _encodings, DelimiterSelectionWidget
 from qtpandas.views.MultiFileDialogs import DataFrameExportDialog, CSVImportDialog, DataFrameModel
@@ -20,11 +20,12 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     def __init__(self, settings_ini: str):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
-
+        self.icons = Icons()
         self.SettingsDialog = SettingsDialog(settings=settings_ini)
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
+        self.connect_icons()
         self.connect_settings_dialog()
         self.current_model = None
 
@@ -43,6 +44,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     def connect_window_title(self):
         root_dir = self.SettingsDialog.rootDirectoryLineEdit.text()
         base_name = os.path.basename(root_dir)
+        self.SettingsDialog.setWindowTitle("{} - Settings".format(base_name))
         self.setWindowTitle("Project: {} - {}".format(base_name, root_dir.replace(base_name, "")))
 
     def connect_actions(self):
@@ -51,6 +53,16 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionOpen.triggered.connect(self.open_tableview_window)
         self.actionSave.triggered.connect(self.open_export_dialog)
         self.actionRemove.triggered.connect(self.remove_tree_selected_model)
+
+    def connect_icons(self):
+        self.setWindowIcon(self.icons['folder'])
+        self.actionNew.setIcon(self.icons['add'])
+        self.actionOpen.setIcon(self.icons['spreadsheet'])
+        self.actionPreferences.setIcon(self.icons['settings'])
+        self.actionRemove.setIcon(self.icons['delete'])
+        self.actionSave.setIcon(self.icons['save'])
+        self.SettingsDialog.setWindowIcon(self.icons['settings'])
+
 
     def connect_filetree(self):
         rootdir = self.SettingsDialog.rootDirectoryLineEdit.text()
@@ -82,11 +94,13 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
                                               models=self.df_models)
 
         dialog.exported.connect(self._flush_export)
+        dialog.setWindowIcon(self.icons['export_generic'])
         dialog.exec_()
 
     def open_import_dialog(self):
         dialog = CSVImportDialog(self)
         dialog.load.connect(self.import_file)
+        dialog.setWindowIcon(self.icons['add'])
         dialog.exec_()
 
     def open_tableview_window(self, model: DataFrameModel = None):

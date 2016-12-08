@@ -20,6 +20,7 @@ class FileTableWidget(DataTableWidget):
         DataTableWidget.__init__(self, **kwargs)
         self.setModel(model)
 
+
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     def __init__(self, model, **kwargs):
         QtGui.QMainWindow.__init__(self, parent=kwargs.pop('parent', None))
@@ -55,13 +56,14 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionRename.triggered.connect(self.open_rename_dialog)
 
     def connect_icons(self):
+        self.setWindowTitle("{}".format(self.currentModel.filePath))
+        self.setWindowIcon(self.icons['spreadsheet'])
         self.actionExecuteScript.setIcon(self.icons['edit'])
         self.actionDelete.setIcon(self.icons['delete'])
         self.actionMergePurge.setIcon(self.icons['merge'])
-        self.actionRename.setIcon(self.icons['edit'])
+        self.actionRename.setIcon(self.icons['lightning'])
         self.actionSave.setIcon(self.icons['save'])
         self.actionSuppress.setIcon(self.icons['suppress'])
-        self.menuAction.setIcon(self.icons['lightning'])
 
     def open_rename_dialog(self):
         if self.dialogRename is None:

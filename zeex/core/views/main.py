@@ -41,7 +41,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
 
     def connect_icons(self):
         self.setWindowIcon(self.icons['home'])
-        self.NewProjectDialog.setWindowIcon(self.icons['folder'])
+        self.NewProjectDialog.setWindowIcon(self.icons['spreadsheet'])
         self.SettingsDialog.setWindowIcon(self.icons['settings'])
 
         self.actionSettings.setIcon(self.icons['settings'])
@@ -57,6 +57,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         model = FileTreeModel(root_dir=rootdir)    
         self.ProjectsTreeView.setModel(model)
         self.ProjectsTreeView.setRootIndex(model.index(rootdir))
+        self.ProjectsTreeView.setColumnWidth(0, 175)
         
     def open_settings(self):
         self.SettingsDialog.exec_()
