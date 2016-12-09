@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
+    <width>644</width>
     <height>422</height>
    </rect>
   </property>
@@ -14,23 +14,18 @@
    <string>MyProject</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTreeView" name="ProjectsTreeView">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>0</y>
-      <width>631</width>
-      <height>381</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTreeView" name="ProjectsTreeView"/>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>804</width>
+     <width>644</width>
      <height>21</height>
     </rect>
    </property>
@@ -51,7 +46,7 @@
    </widget>
    <widget class="QMenu" name="menuRecent_Files">
     <property name="title">
-     <string>Recent Files</string>
+     <string>Recent</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuActions">
@@ -62,9 +57,9 @@
     <addaction name="actionRename"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuSettings"/>
    <addaction name="menuRecent_Files"/>
    <addaction name="menuActions"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">

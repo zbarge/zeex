@@ -22,8 +22,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
         self.icons = Icons()
-        self.SettingsDialog = SettingsDialog(settings=settings_ini)
-        self.MergePurgeDialog = MergePurgeDialog()
+        self.dialog_settings = SettingsDialog(settings=settings_ini)
+        self.dialog_merge_purge = MergePurgeDialog()
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
@@ -44,9 +44,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         return os.path.join(self.project_directory, 'log')
 
     def connect_window_title(self):
-        root_dir = self.SettingsDialog.rootDirectoryLineEdit.text()
+        root_dir = self.dialog_settings.rootDirectoryLineEdit.text()
         base_name = os.path.basename(root_dir)
-        self.SettingsDialog.setWindowTitle("{} - Settings".format(base_name))
+        self.dialog_settings.setWindowTitle("{} - Settings".format(base_name))
         self.setWindowTitle("Project: {} - {}".format(base_name, root_dir.replace(base_name, "")))
 
     def connect_actions(self):
@@ -64,14 +64,14 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionPreferences.setIcon(self.icons['settings'])
         self.actionRemove.setIcon(self.icons['delete'])
         self.actionSave.setIcon(self.icons['save'])
-        self.SettingsDialog.setWindowIcon(self.icons['settings'])
+        self.dialog_settings.setWindowIcon(self.icons['settings'])
         self.actionMerge_Purge.setIcon(self.icons['merge'])
         self.actionRename.setIcon(self.icons['rename'])
-        self.MergePurgeDialog.setWindowIcon(self.icons['merge'])
+        self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
 
 
     def connect_filetree(self):
-        rootdir = self.SettingsDialog.rootDirectoryLineEdit.text()
+        rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
         model = FileTreeModel(root_dir=rootdir)
         self.ProjectsTreeView.setModel(model)
         self.ProjectsTreeView.setRootIndex(model.index(rootdir))
@@ -79,21 +79,21 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
 
     def connect_settings_dialog(self):
         #Adjust the box to remove irrelevant items.
-        self.SettingsDialog.cloudProviderComboBox.hide()
-        self.SettingsDialog.cloudProviderLabel.hide()
-        #self.SettingsDialog.rootDirectoryLabel.hide()
-        #self.SettingsDialog.rootDirectoryLineEdit.hide()
-        self.SettingsDialog.btnLogDirectory.hide()
-        self.SettingsDialog.btnRootDirectory.hide()
-        self.SettingsDialog.themeComboBox.hide()
-        self.SettingsDialog.themeLabel.hide()
+        self.dialog_settings.cloudProviderComboBox.hide()
+        self.dialog_settings.cloudProviderLabel.hide()
+        #self.dialog_settings.rootDirectoryLabel.hide()
+        #self.dialog_settings.rootDirectoryLineEdit.hide()
+        self.dialog_settings.btnLogDirectory.hide()
+        self.dialog_settings.btnRootDirectory.hide()
+        self.dialog_settings.themeComboBox.hide()
+        self.dialog_settings.themeLabel.hide()
 
         # Override the log/root directory options
-        self.SettingsDialog.logDirectoryLineEdit.setText(self.log_directory)
-        self.SettingsDialog.rootDirectoryLineEdit.setText(self.project_directory)
+        self.dialog_settings.logDirectoryLineEdit.setText(self.log_directory)
+        self.dialog_settings.rootDirectoryLineEdit.setText(self.project_directory)
 
-        self.SettingsDialog.logDirectoryLineEdit.setReadOnly(True)
-        self.SettingsDialog.rootDirectoryLineEdit.setReadOnly(True)
+        self.dialog_settings.logDirectoryLineEdit.setReadOnly(True)
+        self.dialog_settings.rootDirectoryLineEdit.setReadOnly(True)
 
     def open_export_dialog(self):
         dialog = ProjectDataFrameExportDialog(parent=self,
@@ -131,12 +131,12 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         file_base, ext = os.path.splitext(model.filePath)
         df = model._dataFrame
         settings = dict()
-        settings['sort_model'] = self.MergePurgeDialog.create_sort_model(df.columns)
-        settings['dedupe_model'] = self.MergePurgeDialog.create_dedupe_model(df.columns)
+        settings['sort_model'] = self.dialog_merge_purge.create_sort_model(df.columns)
+        settings['dedupe_model'] = self.dialog_merge_purge.create_dedupe_model(df.columns)
         settings['source_path'] = model.filePath
         settings['dest_path'] = file_base + "_merged" + ext
-        self.MergePurgeDialog.configure(settings)
-        self.MergePurgeDialog.show()
+        self.dialog_merge_purge.configure(settings)
+        self.dialog_merge_purge.show()
 
     def get_tree_selected_model(self) -> (DataFrameModel, None):
         # Check if file is selected in tree view
@@ -213,7 +213,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             df.to_csv(filepath, **kwargs)
 
     def open_settings_dialog(self):
-        self.SettingsDialog.exec_()
+        self.dialog_settings.exec_()
 
     def _flush_export(self, filepath):
         name = os.path.basename(filepath)

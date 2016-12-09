@@ -27,6 +27,7 @@ class Field(Base):
      
      orig_name = Column(String(45), unique=True)
      new_name = Column(String(45))
+     dtype = Column(String(45))
      insertdate = Column(DateTime, default=datetime.datetime.now())
      updatedate = Column(DateTime, default=datetime.datetime.now())
      source = Column(String(30))
@@ -141,6 +142,69 @@ class FieldRenameModel(QtGui.QStandardItemModel):
         for i in range(self.rowCount()):
             renames[self.item(i, 0).text()] =  self.item(i, 1).text()
         return renames
+
+
+class FieldModel(QtGui.QStandardItemModel):
+    def __init__(self):
+        QtGui.QStandardItemModel.__init__(self)
+        self.db = FieldNames()
+        self.setHorizontalHeaderLabels(['orig_name', 'new_name', 'dtype'])
+        self._original_info = {}
+
+    def sync_database(self):
+        pass
+
+    def reset_to_original(self):
+        self.clear()
+        self.setHorizontalHeaderLabels(['orig_name', 'new_name', 'dtype'])
+        for f, d in self._original_info.items():
+            self.set_field(f, d[0], d[1])
+
+    def request_fields(self, fields: list):
+        pass
+
+    def set_field(self, field_name, new_name=None, dtype=None):
+        """
+        Use this method to add fields to the model.
+        Stores the original data allowing the reset_to_original to work.
+
+        :param field_name: the name of the column in the data
+        :param new_name: the new name of the column
+        :param dtype: the data type of the column
+        :return: None
+        """
+        ct = self.rowCount()
+        self.setItem(ct, 0, self._handle_field_name(field_name))
+        self.setItem(ct, 1, self._handle_new_name(new_name))
+        self.setItem(ct, 2, self._handle_dtype(dtype))
+        self._store_original(field_name, new_name, dtype)
+
+    def apply_new_name(self, method):
+        """
+        Applies the method across all rows
+        of the new_name column in the model.
+        :param method: str.lower, str.upper, str.title
+        :return: None
+        """
+        for idx in range(self.rowCount()):
+            item = self.item(idx, 1)
+            item.setText(method(item.text()))
+
+    def _handle_dtype(self, dtype):
+        return QtGui.QStandardItem(str(dtype))
+
+    def _handle_field_name(self, name):
+        return QtGui.QStandardItem(name)
+
+    def _handle_new_name(self, name):
+        return QtGui.QStandardItem(name)
+
+    def _get_duplicate_indexes(self):
+        return []
+
+    def _store_original(self, field_name, new_name=None, dtype=None):
+        self._original_info[field_name] = [new_name, dtype]
+
 
 
 

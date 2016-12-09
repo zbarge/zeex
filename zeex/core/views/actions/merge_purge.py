@@ -1,12 +1,12 @@
 import os
 from functools import partial
 from core.compat import QtGui, QtCore
-from core.models.fieldnames import FieldRenameModel
 from qtpandas.models.DataFrameModel import DataFrameModel
 from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
 from core.views.actions.push_grid import PushGridHandler
 from core.models.actions import FileViewModel
 from core.views.file import FileTableWindow
+
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
     signalMergeFileOpened = QtCore.Signal(DataFrameModel)

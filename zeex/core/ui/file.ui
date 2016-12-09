@@ -14,31 +14,18 @@
    <string>MyFile</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>741</width>
-      <height>511</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetNoConstraint</enum>
-     </property>
-     <item>
-      <widget class="QWidget" name="widget" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -60,6 +47,7 @@
     <property name="title">
      <string>Action</string>
     </property>
+    <addaction name="actionEditFields"/>
     <addaction name="actionMergePurge"/>
     <addaction name="actionSuppress"/>
     <addaction name="actionRename"/>
@@ -97,6 +85,11 @@
   <action name="actionExecuteScript">
    <property name="text">
     <string>Execute Script</string>
+   </property>
+  </action>
+  <action name="actionEditFields">
+   <property name="text">
+    <string>Edit Fields</string>
    </property>
   </action>
  </widget>

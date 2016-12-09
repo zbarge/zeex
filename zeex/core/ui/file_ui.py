@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'file.ui'
 #
-# Created: Tue Dec  6 00:15:15 2016
+# Created: Fri Dec  9 00:22:32 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,21 +15,16 @@ class Ui_FileWindow(object):
         FileWindow.resize(758, 571)
         self.centralwidget = QtGui.QWidget(FileWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(9, 9, 741, 511))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.widget = QtGui.QWidget(self.verticalLayoutWidget)
+        self.horizontalLayout = QtGui.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.widget = QtGui.QWidget(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
         self.widget.setObjectName("widget")
-        self.verticalLayout.addWidget(self.widget)
+        self.horizontalLayout.addWidget(self.widget)
         FileWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(FileWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 758, 21))
@@ -54,8 +49,11 @@ class Ui_FileWindow(object):
         self.actionRename.setObjectName("actionRename")
         self.actionExecuteScript = QtGui.QAction(FileWindow)
         self.actionExecuteScript.setObjectName("actionExecuteScript")
+        self.actionEditFields = QtGui.QAction(FileWindow)
+        self.actionEditFields.setObjectName("actionEditFields")
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionDelete)
+        self.menuAction.addAction(self.actionEditFields)
         self.menuAction.addAction(self.actionMergePurge)
         self.menuAction.addAction(self.actionSuppress)
         self.menuAction.addAction(self.actionRename)
@@ -76,4 +74,5 @@ class Ui_FileWindow(object):
         self.actionSuppress.setText(QtGui.QApplication.translate("FileWindow", "Suppress", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRename.setText(QtGui.QApplication.translate("FileWindow", "Rename Headers", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteScript.setText(QtGui.QApplication.translate("FileWindow", "Execute Script", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEditFields.setText(QtGui.QApplication.translate("FileWindow", "Edit Fields", None, QtGui.QApplication.UnicodeUTF8))
 

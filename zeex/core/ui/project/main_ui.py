@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Thu Dec  8 21:39:58 2016
+# Created: Thu Dec  8 23:41:34 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,15 +12,17 @@ from PySide import QtCore, QtGui
 class Ui_ProjectWindow(object):
     def setupUi(self, ProjectWindow):
         ProjectWindow.setObjectName("ProjectWindow")
-        ProjectWindow.resize(804, 422)
+        ProjectWindow.resize(644, 422)
         self.centralwidget = QtGui.QWidget(ProjectWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.horizontalLayout = QtGui.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.ProjectsTreeView = QtGui.QTreeView(self.centralwidget)
-        self.ProjectsTreeView.setGeometry(QtCore.QRect(160, 0, 631, 381))
         self.ProjectsTreeView.setObjectName("ProjectsTreeView")
+        self.horizontalLayout.addWidget(self.ProjectsTreeView)
         ProjectWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(ProjectWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 804, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 644, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -59,9 +61,9 @@ class Ui_ProjectWindow(object):
         self.menuActions.addAction(self.actionMerge_Purge)
         self.menuActions.addAction(self.actionRename)
         self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuRecent_Files.menuAction())
         self.menubar.addAction(self.menuActions.menuAction())
+        self.menubar.addAction(self.menuSettings.menuAction())
         self.toolBar.addSeparator()
 
         self.retranslateUi(ProjectWindow)
@@ -71,7 +73,7 @@ class Ui_ProjectWindow(object):
         ProjectWindow.setWindowTitle(QtGui.QApplication.translate("ProjectWindow", "MyProject", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("ProjectWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSettings.setTitle(QtGui.QApplication.translate("ProjectWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuRecent_Files.setTitle(QtGui.QApplication.translate("ProjectWindow", "Recent Files", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuRecent_Files.setTitle(QtGui.QApplication.translate("ProjectWindow", "Recent", None, QtGui.QApplication.UnicodeUTF8))
         self.menuActions.setTitle(QtGui.QApplication.translate("ProjectWindow", "Actions", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("ProjectWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setText(QtGui.QApplication.translate("ProjectWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
