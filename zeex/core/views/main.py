@@ -33,9 +33,9 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self._project_cache = {}
         
     def connect_actions(self):
-        self.NewProjectDialog.signalProjectNew.connect(self.open_existing_project)
+        self.NewProjectDialog.signalProjectNew.connect(self.open_project)
         self.actionSettings.triggered.connect(self.open_settings)
-        self.actionOpen.triggered.connect(self.open_existing_project)
+        self.actionOpen.triggered.connect(self.open_project)
         self.actionNew.triggered.connect(self.create_new_project)
         self.actionEdit.setVisible(False)
 
@@ -63,7 +63,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.SettingsDialog.exec_()
 
     @QtCore.Slot(list)
-    def open_existing_project(self, contents: list = None):
+    def open_project(self, contents: list = None):
         if contents:
             # New project came in off the slot.
             dirname, ini = contents

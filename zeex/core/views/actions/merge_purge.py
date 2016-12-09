@@ -1,19 +1,25 @@
+import os
 from functools import partial
 from core.compat import QtGui, QtCore
-from qtpandas.models.DataFrameModel import DataFrameModel
-
 from core.models.fieldnames import FieldRenameModel
+from qtpandas.models.DataFrameModel import DataFrameModel
 from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
 from core.views.actions.push_grid import PushGridHandler
-
-
+from core.models.actions import FileViewModel
+from core.views.file import FileTableWindow
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
+    signalMergeFileOpened = QtCore.Signal(DataFrameModel)
+    signalSFileOpened = QtCore.Signal(DataFrameModel)
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self._suppress_files = {}
         self._merge_files = {}
+        self._merge_view_model = FileViewModel()
+        self._suppress_view_model = FileViewModel()
+        self._file_table_windows = {}
 
     def configure(self, settings: dict = None) -> bool:
         sort_model   = settings.get('sort_model', [])
@@ -49,11 +55,21 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         if dest_path is not None:
             self.destPathLineEdit.setText(dest_path)
 
-        merge_file_func = partial(self.open_file, self.mergeFileLineEdit, self._add_merge_file)
-        sfile_func = partial(self.open_file, self.sFileLineEdit, self._add_suppress_file)
+        self.signalMergeFileOpened.connect(self._add_merge_file)
+        merge_file_func = partial(self.open_file, model_signal=self.signalMergeFileOpened)
         self.btnAddMergeFile.clicked.connect(merge_file_func)
-        self.btnAddSFile.clicked.connect(sfile_func)
+        self.btnBrowseMergeFile.clicked.connect(merge_file_func)
+        self.btnDeleteMergeFile.clicked.connect(partial(self._remove_file, self.mergeFileTable))
+        self.btnEditMergeFile.clicked.connect(partial(self._open_edit_file_window, self.mergeFileTable, self._merge_files))
+        self.mergeFileTable.setModel(self._merge_view_model)
 
+        self.signalSFileOpened.connect(self._add_suppress_file)
+        sfile_func = partial(self.open_file, model_signal=self.signalSFileOpened)
+        self.btnEditSFile.clicked.connect(partial(self._open_edit_file_window, self.sFileTable, self._suppress_files))
+        self.btnDeleteSFile.clicked.connect(partial(self._remove_file, self.sFileTable))
+        self.btnAddSFile.clicked.connect(sfile_func)
+        self.btnBrowseSFile.clicked.connect(sfile_func)
+        self.sFileTable.setModel(self._suppress_view_model)
 
     def create_dedupe_model(self, columns: list):
         columns = list(columns)
@@ -75,55 +91,61 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             model.appendRow(item)
         return model
 
-    def open_file(self, line_edit, callback=None):
-        file_names = QtGui.QFileDialog.getOpenFileNames()
-
+    def open_file(self, file_names=None, model_signal=None):
+        if file_names is None:
+            file_names = QtGui.QFileDialog.getOpenFileNames()
+        if file_names:
+            file_names = file_names[0]
         for f in file_names:
-            line_edit.setText(f[0])
-            if callback is not None:
-                callback()
+            try:
+                if os.path.exists(f):
+                    model = DataFrameModel()
+                    model.setDataFrameFromFile(f)
+                    if model_signal is not None:
+                        model_signal.emit(model)
+            except Exception as e:
+                print(e)
 
-    def get_file_preview_model(self, *args, **kwargs):
-        file_path = kwargs['file_path']
-        file_type = kwargs['file_type']
-        df_columns = kwargs['columns']
-        header = ['filepath', 'columns', 'edit']
-        model = QtGui.QStandardItemModel()
-        colbox = QtGui.QComboBox(list(df_columns))
-        checkbox = QtGui.QCheckBox()
-        model.setItem(0, 0, file_path)
-        model.setItem(0, 1, colbox)
-        model.setItem(0, 2, checkbox)
-        model.setHorizontalHeaderLabels(header)
-        return model
+    @QtCore.Slot(DataFrameModel)
+    def _add_merge_file(self, model: DataFrameModel):
+        file_path = model.filePath
+        model.enableEditing(True)
+        self._merge_files.update({file_path:model})
+        self._merge_view_model.appendDataFrameModel(model)
+        self.mergeFileTable.setColumnWidth(0, 500)
 
-    def _add_merge_file(self):
-        file_path = self.mergeFileLineEdit.text()
-        model = DataFrameModel()
-        model.setDataFrameFromFile(file_path)
+    @QtCore.Slot(DataFrameModel)
+    def _add_suppress_file(self, model: DataFrameModel):
+        file_path = model.filePath
         model.enableEditing(True)
         self._suppress_files.update({file_path:model})
+        self._suppress_view_model.appendDataFrameModel(model)
+        self.sFileTable.setColumnWidth(0, 500)
+
+    def _remove_file(self, view, indexes=None):
+        if indexes is None:
+            indexes = [x.row() for x in view.selectedIndexes()]
+        model = view.model()
+        for idx in indexes:
+            model.takeRow(idx)
+
+    def _open_edit_file_window(self, view, models):
+        idx = view.selectedIndexes()[0]
+        vmodel = view.model()
+        vitem = vmodel.item(idx.row())
+        model = models.get(vitem.text())
+
+        fp = model.filePath
+        try:
+            self._file_table_windows[fp].show()
+        except KeyError:
+            self._file_table_windows[fp] = FileTableWindow(model)
+            self._file_table_windows[fp].show()
 
 
-    def _add_suppress_file(self):
-        file_path = self.sFileLineEdit.text()
-        model = DataFrameModel()
-        model.setDataFrameFromFile(file_path)
-        model.enableEditing(True)
-        df = model._dataFrame
-        self._merge_files.update({file_path:model})
-        dtype_model = model.columnDtypeModel()
-        self.sFileTable.setModel(dtype_model)
 
-        rename_model = FieldRenameModel()
-        for row_idx, col in enumerate(sorted(df.columns)):
-            item = QtGui.QStandardItem(col)
-            rename = item.clone()
 
-            item.setCheckable(True)
-            rename_model.setItem(row_idx, 0, item)
-            rename_model.setItem(row_idx, 1, rename)
 
-        self.sRenameTable.setModel(rename_model)
+
 
 

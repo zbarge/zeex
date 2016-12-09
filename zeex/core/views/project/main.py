@@ -1,6 +1,6 @@
 import os
-from functools import partial
 from icons import Icons
+from functools import partial
 from core.compat import QtGui, QtCore
 from qtpandas.views.CSVDialogs import _encodings, DelimiterSelectionWidget
 from qtpandas.views.MultiFileDialogs import DataFrameExportDialog, CSVImportDialog, DataFrameModel
@@ -10,6 +10,7 @@ from core.ui.project.main_ui import Ui_ProjectWindow
 from core.utility.widgets import display_ok_msg
 from core.views.file import FileTableWindow
 from core.views.settings import SettingsDialog
+from core.views.actions.merge_purge import MergePurgeDialog
 
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
@@ -22,6 +23,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.setupUi(self)
         self.icons = Icons()
         self.SettingsDialog = SettingsDialog(settings=settings_ini)
+        self.MergePurgeDialog = MergePurgeDialog()
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
@@ -53,6 +55,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionOpen.triggered.connect(self.open_tableview_window)
         self.actionSave.triggered.connect(self.open_export_dialog)
         self.actionRemove.triggered.connect(self.remove_tree_selected_model)
+        self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
 
     def connect_icons(self):
         self.setWindowIcon(self.icons['folder'])
@@ -62,6 +65,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionRemove.setIcon(self.icons['delete'])
         self.actionSave.setIcon(self.icons['save'])
         self.SettingsDialog.setWindowIcon(self.icons['settings'])
+        self.actionMerge_Purge.setIcon(self.icons['merge'])
+        self.actionRename.setIcon(self.icons['rename'])
+        self.MergePurgeDialog.setWindowIcon(self.icons['merge'])
 
 
     def connect_filetree(self):
@@ -119,6 +125,18 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             self.df_windows[name] = FileTableWindow(model)
             self.add_recent_file_menu_entry(name, model)
             return self.df_windows[name].show()
+
+    def open_merge_purge_dialog(self):
+        model = self.get_tree_selected_model()
+        file_base, ext = os.path.splitext(model.filePath)
+        df = model._dataFrame
+        settings = dict()
+        settings['sort_model'] = self.MergePurgeDialog.create_sort_model(df.columns)
+        settings['dedupe_model'] = self.MergePurgeDialog.create_dedupe_model(df.columns)
+        settings['source_path'] = model.filePath
+        settings['dest_path'] = file_base + "_merged" + ext
+        self.MergePurgeDialog.configure(settings)
+        self.MergePurgeDialog.show()
 
     def get_tree_selected_model(self) -> (DataFrameModel, None):
         # Check if file is selected in tree view

@@ -5,6 +5,7 @@ Created on Fri Dec  2 13:47:27 2016
 @author: Zeke
 """
 import os
+import sys
 from functools import partial
 from core.compat import QtGui, QtCore
 from core.models.main import FieldsListModel
@@ -119,6 +120,15 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         INTEGER_FIELDS =  config.get_safe('FIELDS', 'INTEGER',fallback=['id','users_id'])
         DATE_FIELDS   =   config.get_safe('FIELDS', 'DATE',   fallback=['insertdate','updatedate'])
         FLOAT_FIELDS =    config.get_safe('FIELDS', 'FLOAT',   fallback=[])
+
+        #Make sure the directories exist.
+        for fp in [ROOT_DIR, LOG_DIR]:
+            try:
+                if not os.path.exists(fp):
+                    os.mkdir(fp)
+            except OSError as e:
+                raise OSError("Cannot initialize settings directory {}".format(fp))
+                sys.exit(1)
 
         self.autoSortCheckBox.setCheckable(True)
         self.autoDedupeCheckBox.setCheckable(True)

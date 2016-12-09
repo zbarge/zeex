@@ -4,7 +4,6 @@ from core.compat import QtGui, QtCore
 from qtpandas.models.DataFrameModel import DataFrameModel
 from qtpandas.views.DataTableView import DataTableWidget
 from core.ui.file_ui import Ui_FileWindow
-from core.views.actions.merge_purge import MergePurgeDialog
 from core.views.actions.rename import RenameDialog
 
 
@@ -52,7 +51,6 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         return self.currentModel._dataFrame
 
     def connect_actions(self):
-        self.actionMergePurge.triggered.connect(self.open_merge_purge_dialog)
         self.actionRename.triggered.connect(self.open_rename_dialog)
 
     def connect_icons(self):
@@ -70,22 +68,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
             self.dialogRename = RenameDialog(parent=self, model=self.currentModel)
         self.dialogRename.show()
 
-    def open_merge_purge_dialog(self):
-        if self.dialogMergePurge is None:
-            model = self.widget.model()
-            df = model._dataFrame
-            file_base, ext = os.path.splitext(model.filePath)
-            dialog = MergePurgeDialog()
 
-            settings = dict()
-            settings['sort_model'] = dialog.create_sort_model(df.columns)
-            settings['dedupe_model'] = dialog.create_dedupe_model(df.columns)
-            settings['source_path'] = model.filePath
-            settings['dest_path'] =  file_base + "_merged" + ext
-            dialog.configure(settings)
-
-            self.dialogMergePurge = dialog
-        self.dialogMergePurge.show()
 
 
 
