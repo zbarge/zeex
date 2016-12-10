@@ -25,13 +25,8 @@ class RenameDialog(QtGui.QDialog, Ui_renameDialog):
         self.setCaseBtn.clicked.connect(self.set_case)
 
     def apply_renames(self):
-        self.dfmodel.layoutAboutToBeChanged.emit()
         rename_cols = self.rnmodel.get_renames_dict()
-        self.dfmodel._dataFrame.rename(columns=rename_cols, inplace=True)
-        #self.rnmodel.db.add_entries(rename_cols, self.dfmodel.filePath)
-        self.dfmodel.dataChanged.emit()
-        self.dfmodel.dataFrameChanged.emit()
-        self.dfmodel.layoutChanged.emit()
+        self.dfmodel.rename(columns=rename_cols)
 
     def load_template(self):
         pass

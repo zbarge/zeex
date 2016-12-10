@@ -206,11 +206,6 @@ class FieldModel(QtGui.QStandardItemModel):
         self._original_info[field_name] = [new_name, dtype]
 
 
-
-
-
-
-
 def test_fieldnames():
     renames = {"first name-dv":"first_name",
                "last name-dv":"last_name"}

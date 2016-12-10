@@ -35,7 +35,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="sortDropTab">
     <attribute name="title">
@@ -247,6 +247,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="btnMapMergeFields">
+            <property name="text">
+             <string>Map Fields</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="btnDeleteMergeFile">
             <property name="text">
              <string>Delete</string>
@@ -306,6 +313,13 @@
            <widget class="QPushButton" name="btnEditSFile">
             <property name="text">
              <string>Edit</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnMapSFields">
+            <property name="text">
+             <string>Map Fields</string>
             </property>
            </widget>
           </item>

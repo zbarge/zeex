@@ -1,4 +1,4 @@
-
+from core.ui.actions.push_grid_ui import Ui_PushGridWidget
 from core.compat import QtGui, QtCore
 
 
@@ -77,3 +77,25 @@ class PushGridHandler(object):
     def set_deletes(self, left: bool = True, right: bool = True):
         self._left_delete = left
         self._right_delete = right
+
+
+class PushGridWidget(QtGui.QWidget, Ui_PushGridWidget):
+    def __init__(self, *args, **kwargs):
+        QtGui.QWidget.__init__(self, *args, **kwargs)
+        self.handle = None
+
+    def set_handle(self, left_model, left_delete=True, right_delete=True):
+        self.handle = PushGridHandler(left_model=left_model,
+                                      left_button=self.btnPushLeft,
+                                      left_delete=left_delete,
+                                      right_model=None,
+                                      right_button=self.btnPushRight,
+                                      right_delete=right_delete)
+
+    def get_left_data(self):
+        lmodel = self.listViewLeft.model()
+        return [lmodel.item(i).text() for i in range(lmodel.rowCount())]
+
+    def get_right_data(self):
+        rmodel = self.listViewRight.model()
+        return [rmodel.item(i).text() for i in range(rmodel.rowCount())]
