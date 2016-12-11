@@ -72,7 +72,7 @@ setup(
     description=short_description,
     long_description=long_description,
     include_package_data=True,
-    packages=['qtpandas'],
+    packages=['zeex'],
 
     platforms='any',
     test_suite='tests',
