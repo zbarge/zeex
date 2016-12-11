@@ -4,16 +4,21 @@ Created on Mon Nov 28 12:51:47 2016
 
 @author: Zeke
 """
-try:
-    from PySide import QtGui, QtCore
-except ImportError:
+
+from PySide import QtGui, QtCore
+
+
+def if_we_need_multi_version_support():
     try:
-        from PyQt4 import QtGui, QtCore
+        from PySide import QtGui, QtCore
     except ImportError:
         try:
-            from PyQt5 import QtGui, QtCore, Qt
+            from PyQt4 import QtGui, QtCore
         except ImportError:
-            raise ImportError("Cannot import PySide, PyQt4, or PyQt5, please install PySide (preferred) or one of the others.")
+            try:
+                from PyQt5 import QtGui, QtCore, Qt
+            except ImportError:
+                raise ImportError("Cannot import PySide, PyQt4, or PyQt5, please install PySide (preferred) or one of the others.")
 
 
 

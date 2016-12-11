@@ -8,13 +8,14 @@ from core.views.actions.push_grid import PushGridHandler, PushGridWidget
 from core.models.actions import FileViewModel
 from core.views.file import FileTableWindow
 from core.views.actions.map_grid import MapGridDialog
-
+from core.ctrls.dataframe import DataFrameModelManager
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
-    signalMergeFileOpened = QtCore.Signal(DataFrameModel)
-    signalSFileOpened = QtCore.Signal(DataFrameModel)
+    signalMergeFileOpened = QtCore.Signal(str)
+    signalSFileOpened = QtCore.Signal(str)
 
-    def __init__(self, parent=None, source_model=None):
+    def __init__(self, df_manager: DataFrameModelManager, parent=None, source_model=None):
+        self.df_manager = df_manager
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.source_model = source_model
@@ -84,9 +85,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             if model is None:
                 model = self.sourcePathLineEdit.text()
             if os.path.exists(model):
-                d = DataFrameModel()
-                d.setDataFrameFromFile(model)
-                model = d
+                model = self.df_manager.read_file(model)
             else:
                 raise Exception("model parameter must be a filepath or a qtpandas.models.DataFrameModel")
         self.source_model = model
@@ -119,24 +118,23 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         for f in file_names:
             try:
                 if os.path.exists(f):
-                    model = DataFrameModel()
-                    model.setDataFrameFromFile(f)
+                    model = self.df_manager.read_file(f)
                     if model_signal is not None:
-                        model_signal.emit(model)
+                        model_signal.emit(f)
             except Exception as e:
                 print(e)
 
-    @QtCore.Slot(DataFrameModel)
-    def add_merge_file(self, model: DataFrameModel):
-        file_path = model.filePath
+    @QtCore.Slot(str)
+    def add_merge_file(self, file_path):
+        model = self.df_manager.get_model(file_path)
         model.enableEditing(True)
         self._merge_files.update({file_path:model})
         self._merge_view_model.appendDataFrameModel(model)
         self.mergeFileTable.setColumnWidth(0, 500)
 
-    @QtCore.Slot(DataFrameModel)
-    def add_suppress_file(self, model: DataFrameModel):
-        file_path = model.filePath
+    @QtCore.Slot(str)
+    def add_suppress_file(self, file_path):
+        model = self.df_manager.get_model(file_path)
         model.enableEditing(True)
         self._suppress_files.update({file_path:model})
         self._suppress_view_model.appendDataFrameModel(model)
@@ -295,6 +293,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         Merge Purge Report
         ==================
         Original Size: {}
+        Final Size: {}
         Source Path: {}
         Output Path: {}
 
@@ -320,7 +319,10 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             DEDUPE ON: {}
             RECORDS LOST: {}
 
-        """.format(source_size, source_path, dest_path, merge_string, suppress_string,
+
+
+        """.format(source_size, source_df.index.size, source_path,
+                   dest_path, merge_string, suppress_string,
                    sort_on, ascending, dedupe_on, dedupe_lost)
 
         report_path = os.path.splitext(dest_path)[0] + "_report.txt"

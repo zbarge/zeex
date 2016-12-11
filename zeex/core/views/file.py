@@ -6,26 +6,18 @@ from qtpandas.views.DataTableView import DataTableWidget
 from core.ui.file_ui import Ui_FileWindow
 from core.views.actions.rename import RenameDialog
 from core.views.actions.fields_edit import FieldsEditDialog
-
-class FileTableWidget(DataTableWidget):
-    signalDataMerged = QtCore.Signal(DataFrameModel)
-
-    def read_file(*args, **kwargs):
-        model = DataFrameModel()
-        model.setDataFrameFromFile(args[0], **kwargs)
-        return FileTableWidget(model)
-
-    def __init__(self, model, **kwargs):
-        DataTableWidget.__init__(self, **kwargs)
-        self.setModel(model)
+from core.ctrls.dataframe import DataFrameModelManager
 
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
-    def __init__(self, model, **kwargs):
+    def __init__(self, model: DataFrameModel, df_manager: DataFrameModelManager, **kwargs):
         QtGui.QMainWindow.__init__(self, parent=kwargs.pop('parent', None))
+        self.df_manager = df_manager
+        self._widget = DataTableWidget()
+        self._widget.setModel(model)
+
         kwargs['parent'] = self
         self.icons = Icons()
-        self._widget = FileTableWidget(model, **kwargs)
         self.setupUi(self)
         self.dialog_rename = None
         self.dialog_fields_edit = None
@@ -67,6 +59,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         if self.dialog_rename is None:
             self.dialog_rename = RenameDialog(parent=self, model=self.currentModel)
         self.dialog_rename.show()
+
     def open_fields_edit_dialog(self):
         if self.dialog_fields_edit is None:
             self.dialog_fields_edit = FieldsEditDialog(self.currentModel, parent=self)

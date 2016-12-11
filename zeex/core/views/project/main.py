@@ -2,21 +2,24 @@ import os
 from icons import Icons
 from functools import partial
 from core.compat import QtGui, QtCore
-from qtpandas.views.CSVDialogs import _encodings, DelimiterSelectionWidget
-from qtpandas.views.MultiFileDialogs import DataFrameExportDialog, CSVImportDialog, DataFrameModel
+from core.ui.project.main_ui import Ui_ProjectWindow
+from qtpandas.views.MultiFileDialogs import CSVImportDialog
 from qtpandas.models.DataFrameModel import DataFrameModel
 from core.models.filetree import FileTreeModel
-from core.ui.project.main_ui import Ui_ProjectWindow
-from core.utility.widgets import display_ok_msg
+from core.ctrls.dataframe import DataFrameModelManager
+from core.views.actions.export import DataFrameModelExportDialog
+from core.views.actions.merge_purge import MergePurgeDialog
 from core.views.file import FileTableWindow
 from core.views.settings import SettingsDialog
-from core.views.actions.merge_purge import MergePurgeDialog
+from core.utility.widgets import display_ok_msg
 
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     """
     The ProjectMainWindow displays a project that the user wants to work on.
     The project lives in a directory within the ZeexApp.ROOT_DIRECTORY.
+    Each project gets a DataFrameModelManager object which controls the
+    DataFrameModel of each file opened.
     The main window shows all files in this directory and provides
     very convenient features to work with files containing rows/columns.
 
@@ -24,15 +27,16 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     in the root project directory.
     """
     signalModelChanged = QtCore.Signal(str)
-    signalModelOpened = QtCore.Signal(DataFrameModel)
-    signalModelDestroyed = QtCore.Signal(DataFrameModel)
+    signalModelOpened = QtCore.Signal(str)
+    signalModelDestroyed = QtCore.Signal(str)
 
     def __init__(self, settings_ini: str):
+        self.df_manager = DataFrameModelManager()
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
         self.icons = Icons()
         self.dialog_settings = SettingsDialog(settings=settings_ini)
-        self.dialog_merge_purge = MergePurgeDialog()
+        self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
@@ -40,9 +44,10 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.connect_settings_dialog()
         self.current_model = None
 
-        # Temp caches
-        self.df_models = {}
+        # Temp cache
         self.df_windows = {}
+
+
 
     @property
     def project_directory(self):
@@ -147,10 +152,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         to a file.
         :return: None
         """
-        dialog = ProjectDataFrameExportDialog(parent=self,
-                                              models=self.df_models)
+        dialog = DataFrameModelExportDialog(self.df_manager, parent=self)
 
-        dialog.exported.connect(self._flush_export)
+        dialog.signalExported.connect(self._flush_export)
         dialog.setWindowIcon(self.icons['export_generic'])
         dialog.exec_()
 
@@ -186,14 +190,14 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         try:
             return self.df_windows[name].show()
         except KeyError:
-            self.df_windows[name] = FileTableWindow(model)
+            self.df_windows[name] = FileTableWindow(model, self.df_manager)
             self.add_recent_file_menu_entry(name, model)
             return self.df_windows[name].show()
 
     def open_merge_purge_dialog(self):
         model = self.get_tree_selected_model()
         file_base, ext = os.path.splitext(model.filePath)
-        df = model._dataFrame
+        df = model.dataFrame()
         settings = dict()
         settings['sort_model'] = self.dialog_merge_purge.create_sort_model(df.columns)
         settings['dedupe_model'] = self.dialog_merge_purge.create_dedupe_model(df.columns)
@@ -213,19 +217,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         if selected:
             idx = selected[0]
             file_path = self.ProjectsTreeView.model().filePath(idx)
-            filename = os.path.basename(file_path)
-            # Try to return a cached model
-            try:
-                return self.df_models[filename]
-            except KeyError:
-                # Ensure its a path we even want to open
-                ext = os.path.splitext(file_path)[1].lower()
-                if ext in ['.txt', '.xlsx', '.csv']:
-                    # Good to open, lets make/cache the model
-                    model = DataFrameModel()
-                    model.setDataFrameFromFile(file_path)
-                    self.df_models[filename] = model
-                    return self.df_models[filename]
+            return self.df_manager.read_file(file_path)
         return None
 
     def remove_tree_selected_model(self):
@@ -242,10 +234,10 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         return self.open_tableview_window(model)
 
     @QtCore.Slot('DataFrameModel', str)
-    def import_file(self, model, filepath):
+    def import_file(self, filepath):
         name = os.path.basename(filepath)
 
-        self.df_models[name] = model
+        model = self.df_manager.get_model(filepath)
         self.add_recent_file_menu_entry(name, model)
         dirname = self.SettingsDialog.rootDirectoryLineEdit.text()
         if os.path.dirname(filepath) != dirname:
@@ -284,96 +276,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     def open_settings_dialog(self):
         self.dialog_settings.exec_()
 
-    def _flush_export(self, filepath):
-        name = os.path.basename(filepath)
-        self.df_models.pop(name, None)
-        self.menuRecent_Files.removeAction(os.path.basename(filepath))
-
-
-class ProjectDataFrameExportDialog(DataFrameExportDialog):
-    def __init__(self, *args, **kwargs):
-        """
-
-        :param args:
-
-        :param kwargs:
-            models = {filename: df_model}
-            parent = parent widget object
-        """
-        self._models = kwargs.pop('models', {})
-        DataFrameExportDialog.__init__(self, *args, **kwargs)
-
-    def _saveModel(self):
-        sourcename = self._sourceNameComboBox.currentText()
-        self._model = self._models[sourcename]
-        super(ProjectDataFrameExportDialog, self)._saveModel()
-
-    def _initUI(self):
-        """Initiates the user interface with a grid layout and several widgets.
-        """
-        self.setModal(self._modal)
-        self.setWindowTitle(self._windowTitle)
-
-        layout = QtGui.QGridLayout()
-        self._sourceNameLabel = QtGui.QLabel(u'Output Source', self)
-        self._sourceNameComboBox = QtGui.QComboBox(self)
-        self._sourceNameComboBox.addItems(list(self._models.keys()))
-        self._filenameLabel = QtGui.QLabel(u'Output File', self)
-        self._filenameLineEdit = QtGui.QLineEdit(self)
-        self._chooseFileButtonIcon = QtGui.QIcon(QtGui.QPixmap(':/icons/document-save-as.png'))
-        self._chooseFileAction = QtGui.QAction(self)
-        self._chooseFileAction.setIcon(self._chooseFileButtonIcon)
-        self._chooseFileAction.triggered.connect(self._createFile)
-        self._chooseFileButton = QtGui.QToolButton(self)
-        self._chooseFileButton.setDefaultAction(self._chooseFileAction)
-
-        layout.addWidget(self._sourceNameLabel, 0, 0)
-        layout.addWidget(self._sourceNameComboBox, 0, 1, 1, 2)
-        layout.addWidget(self._filenameLabel, 1, 0)
-        layout.addWidget(self._filenameLineEdit, 1, 1, 1, 2)
-        layout.addWidget(self._chooseFileButton, 1, 3)
-
-        self._encodingLabel = QtGui.QLabel(u'File Encoding', self)
-
-        encoding_names = list(map(lambda x: x.upper(), sorted(list(set(_encodings.values())))))
-        self._encodingComboBox = QtGui.QComboBox(self)
-        self._encodingComboBox.addItems(encoding_names)
-        self._idx = encoding_names.index('UTF_8')
-        self._encodingComboBox.setCurrentIndex(self._idx)
-        #self._encodingComboBox.activated.connect(self._updateEncoding)
-
-        layout.addWidget(self._encodingLabel, 2, 0)
-        layout.addWidget(self._encodingComboBox, 2, 1, 1, 1)
-
-        self._hasHeaderLabel = QtGui.QLabel(u'Header Available?', self)
-        self._headerCheckBox = QtGui.QCheckBox(self)
-        #self._headerCheckBox.toggled.connect(self._updateHeader)
-        self._headerCheckBox.setChecked(True)
-
-        layout.addWidget(self._hasHeaderLabel, 3, 0)
-        layout.addWidget(self._headerCheckBox, 3, 1)
-
-        self._delimiterLabel = QtGui.QLabel(u'Column Delimiter', self)
-        self._delimiterBox = DelimiterSelectionWidget(self)
-
-        layout.addWidget(self._delimiterLabel, 4, 0)
-        layout.addWidget(self._delimiterBox, 4, 1, 1, 3)
-
-        self._exportButton = QtGui.QPushButton(u'Export Data', self)
-        self._cancelButton = QtGui.QPushButton(u'Cancel', self)
-
-        self._buttonBox = QtGui.QDialogButtonBox(self)
-        self._buttonBox.addButton(self._exportButton, QtGui.QDialogButtonBox.AcceptRole)
-        self._buttonBox.addButton(self._cancelButton, QtGui.QDialogButtonBox.RejectRole)
-
-        self._buttonBox.accepted.connect(self.accepted)
-        self._buttonBox.rejected.connect(self.rejected)
-
-        layout.addWidget(self._buttonBox, 6, 2, 1, 2)
-        self._exportButton.setDefault(False)
-        self._filenameLineEdit.setFocus()
-
-        self._statusBar = QtGui.QStatusBar(self)
-        self._statusBar.setSizeGripEnabled(False)
-        layout.addWidget(self._statusBar, 5, 0, 1, 4)
-        self.setLayout(layout)
+    def _flush_export(self, orig_path, new_path):
+        if orig_path != new_path:
+            self.add_recent_file_menu_entry(new_path, self.df_manager.get_model(new_path))
