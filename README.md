@@ -32,27 +32,27 @@ A Python GUI studio for data analysis. Utilizes Qt/PySide and Pandas libraries t
 
 - Home Window
 
-![basic](images/home.PNG)
+![basic](images/home.png)
 
 
 - Project Window
 
-![basic](images/project_open.PNG)
+![basic](images/project_open.png)
 
 
 - File Window
 
-![basic](images/file_open.PNG)
+![basic](images/file_open.png)
 
 
 - Edit Fields Dialog
 
-![basic](images/action_edit_fields_set_case.PNG)
+![basic](images/action_edit_fields_set_case.png)
 
 
 - Merge/Purge Dialog
 
-![basic](images/action_merge_purge_tab1.PNG)
+![basic](images/action_merge_purge_tab1.png)
 
 
 
