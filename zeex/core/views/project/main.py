@@ -14,6 +14,15 @@ from core.views.actions.merge_purge import MergePurgeDialog
 
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
+    """
+    The ProjectMainWindow displays a project that the user wants to work on.
+    The project lives in a directory within the ZeexApp.ROOT_DIRECTORY.
+    The main window shows all files in this directory and provides
+    very convenient features to work with files containing rows/columns.
+
+    Project's settings are stored in a .ini file
+    in the root project directory.
+    """
     signalModelChanged = QtCore.Signal(str)
     signalModelOpened = QtCore.Signal(DataFrameModel)
     signalModelDestroyed = QtCore.Signal(DataFrameModel)
@@ -37,19 +46,38 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
 
     @property
     def project_directory(self):
+        """
+        The project's root directory stores everything for the project.
+
+        :return: (str)
+            ProjectMainWindow.ProjectsTreeView.QFileSystemModel.rootPath
+        """
         return self.ProjectsTreeView.model().rootPath()
 
     @property
     def log_directory(self):
+        """
+        The project's log directory stores output logs.
+        :return: (str)
+            ProjectMainWindow.project_directory/log
+        """
         return os.path.join(self.project_directory, 'log')
 
     def connect_window_title(self):
+        """
+        Sets the ProjectMainWindow.windowTitle to "Project - dirname - dirpath"
+        :return: None
+        """
         root_dir = self.dialog_settings.rootDirectoryLineEdit.text()
         base_name = os.path.basename(root_dir)
         self.dialog_settings.setWindowTitle("{} - Settings".format(base_name))
         self.setWindowTitle("Project: {} - {}".format(base_name, root_dir.replace(base_name, "")))
 
     def connect_actions(self):
+        """
+        Connects all project actions.
+        :return: None
+        """
         self.actionPreferences.triggered.connect(self.open_settings_dialog)
         self.actionNew.triggered.connect(self.open_import_dialog)
         self.actionOpen.triggered.connect(self.open_tableview_window)
@@ -58,6 +86,10 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
 
     def connect_icons(self):
+        """
+        Sets all the menu/window icons.
+        :return: None
+        """
         self.setWindowIcon(self.icons['folder'])
         self.actionNew.setIcon(self.icons['add'])
         self.actionOpen.setIcon(self.icons['spreadsheet'])
@@ -71,6 +103,12 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
 
 
     def connect_filetree(self):
+        """
+        Uses the ProjectMainWindow.dialog_settings.rootDirectoryLineEdit
+        to get the root directory name of the project. It then
+        connects the filetree using a QFileSystemModel.
+        :return: None
+        """
         rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
         model = FileTreeModel(root_dir=rootdir)
         self.ProjectsTreeView.setModel(model)
@@ -78,6 +116,12 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.ProjectsTreeView.setColumnWidth(0, 400)
 
     def connect_settings_dialog(self):
+        """
+        Re-purposes the ProjectMainWindow.dialog_settings
+        dialog to fit the scope of a project rather than
+        the application as a whole.
+        :return: None
+        """
         #Adjust the box to remove irrelevant items.
         self.dialog_settings.cloudProviderComboBox.hide()
         self.dialog_settings.cloudProviderLabel.hide()
@@ -96,6 +140,13 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings.rootDirectoryLineEdit.setReadOnly(True)
 
     def open_export_dialog(self):
+        """
+        Opens a ProjectDataFrameExportDialog object
+        and supplies the current df_models making them
+        available in the dropdown for the user to export
+        to a file.
+        :return: None
+        """
         dialog = ProjectDataFrameExportDialog(parent=self,
                                               models=self.df_models)
 
@@ -104,12 +155,25 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         dialog.exec_()
 
     def open_import_dialog(self):
+        """
+        Opens a CSVImportDialog object
+        allowing the user to select a model to
+        import (kind of pointless? - use open_tableview_window).
+        :return: None
+        """
         dialog = CSVImportDialog(self)
         dialog.load.connect(self.import_file)
         dialog.setWindowIcon(self.icons['add'])
         dialog.exec_()
 
     def open_tableview_window(self, model: DataFrameModel = None):
+        """
+        Opens a FileTableWindow for the filename selected in the
+        ProjectMainWindow.ProjectsTreeView.
+
+        :param model: The qtpandas.models.DataFrameModel to edit.
+        :return: None
+        """
         if model is None:
             # Maybe it's selected on the tree?
             model = self.get_tree_selected_model()
@@ -139,6 +203,11 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_merge_purge.show()
 
     def get_tree_selected_model(self) -> (DataFrameModel, None):
+        """
+        Returns a DataFrameModel based on the filepath selected
+        in the ProjectMainWindow.ProjectsTreeView.
+        :return: qtpandas.DataFrameModel
+        """
         # Check if file is selected in tree view
         selected = self.ProjectsTreeView.selectedIndexes()
         if selected:

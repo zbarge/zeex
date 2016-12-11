@@ -1,6 +1,7 @@
 import os
 from functools import partial
 from core.compat import QtGui, QtCore
+import pandas as pd
 from qtpandas.models.DataFrameModel import DataFrameModel
 from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
 from core.views.actions.push_grid import PushGridHandler, PushGridWidget
@@ -22,7 +23,8 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self._merge_view_model = FileViewModel()
         self._suppress_view_model = FileViewModel()
         self._file_table_windows = {}
-        self._field_maps = {}
+        self._field_map_grids = {}
+        self._field_map_data = {}
 
     def configure(self, settings: dict = None) -> bool:
         sort_model   = settings.get('sort_model', [])
@@ -75,6 +77,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.sFileTable.setModel(self._suppress_view_model)
         self.btnMapSFields.clicked.connect(partial(self.open_field_map, self.sFileTable, self._suppress_files))
         self.btnMapMergeFields.clicked.connect(partial(self.open_field_map, self.mergeFileTable, self._merge_files))
+        self.btnExecute.clicked.connect(self.execute)
 
     def set_source_model(self, model=None):
         if not isinstance(model, DataFrameModel):
@@ -147,27 +150,58 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             model.takeRow(idx)
 
     def open_field_map(self, view, models):
+        """
+        Connects a MapGridDialog to help the  user map field names that
+        are different between the source DataFrameModel and the
+        selected merge or suppression DataFrameModel.
+
+        :param view: (QtGui.QTableView)
+            The view that has a selected filepath
+        :param models: (dict)
+            The dictionary of {file_path:DataFrameModel} where
+            dataframe columns can be gathered from.
+        :return: None
+
+        """
         idx = view.selectedIndexes()[0]
-        vmodel = view.model()
-        vitem = vmodel.item(idx.row())
+        view_model = view.model()
+        view_item = view_model.item(idx.row())
+        view_item_text = view_item.text()
+
         try:
-            self._field_maps[vitem.text()].show()
+            self._field_map_grids[view_item_text].show()
         except KeyError:
-            dfmodel = models[vitem.text()]
+            dfmodel = models[view_item_text]
             colmodel = dfmodel._dataFrame.columns.tolist()
+
             if self.source_model is None:
                 self.set_source_model()
+
             source_colmodel = self.source_model._dataFrame.columns.tolist()
+
             fmap = MapGridDialog(parent=self)
             fmap.load_combo_box(source_colmodel, left=True)
             fmap.load_combo_box(colmodel, left=False)
             fmap.setWindowTitle("Map Fields")
             fmap.labelLeft.setText(os.path.basename(self.source_model.filePath))
             fmap.labelRight.setText(os.path.basename(dfmodel.filePath))
-            self._field_maps[vitem.text()] = fmap
-            self._field_maps[vitem.text()].show()
+            fmap.signalNewMapping.connect(lambda x: self._field_map_data.update({dfmodel.filePath: x}))
+
+            self._field_map_grids[view_item_text] = fmap
+            self._field_map_grids[view_item_text].show()
 
     def open_edit_file_window(self, view, models):
+        """
+        Connects a DataFrameModel selected in the view
+        to a FileTableWindow where the model can be edited.
+
+        :param view: (QtGui.QTableView)
+            The view that has a selected filepath
+        :param models: (dict)
+            The dictionary of {file_path:DataFrameModel}
+            to supply the FileTableWindow
+        :return: None
+        """
         idx = view.selectedIndexes()[0]
         vmodel = view.model()
         vitem = vmodel.item(idx.row())
@@ -179,6 +213,131 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         except KeyError:
             self._file_table_windows[fp] = FileTableWindow(model)
             self._file_table_windows[fp].show()
+
+    def execute(self):
+        """
+        Executes the merge_purge based upon the given settings.
+        :return: None
+        """
+        if self.source_model is None:
+            self.set_source_model()
+
+        suppressed_results = {}
+        merged_results = {}
+        source_path = self.sourcePathLineEdit.text()
+        dest_path = self.destPathLineEdit.text()
+        source_df = self.source_model.dataFrame().copy()
+        source_df.loc[:, 'ORIG_IDXER'] = source_df.index
+        source_size = source_df.index.size
+
+        sort_on = self.sortOnHandler.get_model_list(left=False)
+        ascending = self.sortAscHandler.get_model_list(left=False)
+        dedupe_on = self.dedupeOnHandler.get_model_list(left=False)
+
+        # Make sure ascending/sort_on lists are equal.
+        while len(sort_on) < len(ascending):
+            ascending.append(False)
+
+        while len(sort_on) > len(ascending):
+            ascending.pop()
+
+        # Get all merge models and merge.
+        # Absorb all rows and columns
+        for file_path, merge_model in self._merge_files.items():
+            pre_size = source_df.index.size
+            other_df = merge_model.dataFrame()
+            source_df = pd.concat([source_df, other_df])
+            merged_results.update({merge_model.filePath: source_df.index.size - pre_size})
+
+        # Get all suppression models and suppress.
+        for file_path, suppress_model in self._suppress_files.items():
+            map_dict = self._field_map_data.get(file_path, {})
+            sframe = suppress_model.dataFrame().copy()
+            sframe.drop(['ORIG_IDXER'], axis=1, inplace=True, errors='ignore')
+
+            if map_dict:
+                # A mapping exists - rename the data and get the key_cols
+                key_cols = list(map_dict.values())
+                sframe.rename(columns=map_dict, inplace=True)
+            else:
+                # No mapping exists - Try to use the dedupe_on cols as key_cols
+                key_cols = dedupe_on.copy()
+                missing = [x for x in key_cols if x not in sframe.columns]
+                if missing:
+                    raise KeyError("Suppression file {} must have a field mapping or have the dedupe column labels, it has neither!.".format(
+                                    suppress_model.filePath))
+
+            sframe = sframe.loc[:, key_cols].drop_duplicates(key_cols)
+            badframe = pd.merge(source_df, sframe, how='inner', left_on=key_cols, right_on=key_cols)
+            source_df = source_df.loc[~source_df.index.isin(badframe.loc[:, 'ORIG_IDXER'].tolist()), :]
+            suppressed_results.update({suppress_model.filePath: badframe.index.size})
+
+        # Sort the data
+        if sort_on and ascending:
+            source_df.sort_values(sort_on, ascending=ascending, inplace=True)
+
+        # Deduplicate the data.
+        if dedupe_on:
+            pre_size = source_df.index.size
+            source_df.drop_duplicates(dedupe_on, inplace=True)
+            dedupe_lost = pre_size - source_df.index.size
+        else:
+            dedupe_lost = 0
+
+        # Export the data - done!
+        source_df.drop(['ORIG_IDXER'], axis=1, inplace=True, errors='ignore')
+        source_df.to_csv(dest_path, index=False)
+        print("Exported: {}".format(dest_path))
+
+        merge_string = "\n".join("Gained {} merging {}".format(v, k) for k, v in merged_results.items())
+        suppress_string = "\n".join("Lost {} suppressing {}".format(v, k) for k,v in suppressed_results.items())
+        report = """
+        Merge Purge Report
+        ==================
+        Original Size: {}
+        Source Path: {}
+        Output Path: {}
+
+
+        Merge:
+        ==================
+        {}
+
+
+        Purge:
+        ==================
+        {}
+
+
+        Sort:
+        ==================
+            SORT BY: {}
+            SORT ASCENDING: {}
+
+
+        Dedupe:
+        ==================
+            DEDUPE ON: {}
+            RECORDS LOST: {}
+
+        """.format(source_size, source_path, dest_path, merge_string, suppress_string,
+                   sort_on, ascending, dedupe_on, dedupe_lost)
+
+        report_path = os.path.splitext(dest_path)[0] + "_report.txt"
+        with open(report_path, "w") as fh:
+            fh.write(report)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

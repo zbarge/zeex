@@ -51,7 +51,6 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         return self.currentModel._dataFrame
 
     def connect_actions(self):
-        self.actionRename.triggered.connect(self.open_rename_dialog)
         self.actionEditFields.triggered.connect(self.open_fields_edit_dialog)
 
     def connect_icons(self):
@@ -60,7 +59,6 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionExecuteScript.setIcon(self.icons['edit'])
         self.actionDelete.setIcon(self.icons['delete'])
         self.actionMergePurge.setVisible(False)
-        self.actionRename.setIcon(self.icons['lightning'])
         self.actionSave.setIcon(self.icons['save'])
         self.actionSuppress.setIcon(self.icons['suppress'])
         self.actionEditFields.setIcon(self.icons['add_column'])

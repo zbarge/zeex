@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'file.ui'
 #
-# Created: Fri Dec  9 00:22:32 2016
+# Created: Sun Dec 11 00:48:11 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,7 +56,6 @@ class Ui_FileWindow(object):
         self.menuAction.addAction(self.actionEditFields)
         self.menuAction.addAction(self.actionMergePurge)
         self.menuAction.addAction(self.actionSuppress)
-        self.menuAction.addAction(self.actionRename)
         self.menuAction.addAction(self.actionExecuteScript)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAction.menuAction())

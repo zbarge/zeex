@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'merge_purge.ui'
 #
-# Created: Fri Dec  9 17:21:22 2016
+# Created: Sat Dec 10 18:43:13 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,14 +12,21 @@ from PySide import QtCore, QtGui
 class Ui_MergePurgeDialog(object):
     def setupUi(self, MergePurgeDialog):
         MergePurgeDialog.setObjectName("MergePurgeDialog")
-        MergePurgeDialog.resize(727, 717)
+        MergePurgeDialog.resize(739, 768)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MergePurgeDialog.sizePolicy().hasHeightForWidth())
         MergePurgeDialog.setSizePolicy(sizePolicy)
-        self.tabWidget = QtGui.QTabWidget(MergePurgeDialog)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 716, 705))
+        self.verticalLayoutWidget = QtGui.QWidget(MergePurgeDialog)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(9, 9, 720, 740))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.gridLayout_18 = QtGui.QGridLayout(self.verticalLayoutWidget)
+        self.gridLayout_18.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_18.setObjectName("gridLayout_18")
+        self.gridLayout_4 = QtGui.QGridLayout()
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.tabWidget = QtGui.QTabWidget(self.verticalLayoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(3)
         sizePolicy.setVerticalStretch(8)
@@ -28,8 +35,8 @@ class Ui_MergePurgeDialog(object):
         self.tabWidget.setObjectName("tabWidget")
         self.sortDropTab = QtGui.QWidget()
         self.sortDropTab.setObjectName("sortDropTab")
-        self.horizontalLayout_7 = QtGui.QHBoxLayout(self.sortDropTab)
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.sortDropTab)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
@@ -126,7 +133,7 @@ class Ui_MergePurgeDialog(object):
         self.dedupeOnLeftView.setObjectName("dedupeOnLeftView")
         self.pushGrid_3.addWidget(self.dedupeOnLeftView, 0, 0, 1, 1)
         self.formLayout.setLayout(4, QtGui.QFormLayout.FieldRole, self.pushGrid_3)
-        self.horizontalLayout_7.addLayout(self.formLayout)
+        self.verticalLayout_3.addLayout(self.formLayout)
         self.tabWidget.addTab(self.sortDropTab, "")
         self.mergeTab = QtGui.QWidget()
         self.mergeTab.setObjectName("mergeTab")
@@ -206,20 +213,31 @@ class Ui_MergePurgeDialog(object):
         self.gridLayout_5.addWidget(self.sFileLineEdit, 0, 1, 1, 1)
         self.gridLayout_13.addLayout(self.gridLayout_5, 0, 0, 1, 1)
         self.tabWidget.addTab(self.suppressTab, "")
-        self.fieldsTab = QtGui.QWidget()
-        self.fieldsTab.setObjectName("fieldsTab")
-        self.horizontalLayout_6 = QtGui.QHBoxLayout(self.fieldsTab)
+        self.reviewTab = QtGui.QWidget()
+        self.reviewTab.setObjectName("reviewTab")
+        self.horizontalLayout_6 = QtGui.QHBoxLayout(self.reviewTab)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.fieldsTableView = QtGui.QTableView(self.fieldsTab)
-        self.fieldsTableView.setObjectName("fieldsTableView")
-        self.horizontalLayout.addWidget(self.fieldsTableView)
+        self.reviewTableView = QtGui.QTableView(self.reviewTab)
+        self.reviewTableView.setObjectName("reviewTableView")
+        self.horizontalLayout.addWidget(self.reviewTableView)
         self.horizontalLayout_6.addLayout(self.horizontalLayout)
-        self.tabWidget.addTab(self.fieldsTab, "")
+        self.tabWidget.addTab(self.reviewTab, "")
+        self.gridLayout_4.addWidget(self.tabWidget, 0, 0, 1, 1)
+        self.gridLayout_18.addLayout(self.gridLayout_4, 0, 0, 1, 1)
+        self.gridLayout_17 = QtGui.QGridLayout()
+        self.gridLayout_17.setObjectName("gridLayout_17")
+        self.btnReset = QtGui.QPushButton(self.verticalLayoutWidget)
+        self.btnReset.setObjectName("btnReset")
+        self.gridLayout_17.addWidget(self.btnReset, 0, 1, 1, 1)
+        self.btnExecute = QtGui.QPushButton(self.verticalLayoutWidget)
+        self.btnExecute.setObjectName("btnExecute")
+        self.gridLayout_17.addWidget(self.btnExecute, 0, 0, 1, 1)
+        self.gridLayout_18.addLayout(self.gridLayout_17, 1, 0, 1, 1)
 
         self.retranslateUi(MergePurgeDialog)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MergePurgeDialog)
 
     def retranslateUi(self, MergePurgeDialog):
@@ -250,5 +268,7 @@ class Ui_MergePurgeDialog(object):
         self.btnDeleteSFile.setText(QtGui.QApplication.translate("MergePurgeDialog", "Delete", None, QtGui.QApplication.UnicodeUTF8))
         self.btnBrowseSFile.setText(QtGui.QApplication.translate("MergePurgeDialog", "Browse", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.suppressTab), QtGui.QApplication.translate("MergePurgeDialog", "Suppress", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.fieldsTab), QtGui.QApplication.translate("MergePurgeDialog", "Fields", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.reviewTab), QtGui.QApplication.translate("MergePurgeDialog", "Review", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnReset.setText(QtGui.QApplication.translate("MergePurgeDialog", "Reset", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnExecute.setText(QtGui.QApplication.translate("MergePurgeDialog", "Execute", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -50,7 +50,6 @@
     <addaction name="actionEditFields"/>
     <addaction name="actionMergePurge"/>
     <addaction name="actionSuppress"/>
-    <addaction name="actionRename"/>
     <addaction name="actionExecuteScript"/>
    </widget>
    <addaction name="menuFile"/>

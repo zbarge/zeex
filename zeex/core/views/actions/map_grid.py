@@ -19,6 +19,7 @@ class MapGridDialog(QtGui.QDialog, Ui_MapGrid):
     signalNewMapping = QtCore.Signal(dict)
 
     def __init__(self, *args, **kwargs):
+        self._data_source = kwargs.pop('data_source', None)
         QtGui.QDialog.__init__(self, *args, **kwargs)
         self.setupUi(self)
         self.map_model = QtGui.QStandardItemModel(0, 2)
@@ -31,6 +32,7 @@ class MapGridDialog(QtGui.QDialog, Ui_MapGrid):
         self.btnBox.rejected.connect(self.hide)
         self.tableView.setModel(self.map_model)
         self.map_model.setHorizontalHeaderLabels(['Left On', 'Right On'])
+        self.comboBoxLeft.currentIndexChanged.connect(self.sync_right_box)
 
     def load_combo_box(self, model, default=None, left=True):
         if not isinstance(model, (QtCore.QAbstractItemModel, QtGui.QStandardItemModel)):
@@ -54,27 +56,59 @@ class MapGridDialog(QtGui.QDialog, Ui_MapGrid):
             item = QtGui.QStandardItem(val)
             item.setEditable(False)
             self.map_model.setItem(row, col, item)
-        print("Pushed {} and {} to view.".format(left_item, right_item))
+
+    def sync_right_box(self, index):
+        """
+        Tries to set the right-hand combo box
+        by searching for what's currently selected on the left-hand
+        combo box. Case-insensitive but the string must match otherwise.
+        :param index: Useless, part of the signal that comes out of the combo box.
+        :return: None
+        """
+        try:
+            text = self.comboBoxLeft.currentText()
+            idx = self.comboBoxRight.findText(text, flags=QtCore.Qt.MatchFixedString)
+            self.comboBoxRight.setCurrentIndex(idx)
+        except:
+            pass
 
     def delete_selection(self):
         for item in self.tableView.selectedIndexes():
             self.map_model.takeRow(item.row())
 
     def emit_selection(self):
+        """
+        Emits a signalNewMapping signal containing a
+        dictionary with keys from the right-hand combo box selections,
+        and values from the left-hand combo box selections.
+        :return: None
+        """
         data = dict()
         for row in range(self.map_model.rowCount()):
             left_item = self.map_model.item(row, 0)
             right_item = self.map_model.item(row, 1)
             data.update({right_item.text(): left_item.text()})
         self.signalNewMapping.emit(data)
-        print("new mapping signal activated: {}".format(data))
 
     def clear_boxes(self):
+        """
+        Resets the models of both ComboBoxes.
+        :return:
+        """
         for b in self.findChildren(QtGui.QComboBox):
             b.setModel(False)
 
     @staticmethod
     def list_to_model(items):
+        """
+        Creates a QtGui.StandardItemModel filled
+        with QtGui.QStandardItems from the list of
+        items.
+        :param items: (list)
+            of string-like items to store.
+        :return: (QtGui.QStandardItemModel)
+            With all items from the list.
+        """
         model = QtGui.QStandardItemModel()
         for i in items:
             model.appendRow(QtGui.QStandardItem(i))

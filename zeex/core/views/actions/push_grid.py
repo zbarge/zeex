@@ -78,6 +78,13 @@ class PushGridHandler(object):
         self._left_delete = left
         self._right_delete = right
 
+    def get_model_list(self, left=True):
+        if left is True:
+            model = self._left_model
+        else:
+            model = self._right_model
+        return [model.item(i).text() for i in range(model.rowCount())]
+
 
 class PushGridWidget(QtGui.QWidget, Ui_PushGridWidget):
     def __init__(self, *args, **kwargs):
@@ -93,9 +100,7 @@ class PushGridWidget(QtGui.QWidget, Ui_PushGridWidget):
                                       right_delete=right_delete)
 
     def get_left_data(self):
-        lmodel = self.listViewLeft.model()
-        return [lmodel.item(i).text() for i in range(lmodel.rowCount())]
+        return self.handle.get_model_list(left=True)
 
     def get_right_data(self):
-        rmodel = self.listViewRight.model()
-        return [rmodel.item(i).text() for i in range(rmodel.rowCount())]
+        return self.handle.get_model_list(left=False)
