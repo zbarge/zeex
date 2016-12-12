@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
+    <width>740</width>
     <height>768</height>
    </rect>
   </property>
@@ -145,7 +145,7 @@
             </item>
             <item row="3" column="1">
              <layout class="QGridLayout" name="pushGrid_2">
-              <item row="0" column="0">
+              <item row="0" column="1">
                <layout class="QGridLayout" name="btnGrid_2">
                 <item row="0" column="0">
                  <widget class="QPushButton" name="sortAscRightButton">
@@ -163,12 +163,15 @@
                 </item>
                </layout>
               </item>
-              <item row="0" column="1">
+              <item row="0" column="2">
                <widget class="QListView" name="sortAscRightView"/>
+              </item>
+              <item row="0" column="0">
+               <widget class="QListView" name="sortAscLeftView"/>
               </item>
              </layout>
             </item>
-            <item row="5" column="0">
+            <item row="4" column="0">
              <widget class="QLabel" name="dedupeOnLabel">
               <property name="text">
                <string>Dedupe On</string>
@@ -181,7 +184,7 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="4" column="1">
              <layout class="QGridLayout" name="pushGrid_3">
               <item row="0" column="2">
                <widget class="QListView" name="dedupeOnRightView"/>
@@ -209,9 +212,6 @@
               </item>
              </layout>
             </item>
-            <item row="4" column="0">
-             <widget class="QComboBox" name="comboBox"/>
-            </item>
            </layout>
           </item>
          </layout>
@@ -226,7 +226,7 @@
             <x>30</x>
             <y>30</y>
             <width>621</width>
-            <height>601</height>
+            <height>621</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_14">
@@ -267,6 +267,19 @@
                </item>
               </layout>
              </item>
+             <item row="3" column="0">
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
             </layout>
            </item>
            <item row="0" column="0">
@@ -283,12 +296,154 @@
              </item>
             </layout>
            </item>
+           <item row="4" column="0">
+            <layout class="QGridLayout" name="gridLayout_21">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_20">
+               <item row="0" column="2">
+                <layout class="QGridLayout" name="pushGrid_9">
+                 <item row="0" column="0">
+                  <widget class="QListView" name="gatherFieldsListViewLeft"/>
+                 </item>
+                 <item row="0" column="1">
+                  <layout class="QGridLayout" name="btnGrid_9">
+                   <item row="0" column="0">
+                    <widget class="QPushButton" name="gatherFieldsButtonRight">
+                     <property name="text">
+                      <string>&gt;&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="gatherFieldsButtonLeft">
+                     <property name="text">
+                      <string>&lt;&lt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QListView" name="gatherFieldsListViewRight"/>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="gatherFieldsLabel">
+                 <property name="text">
+                  <string>Fields to Gather</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="0">
+              <layout class="QGridLayout" name="gridLayout_19">
+               <item row="1" column="1">
+                <layout class="QGridLayout" name="pushGrid_8">
+                 <item row="0" column="0">
+                  <widget class="QListView" name="uniqueFieldsListViewLeft"/>
+                 </item>
+                 <item row="0" column="1">
+                  <layout class="QGridLayout" name="btnGrid_8">
+                   <item row="0" column="0">
+                    <widget class="QPushButton" name="uniqueFieldsPushButtonRight">
+                     <property name="text">
+                      <string>&gt;&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="uniqueFieldsPushButtonLeft">
+                     <property name="text">
+                      <string>&lt;&lt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QListView" name="uniqueFieldsListViewRight"/>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="uniqueFieldsLabel">
+                 <property name="text">
+                  <string>Unique Fields     </string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="gatherFieldsOverWriteCheckBox">
+               <property name="text">
+                <string>Overwrite Existing Data</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <layout class="QGridLayout" name="gridLayout_22">
+             <item row="0" column="1">
+              <widget class="QComboBox" name="primaryKeyComboBox"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="primaryKeyLabel">
+               <property name="text">
+                <string>Primary Key</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="0">
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </widget>
         </widget>
         <widget class="QWidget" name="suppressTab">
          <attribute name="title">
-          <string>Suppress</string>
+          <string>Purge</string>
          </attribute>
          <widget class="QWidget" name="gridLayoutWidget_5">
           <property name="geometry">
@@ -296,10 +451,24 @@
             <x>30</x>
             <y>30</y>
             <width>621</width>
-            <height>601</height>
+            <height>621</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_13">
+           <item row="0" column="0">
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="0" column="0">
+              <widget class="QPushButton" name="btnBrowseSFile">
+               <property name="text">
+                <string>Browse</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="sFileLineEdit"/>
+             </item>
+            </layout>
+           </item>
            <item row="1" column="0">
             <layout class="QGridLayout" name="gridLayout_6">
              <item row="2" column="0">
@@ -339,36 +508,47 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="0">
-            <layout class="QGridLayout" name="gridLayout_5">
+           <item row="2" column="0">
+            <layout class="QGridLayout" name="gridLayout_23">
+             <item row="1" column="0">
+              <widget class="QTableView" name="sFileStandardizeTableView"/>
+             </item>
              <item row="0" column="0">
-              <widget class="QPushButton" name="btnBrowseSFile">
+              <widget class="QLabel" name="sFileStandardizeLabel">
                <property name="text">
-                <string>Browse</string>
+                <string>Field Standardization</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="sFileLineEdit"/>
              </item>
             </layout>
            </item>
           </layout>
          </widget>
+         <zorder>gridLayoutWidget_5</zorder>
+         <zorder>gridLayoutWidget_15</zorder>
         </widget>
         <widget class="QWidget" name="reviewTab">
          <attribute name="title">
           <string>Review</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QTableView" name="reviewTableView"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         <widget class="QWidget" name="horizontalLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>691</width>
+            <height>651</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QTableView" name="reviewTableView"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -376,6 +556,13 @@
     </item>
     <item row="1" column="0">
      <layout class="QGridLayout" name="gridLayout_17">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="btnExecute">
+        <property name="text">
+         <string>Execute</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="btnReset">
         <property name="text">
@@ -383,10 +570,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="btnExecute">
+      <item row="0" column="2">
+       <widget class="QPushButton" name="btnExportTemplate">
         <property name="text">
-         <string>Execute</string>
+         <string>Export Template</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="btnImportTemplate">
+        <property name="text">
+         <string>Import Template</string>
         </property>
        </widget>
       </item>

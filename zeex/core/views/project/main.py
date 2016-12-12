@@ -47,8 +47,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         # Temp cache
         self.df_windows = {}
 
-
-
     @property
     def project_directory(self):
         """
@@ -106,7 +104,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionRename.setIcon(self.icons['rename'])
         self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
 
-
     def connect_filetree(self):
         """
         Uses the ProjectMainWindow.dialog_settings.rootDirectoryLineEdit
@@ -139,9 +136,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
 
         # Override the log/root directory options
         self.dialog_settings.logDirectoryLineEdit.setText(self.log_directory)
-        self.dialog_settings.rootDirectoryLineEdit.setText(self.project_directory)
-
         self.dialog_settings.logDirectoryLineEdit.setReadOnly(True)
+        self.dialog_settings.rootDirectoryLineEdit.setText(self.project_directory)
         self.dialog_settings.rootDirectoryLineEdit.setReadOnly(True)
 
     def open_export_dialog(self):
