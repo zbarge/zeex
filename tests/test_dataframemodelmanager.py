@@ -34,12 +34,14 @@ class TestClass(MainTestClass):
 
         assert check_path in manager.file_paths
         assert sample_file in manager.file_paths
+        assert os.path.exists(check_path)
+        os.remove(check_path)
 
         manager.save_file(sample_file, save_as=check_path, keep_orig=False)
 
         assert check_path in manager.file_paths
         assert sample_file not in manager.file_paths
-
+        assert os.path.exists(check_path)
         os.remove(check_path)
 
 

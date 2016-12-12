@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>622</width>
-    <height>670</height>
+    <height>582</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,6 +46,20 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="btnSetDefault">
+        <property name="text">
+         <string>Set Default</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QPushButton" name="btnReset">
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item row="0" column="0">
@@ -77,12 +91,40 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="1">
+            <widget class="QPushButton" name="btnRootDirectory">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLineEdit" name="rootDirectoryLineEdit"/>
+           </item>
+          </layout>
+         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="logDirectoryLabel">
            <property name="text">
             <string>Log Directory: </string>
            </property>
           </widget>
+         </item>
+         <item row="1" column="1">
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="1">
+            <widget class="QPushButton" name="btnLogDirectory">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLineEdit" name="logDirectoryLineEdit"/>
+           </item>
+          </layout>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="logLevelLabel">
@@ -113,34 +155,6 @@
          </item>
          <item row="4" column="1">
           <widget class="QComboBox" name="themeComboBox"/>
-         </item>
-         <item row="0" column="1">
-          <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="1">
-            <widget class="QPushButton" name="btnRootDirectory">
-             <property name="text">
-              <string>Browse</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLineEdit" name="rootDirectoryLineEdit"/>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="1">
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="1">
-            <widget class="QPushButton" name="btnLogDirectory">
-             <property name="text">
-              <string>Browse</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLineEdit" name="logDirectoryLineEdit"/>
-           </item>
-          </layout>
          </item>
         </layout>
        </widget>

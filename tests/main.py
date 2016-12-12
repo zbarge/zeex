@@ -1,6 +1,8 @@
 import os
 import pytest
 import pandas as pd
+from core.compat import QtGui, QtCore
+from PySide.QtTest import QTest
 
 
 class MainTestClass(object):
@@ -21,3 +23,11 @@ class MainTestClass(object):
         if not os.path.exists(fp):
             os.mkdir(fp)
         return fp
+
+    @pytest.fixture
+    def fixtures_dir(self) -> str:
+        fp = os.path.join(os.path.dirname(__file__), "fixtures")
+        if not os.path.exists(fp):
+            os.mkdir(fp)
+        return fp
+

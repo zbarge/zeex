@@ -5,7 +5,7 @@ Created on Mon Nov 28 12:51:47 2016
 @author: Zeke
 """
 
-from PySide import QtGui, QtCore
+from PySide import QtGui, QtCore, QtTest
 
 
 def if_we_need_multi_version_support():

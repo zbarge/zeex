@@ -24,7 +24,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.setMaximumHeight(600)
         self.setMaximumWidth(800)
         self.icons = Icons()
-        self.SettingsDialog = SettingsDialog()
+        self.SettingsDialog = SettingsDialog(parent=self)
         self.NewProjectDialog = NewProjectDialog()
 
         self.connect_actions()
@@ -34,6 +34,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         
     def connect_actions(self):
         self.NewProjectDialog.signalProjectNew.connect(self.open_project)
+        self.SettingsDialog.signalSettingsSaved.connect(self.connect_filetree)
         self.actionSettings.triggered.connect(self.open_settings)
         self.actionOpen.triggered.connect(self.open_project)
         self.actionNew.triggered.connect(self.create_new_project)
@@ -50,17 +51,38 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionEdit.setIcon(self.icons['edit'])
         self.actionSave.setIcon(self.icons['save'])
 
-    def connect_filetree(self):
-        rootdir = self.SettingsDialog.rootDirectoryLineEdit.text()
+    @QtCore.Slot()
+    def connect_filetree(self, rootdir=None):
+        """
+        Handles the FileSystemModel for the home view.
+        Connects with SettingsDialog.signalProjectSaved.
+        Ignores the SettingsINI file emitted.
+
+        :param rootdir: (str, default=None)
+            a filepath to set as the root of the filetree.
+            The SettingsDialog.rootDirectoryLineEdit is used
+            as a backup.
+        :return: None
+        
+        """
+        if rootdir is None or isinstance(rootdir, SettingsINI):
+            rootdir = self.SettingsDialog.rootDirectoryLineEdit.text()
+
         if not os.path.exists(rootdir):
             os.mkdir(rootdir)
-        model = FileTreeModel(root_dir=rootdir)    
-        self.ProjectsTreeView.setModel(model)
-        self.ProjectsTreeView.setRootIndex(model.index(rootdir))
-        self.ProjectsTreeView.setColumnWidth(0, 175)
+
+        model = self.ProjectsTreeView.model()
+
+        if model is None:
+            model = FileTreeModel(root_dir=rootdir)
+            self.ProjectsTreeView.setModel(model)
+
+        if model.rootPath() is not rootdir:
+            self.ProjectsTreeView.setRootIndex(model.index(rootdir))
+            self.ProjectsTreeView.setColumnWidth(0, 175)
         
     def open_settings(self):
-        self.SettingsDialog.exec_()
+        self.SettingsDialog.show()
 
     @QtCore.Slot(list)
     def open_project(self, contents: list = None):
@@ -116,7 +138,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
     def create_new_project(self):
         # Creates new project dialog and
         # Routes the user back to self.open_existing_project
-        self.NewProjectDialog.exec_()
+        self.NewProjectDialog.show()
 
     def _cache_project(self, dirname, window):
         self._project_cache.update({dirname: window})

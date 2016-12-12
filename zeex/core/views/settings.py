@@ -36,14 +36,18 @@ DEFAULT_SEPARATORS = [',','|',r'\t',';']
 DEFAULT_FLAVORS = ['SQLite', 'PostgreSQL', 'MySQL']
 DEFAULT_FILE_FORMATS = ['.xlsx', '.csv', '.txt']
 
+DEFAULT_ROOT_DIR = os.path.join(os.environ['HOMEPATH'], "Zeex Projects")
+DEFAULT_LOG_DIR = os.path.join(DEFAULT_ROOT_DIR, 'logs')
+
 
 class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
     signalSettingsExported = QtCore.Signal(SettingsINI, str)
     signalSettingsImported = QtCore.Signal(SettingsINI, str)
+    signalSettingsSaved = QtCore.Signal(SettingsINI, str)
     _themes_dir = THEMES_DIR
 
-    def __init__(self, settings=None):
-        QtGui.QDialog.__init__(self)
+    def __init__(self, settings=None, **kwargs):
+        QtGui.QDialog.__init__(self, **kwargs)
         self.setupUi(self)
 
         if isinstance(settings, SettingsINI):
@@ -59,13 +63,13 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         return self.Config._filename
 
     def connect_buttons(self):
-        new_path = os.path.splitext(self.Config._default_path)[0] + "-test.ini"
-        func = partial(self.save_settings, new_path)
-        self.btnSave.clicked.connect(func)
+        self.btnSave.clicked.connect(self.save_settings)
         self.btnExport.clicked.connect(self.export_settings)
         self.btnImport.clicked.connect(self.import_settings)
         self.btnLogDirectory.clicked.connect(self.open_log_directory)
         self.btnRootDirectory.clicked.connect(self.open_root_directory)
+        self.btnSetDefault.clicked.connect(partial(self.export_settings, self.Config.default_path, set_self=True))
+        self.btnReset.clicked.connect(self.reset_settings)
 
     def configure_settings(self, config):
         """
@@ -90,8 +94,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
             raise KeyError("SettingsINI object missing config option '{}'".format(e))
             
         # Get items/set defaults.
-        ROOT_DIR =        genconfig.get('ROOT_DIRECTORY',  "C:/Zeex Projects")
-        LOG_DIR =         genconfig.get('LOG_DIRECTORY',   "C:/Zeex Projects/logs")
+        ROOT_DIR =        genconfig.get('ROOT_DIRECTORY',  DEFAULT_ROOT_DIR)
+        LOG_DIR =         genconfig.get('LOG_DIRECTORY',   DEFAULT_LOG_DIR)
         LOG_LEVEL =       genconfig.get('LOG_LEVEL',       "Low")
         CLOUD_PROVIDER =  genconfig.get('CLOUD_PROVIDER',  "S3")
         THEME_NAME     =  genconfig.get('THEME',           DEFAULT_THEME)
@@ -102,8 +106,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         OUTPUT_FORMAT =   outconfig.get('OUTPUT_FORMAT',   ".csv")
         FILENAME_PFX =    outconfig.get('FILENAME_PREFIX', "z_")
         CHART_FILE =      outconfig.get('CHART_FILENAME',  "")
-        SEPARATOR =       outconfig.get('SEPARATOR', ",")
-        ENCODING =        outconfig.get('ENCODING', "UTF_8")
+        SEPARATOR =       outconfig.get('SEPARATOR',       ",")
+        ENCODING =        outconfig.get('ENCODING',        "UTF_8")
         DB_FLAVOR =       dbconfig.get('FLAVOR',           "SQLITE")
         DB_URL =          dbconfig.get('URL',              "")
         DB_NAME =         dbconfig.get('DEFAULT_DATABASE', None)
@@ -176,6 +180,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.intFieldsListView.setModel(   self.intFieldsModel)
         self.dateFieldsListView.setModel(  self.dateFieldsModel)
         self.floatFieldsListView.setModel( self.floatFieldsModel)
+
+        self.save_settings(to_path=None, write=False)
         
     def save_settings(self, to_path=None, write=False):
         self.set_theme()
@@ -216,14 +222,25 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
 
             self.Config.save()
 
-    def clear_settings(self):
-        pass
+        self.signalSettingsSaved.emit(self.Config, self.Config.filename)
 
-    def export_settings(self, to=None):
+    def clear_settings(self):
+        self.cloudProviderComboBox.clear()
+        self.encodingComboBox.clear()
+        self.fileFormatComboBox.clear()
+        self.flavorComboBox.clear()
+        self.headerCaseComboBox.clear()
+        self.headerSpacesComboBox.clear()
+        self.logLevelComboBox.clear()
+        self.separatorComboBox.clear()
+        self.themeComboBox.clear()
+
+
+    def export_settings(self, to=None, set_self=False):
         if to is None:
             to = QtGui.QFileDialog.getSaveFileName()[0]
         self.save_settings(to_path=None, write=False)
-        self.Config.save_as(to, set_self=False)
+        self.Config.save_as(to, set_self=set_self)
         self.signalSettingsExported.emit(self.Config, to)
 
     def set_theme(self, theme_name=None):
@@ -250,6 +267,13 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.Config.clear()
         self.Config.read(filename)
         self.Config._filename = filename
+        self.clear_settings()
+        self.configure_settings(self.Config)
+
+    def reset_settings(self):
+        self.Config.clear()
+        self.Config.read(self.Config.backup_path)
+        self.Config.save_as(self.Config.default_path, set_self=True)
         self.clear_settings()
         self.configure_settings(self.Config)
 
