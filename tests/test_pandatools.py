@@ -1,25 +1,9 @@
 import pytest
 from core.utility.pandatools import *
+from tests.main import MainTestClass
 
 
-class TestClass(object):
-
-    @pytest.fixture
-    def df(self):
-        sample_cols = ['id', 'name', 'address', 'updated']
-        sample_recs = [[1000, 'zeke', '123 street'],
-                       [1001, 'larry', '688 road'],
-                       [1002, 'fred', '585 lane']]
-        for rec in sample_recs:
-            rec.append(pd.NaT)
-        return pd.DataFrame(sample_recs, columns=sample_cols)
-
-    @pytest.fixture
-    def output_dir(self):
-        fp = os.path.join(os.path.dirname(__file__), "output")
-        if not os.path.exists(fp):
-            os.mkdir(fp)
-        return fp
+class TestClass(MainTestClass):
 
     def test_super_read_file(self):
         """
@@ -47,9 +31,12 @@ class TestClass(object):
         df.loc[:, 'NEW_COL'] = ''
         cols = df.columns.tolist()
         cols[-1] = cols[-2]
+        assert len(cols) != len(set(cols)), "There should be one duplicate column."
+
         df.columns = cols
         df.columns = rename_dupe_cols(df.columns)
         cols = df.columns.tolist()
+
         assert len(cols) == len(set(cols)), "Cols should have been deduplicated."
 
     def test_set_frame_id(self, df):
