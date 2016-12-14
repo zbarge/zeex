@@ -37,7 +37,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
 
         if source_path is None:
             source_path = self.sourcePathLineEdit.text()
-            assert os.path.exists(source_path), "source_path must exist: '{}'".format(source_path)
+            assert os.path.exists(source_path), "source_path cannot be None, set ".format(source_path)
         self.set_line_edit_paths(source_path, dest_path=dest_path)
         if self.sortAscHandler is None:
             self.set_handler_sort_asc()
@@ -61,7 +61,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.btnMapMergeFields.clicked.connect(partial(self.open_field_map, self.mergeFileTable, self._merge_files))
         self.btnExecute.clicked.connect(self.execute)
 
-    def set_source_model(self, model=None):
+    def set_source_model(self, model=None, configure=False):
         if not isinstance(model, DataFrameModel):
             if model is None:
                 model = self.sourcePathLineEdit.text()
@@ -70,6 +70,9 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             else:
                 raise Exception("model parameter must be a filepath or a qtpandas.models.DataFrameModel")
         self.source_model = model
+        if configure:
+            self.configure(source_path=self.source_model.filePath)
+            self.set_push_grid_handlers()
 
     def set_line_edit_paths(self, source_path, dest_path=None):
         if dest_path is None:
@@ -95,7 +98,9 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             column_model = self.get_source_columns_model()
 
         self.set_handler_sort_on(column_model, default_model=sorton_model)
+
         self.set_handler_sort_asc(default_model=sortasc_model)
+
         self.set_handler_dedupe_on(column_model, default_model=dedupe_model)
 
     def set_handler_sort_on(self, column_model=None, default_model=None):

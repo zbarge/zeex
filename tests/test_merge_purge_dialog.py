@@ -13,6 +13,7 @@ class TestMergePurgeDialog(MainTestClass):
         manager.read_file(example_file_path)
         dialog = MergePurgeDialog(manager)
         dialog.set_line_edit_paths(example_file_path)
+        dialog.configure()
         dialog.set_source_model(manager.get_model(example_file_path))
         dialog.set_push_grid_handlers()
         qtbot.addWidget(dialog)
@@ -57,23 +58,78 @@ class TestMergePurgeDialog(MainTestClass):
         assert caught_left >= 3
 
     def test_sorting(self, dialog: MergePurgeDialog, example_file_path):
+        check_path = dialog.destPathLineEdit.text()
+        if os.path.exists(check_path):
+            os.remove(check_path)
         model = dialog.df_manager.get_model(example_file_path)
         df = model.dataFrame()
         columns = df.columns.tolist()
-        check = columns[:2]
-
+        check = 'policyid'
+        check_not = 'fook_yoo'
         left_model = dialog.sortOnLeftView.model()
-        for col in check:
-            idx = left_model.findText(col)
-            assert idx >= 0
-            left_model.select
+        right_model = dialog.sortOnRightView.model()
 
+        # Make sure the item doesnt exist on the right model
+        found_right = right_model.findItems(check)
+        assert not found_right
+
+        # Make sure the item DOES exist on the left model.
+        items = left_model.findItems(check)
+        assert items
+        item = items[0]
+        dialog.sortOnLeftView.setCurrentIndex(item.index())
+
+        # Push column left->right and ensure the item popped over.
+        dialog.sortOnRightButton.click()
+        found_right = right_model.findItems(check)
+        assert found_right
+        found_wrong = right_model.findItems(check_not)
+        assert not found_wrong
+
+        #Get the sort order (True) for ascending and pop that over as well
+        orders = dialog.sortAscLeftView.model().findItems("True")
+        assert orders
+        order = orders[0]
+        dialog.sortAscLeftView.setCurrentIndex(order.index())
+        dialog.sortAscRightButton.click()
+
+        #Confirm the sort order popped over.
+        orders = dialog.sortAscRightView.model().findItems("True")
+        assert orders
+
+        #Sort the opposite of how the dialog will sort.
+        df.sort_values(check, ascending=False, inplace=True)
+
+        #Make a copy to use for verification.
+        verify_not_sort = df.copy()
+
+        #Execute the simulation.
+        dialog.btnExecute.click()
+
+        assert os.path.exists(check_path)
+        check_model = dialog.df_manager.read_file(check_path)
+        check_df = check_model.dataFrame()
+        assert check_df.index.size == df.index.size, "Sorting shouldnt/gain lose records."
+
+        last = 0
+        bads = []
+        # Every item should be greater than the last.
+        # Every item should also not be equal to the original.
+        for i in check_df.index.tolist():
+            check_entry = check_df.iloc[i]
+            verify_not_entry = verify_not_sort.iloc[i]
+            if check_entry[check] == verify_not_entry[check]:
+                bads.append(check_entry[check])
+            assert check_entry[check] >= last
+            last = check_entry[check]
+        assert len(bads) < 0.1 * check_df.index.size
+        os.remove(check_path)
 
     def test_dedupe(self, dialog: MergePurgeDialog, example_file_path):
-        pass
+        pytest.skip("TODO: make test_dedupe")
 
     def test_merge(self, dialog: MergePurgeDialog, example_file_path):
-        pass
+        pytest.skip("TODO: make test_merge")
 
     def test_purge(self, dialog: MergePurgeDialog, example_file_path):
-        pass
+        pytest.skip("TODO: make test_purge")
