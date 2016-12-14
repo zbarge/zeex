@@ -9,14 +9,19 @@ import pandas as pd
 import qtpandas
 from collections import defaultdict
 import datetime
+from core.compat import QtCore
 
 
-class DataFrameModelManager:
+class DataFrameModelManager(QtCore.QObject):
     """
     A central storage unit for managing
     DataFrameModels.
     """
+    signalNewModelRead = QtCore.Signal(str)
+    signalModelDestroyed = QtCore.Signal(str)
+
     def __init__(self):
+        QtCore.QObject.__init__(self)
         self._models = {}
         self._updates = defaultdict(list)
         self._paths_read = []
@@ -46,14 +51,13 @@ class DataFrameModelManager:
 
     def save_file(self, filepath, save_as=None, keep_orig=False, **kwargs):
         df = self._models[filepath].dataFrame()
-
-        
         kwargs['index'] = kwargs.get('index', False)
+
         if save_as is not None:
             to_path = save_as
         else:
-
             to_path = filepath
+
         ext = os.path.splitext(to_path)[1].lower()
 
         if ext == ".xlsx":
@@ -81,6 +85,12 @@ class DataFrameModelManager:
     def set_model(self, df_model: qtpandas.DataFrameModel, file_path):
         assert isinstance(df_model, qtpandas.DataFrameModel), "df_model argument must be a DataFrameModel!"
         df_model._filePath = file_path
+
+        try:
+            self._models[file_path]
+        except KeyError:
+            self.signalNewModelRead.emit(file_path)
+
         self._models[file_path] = df_model
 
     def get_model(self, filepath):
@@ -103,14 +113,15 @@ class DataFrameModelManager:
         
     def remove_file(self, filepath):
         self._models.pop(filepath)
-    
+        self.signalModelDestroyed.emit(filepath)
+
     def read_file(self, filepath, **kwargs):
-        
         try:
             model = self._models[filepath]
         except KeyError:
             model = qtpandas.read_file(filepath, **kwargs)
             self._models[filepath] = model
+            self.signalNewModelRead.emit(filepath)
         finally:
             self._paths_read.append(filepath)
             

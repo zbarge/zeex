@@ -15,10 +15,35 @@ def configureComboBox(box, options, default):
     return box
 
 
+def create_standard_item_model(columns: list = None):
+        if columns is None:
+            columns = []
+        elif not isinstance(columns, list):
+            columns = list(columns)
+        model = QtGui.QStandardItemModel()
+        for idx, col in enumerate(columns):
+            item = QtGui.QStandardItem(col)
+            for order in ['asc', 'desc']:
+                oitem = QtGui.QStandardItem(order)
+                item.appendRow(oitem)
+            model.appendRow(item)
+        return model
+
+
+def ensure_modeled(item: (str, list, QtGui.QStandardItemModel)):
+    if isinstance(item, str):
+        item = [item]
+    if hasattr(item, "__iter__"):
+        item = create_standard_item_model(item)
+    elif not hasattr(item, "rowCount"):
+        raise NotImplementedError("unable to convert item of type {} to QStandardItemModel".format(type(item)))
+    return item
+
+
 def display_ok_msg(parent, msg):
     msgBox = QtGui.QMessageBox(parent)
     msgBox.setText(msg)
-    msgBox.exec_()
+    msgBox.show()
 
 
 def shift_grid_layout_down(layout):

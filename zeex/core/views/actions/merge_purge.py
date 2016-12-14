@@ -9,57 +9,38 @@ from core.models.actions import FileViewModel
 from core.views.file import FileTableWindow
 from core.views.actions.map_grid import MapGridDialog
 from core.ctrls.dataframe import DataFrameModelManager
+from core.utility.widgets import create_standard_item_model
+
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
-    signalMergeFileOpened = QtCore.Signal(str)
-    signalSFileOpened = QtCore.Signal(str)
+    signalMergeFileOpened = QtCore.Signal(str) # file path
+    signalSFileOpened = QtCore.Signal(str) # file path
+    signalExecuted = QtCore.Signal(str, str, str) # source_path, dest_path, report_path
 
     def __init__(self, df_manager: DataFrameModelManager, parent=None, source_model=None):
         self.df_manager = df_manager
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.source_model = source_model
-        self._suppress_files = {}
-        self._merge_files = {}
         self._merge_view_model = FileViewModel()
         self._suppress_view_model = FileViewModel()
+        self._suppress_files = {}
+        self._merge_files = {}
         self._file_table_windows = {}
         self._field_map_grids = {}
         self._field_map_data = {}
+        self.sortAscHandler = None
+        self.sortOnHandler = None
+        self.dedupeOnHandler = None
 
-    def configure(self, settings: dict = None) -> bool:
-        sort_model   = settings.get('sort_model', [])
-        dedupe_model = settings.get('dedupe_model', [])
-        source_path  = settings.get('source_path', None)
-        dest_path    = settings.get('dest_path', None)
+    def configure(self, source_path=None, dest_path=None) -> bool:
 
-        sort_asc = QtGui.QStandardItemModel()
-        sort_asc.appendRow(QtGui.QStandardItem('True'))
-        sort_asc.appendRow(QtGui.QStandardItem('False'))
-
-        self.sortAscHandler = PushGridHandler(left_model=sort_asc, left_view=self.sortAscLeftView,
-                                              left_button=self.sortAscLeftButton,
-                                              left_delete=False, right_model=None,
-                                              right_view=self.sortAscRightView,
-                                              right_button=self.sortAscRightButton)
-
-        self.sortOnHandler = PushGridHandler(left_model=sort_model, left_view=self.sortOnLeftView,
-                                             left_button=self.sortOnLeftButton,
-                                             left_delete=True, right_model=None,
-                                             right_view=self.sortOnRightView,
-                                             right_button=self.sortOnRightButton)
-
-        self.dedupeOnHandler = PushGridHandler(left_model=dedupe_model, left_view=self.dedupeOnLeftView,
-                                               left_button=self.dedupeOnLeftButton,
-                                               left_delete=True, right_model=None,
-                                               right_view=self.dedupeOnRightView,
-                                               right_button=self.dedupeOnRightButton)
-
-        if source_path is not None:
-            self.sourcePathLineEdit.setText(source_path)
-
-        if dest_path is not None:
-            self.destPathLineEdit.setText(dest_path)
+        if source_path is None:
+            source_path = self.sourcePathLineEdit.text()
+            assert os.path.exists(source_path), "source_path must exist: '{}'".format(source_path)
+        self.set_line_edit_paths(source_path, dest_path=dest_path)
+        if self.sortAscHandler is None:
+            self.set_handler_sort_asc()
 
         self.signalMergeFileOpened.connect(self.add_merge_file)
         merge_file_func = partial(self.open_file, model_signal=self.signalMergeFileOpened)
@@ -84,31 +65,75 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         if not isinstance(model, DataFrameModel):
             if model is None:
                 model = self.sourcePathLineEdit.text()
-            if os.path.exists(model):
+            if isinstance(model, str) and os.path.exists(model):
                 model = self.df_manager.read_file(model)
             else:
                 raise Exception("model parameter must be a filepath or a qtpandas.models.DataFrameModel")
         self.source_model = model
 
-    def create_dedupe_model(self, columns: list):
-        columns = list(columns)
-        model = QtGui.QStandardItemModel()
+    def set_line_edit_paths(self, source_path, dest_path=None):
+        if dest_path is None:
+            dirname = os.path.dirname(source_path)
+            base, ext = os.path.splitext(os.path.basename(source_path))
+            dest_path = os.path.join(dirname, base + "_merged" + ext)
+        self.sourcePathLineEdit.setText(source_path)
+        self.destPathLineEdit.setText(dest_path)
 
-        for idx, col in enumerate(columns):
-            item = QtGui.QStandardItem(col)
-            for order in ['asc', 'desc']:
-                oitem = QtGui.QStandardItem(order)
-                item.appendRow(oitem)
-            model.appendRow(item)
-        return model
+    def set_push_grid_handlers(self, column_model=None, sorton_model=None, sortasc_model=None,
+                               dedupe_model=None):
+        """
+        Sets all default push grid handlers for the dialog.
 
-    def create_sort_model(self, columns: list):
-        columns = list(columns)
-        model = QtGui.QStandardItemModel()
-        for idx, col in enumerate(columns):
-            item = QtGui.QStandardItem(col)
-            model.appendRow(item)
-        return model
+        :param column_model: (QStandardItemModel, default None)
+        :param sorton_model:  ((QStandardItemModel,list) default None)
+        :param sortasc_model: ((QStandardItemModel,list) default None)
+        :param dedupe_model: ((QStandardItemModel,list) default None)
+        :return:
+        """
+
+        if column_model is None:
+            column_model = self.get_source_columns_model()
+
+        self.set_handler_sort_on(column_model, default_model=sorton_model)
+        self.set_handler_sort_asc(default_model=sortasc_model)
+        self.set_handler_dedupe_on(column_model, default_model=dedupe_model)
+
+    def set_handler_sort_on(self, column_model=None, default_model=None):
+
+        self.sortOnHandler = PushGridHandler(left_model=column_model, left_view=self.sortOnLeftView,
+                                             left_button=self.sortOnLeftButton,
+                                             left_delete=True, right_model=default_model,
+                                             right_view=self.sortOnRightView,
+                                             right_button=self.sortOnRightButton)
+
+    def set_handler_sort_asc(self, default_model=None):
+        if self.sortAscHandler is None:
+            sort_asc = QtGui.QStandardItemModel()
+            sort_asc.appendRow(QtGui.QStandardItem('True'))
+            sort_asc.appendRow(QtGui.QStandardItem('False'))
+            self.sortAscHandler = PushGridHandler(left_model=sort_asc, left_view=self.sortAscLeftView,
+                                                  left_button=self.sortAscLeftButton,
+                                                  left_delete=False, right_model=default_model,
+                                                  right_view=self.sortAscRightView,
+                                                  right_button=self.sortAscRightButton)
+
+    def set_handler_dedupe_on(self, column_model=None, default_model=None):
+        self.dedupeOnHandler = PushGridHandler(left_model=column_model, left_view=self.dedupeOnLeftView,
+                                               left_button=self.dedupeOnLeftButton,
+                                               left_delete=True, right_model=default_model,
+                                               right_view=self.dedupeOnRightView,
+                                               right_button=self.dedupeOnRightButton)
+
+    def get_source_columns_model(self ,raise_on_error=True):
+        if self.source_model is None:
+            if raise_on_error:
+                raise Exception("Cannot get source_columns as source_model is None!")
+            else:
+                columns = []
+        else:
+            columns = self.source_model.dataFrame().columns.tolist()
+
+        return create_standard_item_model(columns)
 
     def open_file(self, file_names=None, model_signal=None):
         if file_names is None:
@@ -328,6 +353,8 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         report_path = os.path.splitext(dest_path)[0] + "_report.txt"
         with open(report_path, "w") as fh:
             fh.write(report)
+
+        self.signalExecuted.emit(source_path, dest_path, report_path)
 
 
 

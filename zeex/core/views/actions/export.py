@@ -2,7 +2,7 @@ import os
 from core.compat import QtGui, QtCore
 from core.ui.actions.export_ui import Ui_ExportFileDialog
 from core.utility.widgets import configureComboBox, display_ok_msg
-
+from core.ctrls.dataframe import DataFrameModelManager
 
 SEPARATORS = {'Comma':',',
               'Semi Colon': ';',
@@ -19,8 +19,10 @@ ENCODINGS = {'UTF-8':'UTF_8',
 class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
     signalExported = QtCore.Signal(str, str) # original_path, new_path
 
-    def __init__(self, df_manager, filename=None, **kwargs):
+    def __init__(self, df_manager: DataFrameModelManager, filename: str=None, **kwargs):
         self.df_manager = df_manager
+        self.df_manager.signalNewModelRead.connect(self.append_source_filename)
+
         if filename is None:
 
             if df_manager.last_path_updated is not None:
@@ -32,7 +34,7 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
             self._default_path = filename
             assert filename in df_manager.file_paths, "Invalid filename {} not in DataFrameModelManager paths: {}".format(
                                                        filename, df_manager.file_paths)
-        print(filename)
+
         QtGui.QDialog.__init__(self, **kwargs)
         self.setupUi(self)
         self.configure()
@@ -58,9 +60,12 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         filename = QtGui.QFileDialog.getOpenFileName(self)[0]
         if filename not in self.df_manager.file_paths:
             self.df_manager.read_file(filename)
-            self.comboBoxSource.addItem(filename)
         idx = self.comboBoxSource.findText(filename)
         self.comboBoxSource.setCurrentIndex(idx)
+
+    @QtCore.Slot(str)
+    def append_source_filename(self, filename: str):
+        self.comboBoxSource.addItem(filename)
 
     def export(self):
         source_path = self.comboBoxSource.currentText()

@@ -3,7 +3,7 @@ import pytest
 import pandas as pd
 from core.compat import QtGui, QtCore
 from PySide.QtTest import QTest
-
+from core.utility.collection import SettingsINI
 
 class MainTestClass(object):
 
@@ -31,3 +31,26 @@ class MainTestClass(object):
             os.mkdir(fp)
         return fp
 
+    @pytest.fixture
+    def project_root_dir(self, fixtures_dir):
+        return os.path.join(fixtures_dir, "fixed_root_dir/fixed_project")
+
+    @pytest.fixture
+    def project_log_dir(self, project_root_dir):
+        return os.path.join(project_root_dir, "logs")
+
+    @pytest.fixture
+    def project_settings_path(self, project_root_dir):
+        return os.path.join(project_root_dir, "sample_project_config.ini")
+
+    @pytest.fixture
+    def example_file_path(self, project_root_dir):
+        return os.path.join(project_root_dir, "example.csv")
+
+    @pytest.fixture
+    def project_settings_ini(self, project_settings_path, project_root_dir, project_log_dir):
+        settings = SettingsINI(filename=project_settings_path)
+        settings.set('GENERAL', 'ROOT_DIRECTORY', value=project_root_dir)
+        settings.set('GENERAL', 'LOG_DIRECTORY', value=project_log_dir)
+        settings.save()
+        return settings

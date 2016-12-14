@@ -11,7 +11,8 @@ from core.views.actions.export import DataFrameModelExportDialog
 from core.views.actions.merge_purge import MergePurgeDialog
 from core.views.file import FileTableWindow
 from core.views.settings import SettingsDialog
-from core.utility.widgets import display_ok_msg
+from core.utility.widgets import display_ok_msg, create_standard_item_model
+from core.utility.collection import SettingsINI
 
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
@@ -30,13 +31,15 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     signalModelOpened = QtCore.Signal(str)
     signalModelDestroyed = QtCore.Signal(str)
 
-    def __init__(self, settings_ini: str):
+    def __init__(self, settings_ini: (str, SettingsINI)):
         self.df_manager = DataFrameModelManager()
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
         self.icons = Icons()
         self.dialog_settings = SettingsDialog(settings=settings_ini)
         self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
+        self.dialog_export = DataFrameModelExportDialog(self.df_manager, parent=self)
+        self.dialog_import = CSVImportDialog(self)
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
@@ -148,11 +151,10 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         to a file.
         :return: None
         """
-        dialog = DataFrameModelExportDialog(self.df_manager, parent=self)
-
+        dialog = self.dialog_export
         dialog.signalExported.connect(self._flush_export)
         dialog.setWindowIcon(self.icons['export_generic'])
-        dialog.exec_()
+        dialog.show()
 
     def open_import_dialog(self):
         """
@@ -161,10 +163,10 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         import (kind of pointless? - use open_tableview_window).
         :return: None
         """
-        dialog = CSVImportDialog(self)
+        dialog = self.dialog_import
         dialog.load.connect(self.import_file)
         dialog.setWindowIcon(self.icons['add'])
-        dialog.exec_()
+        dialog.show()
 
     def open_tableview_window(self, model: DataFrameModel = None):
         """
@@ -190,16 +192,17 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             self.add_recent_file_menu_entry(name, model)
             return self.df_windows[name].show()
 
-    def open_merge_purge_dialog(self):
-        model = self.get_tree_selected_model()
-        file_base, ext = os.path.splitext(model.filePath)
+    def open_merge_purge_dialog(self, model: DataFrameModel=None):
+        if model is None:
+            model = self.get_tree_selected_model()
         df = model.dataFrame()
-        settings = dict()
-        settings['sort_model'] = self.dialog_merge_purge.create_sort_model(df.columns)
-        settings['dedupe_model'] = self.dialog_merge_purge.create_dedupe_model(df.columns)
-        settings['source_path'] = model.filePath
-        settings['dest_path'] = file_base + "_merged" + ext
-        self.dialog_merge_purge.configure(settings)
+        file_base, ext = os.path.splitext(model.filePath)
+        dedupe_model = create_standard_item_model(df.columns)
+        sort_model = create_standard_item_model(df.columns)
+
+        self.dialog_merge_purge.set_handler_dedupe_on(column_model=dedupe_model, default_model=None)
+        self.dialog_merge_purge.set_handler_sort_on(column_model=sort_model, default_model=None)
+        self.dialog_merge_purge.configure(source_path=model.filePath, dest_path=file_base + "_merged" + ext)
         self.dialog_merge_purge.show()
 
     def get_tree_selected_model(self) -> (DataFrameModel, None):
@@ -224,10 +227,30 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         else:
             display_ok_msg(self, "Unable to remove file.")
 
-    def open_tableview_current(self):
-        model = self.current_model
+    def open_tableview_current(self, model: DataFrameModel=None):
+        """
+        Opens a tableview window for the current_model or the model kwarg.
+
+        :param model: DataFrameModel
+
+        :return: None
+        """
+        if model is None:
+            model = self.current_model
+        else:
+            self.set_current_df_model(model)
+
         assert isinstance(model, DataFrameModel), "No current DataFrame model."
         return self.open_tableview_window(model)
+
+    def set_current_df_model(self, model: DataFrameModel):
+        """
+        Sets the current dataframe model. for the project.
+        :param model: DataFrameModel
+        :return: None
+        """
+        self.df_manager.set_model(model, model._filePath)
+        self.current_model = self.df_manager.get_model(model._filePath)
 
     @QtCore.Slot('DataFrameModel', str)
     def import_file(self, filepath):
@@ -270,7 +293,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             df.to_csv(filepath, **kwargs)
 
     def open_settings_dialog(self):
-        self.dialog_settings.exec_()
+        self.dialog_settings.show()
 
     def _flush_export(self, orig_path, new_path):
         if orig_path != new_path:
