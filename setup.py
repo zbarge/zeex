@@ -16,7 +16,7 @@ probably wouldn't want to install this way unless.
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-version_file = open(os.path.join(here, 'zeex', '__init__.py'), 'rU')
+version_file = open(os.path.join(here, 'zeex', 'zeex_app.py'), 'rU')
 __version__ = re.sub(
     r".*\b__version__\s+=\s+'([^']+)'.*",
     r'\1',

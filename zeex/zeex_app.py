@@ -8,6 +8,8 @@ Created on Tue Nov 29 19:41:37 2016
 
 import sys
 from core.main import ZeexApp
+__version__ = 1.0.0
+
 
 if __name__ == '__main__':
 
