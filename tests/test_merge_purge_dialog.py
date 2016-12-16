@@ -17,6 +17,11 @@ class TestMergePurgeDialog(MainTestClass):
         dialog.set_source_model(manager.get_model(example_file_path))
         dialog.set_push_grid_handlers()
         qtbot.addWidget(dialog)
+        check_path = dialog.destPathLineEdit.text()
+        rpt_path = os.path.splitext(check_path)[0] + "_report.txt"
+        for p in [check_path, rpt_path]:
+            if os.path.exists(p):
+                os.remove(p)
         return dialog
 
     def test_general_config(self, dialog: MergePurgeDialog, example_file_path):
@@ -58,10 +63,8 @@ class TestMergePurgeDialog(MainTestClass):
         assert caught_left >= 3
 
     def test_sorting(self, dialog: MergePurgeDialog, example_file_path):
-        check_path = dialog.destPathLineEdit.text()
-        if os.path.exists(check_path):
-            os.remove(check_path)
         model = dialog.df_manager.get_model(example_file_path)
+        check_path = dialog.destPathLineEdit.text()
         df = model.dataFrame()
         columns = df.columns.tolist()
         check = 'policyid'
@@ -126,10 +129,41 @@ class TestMergePurgeDialog(MainTestClass):
         os.remove(check_path)
 
     def test_dedupe(self, dialog: MergePurgeDialog, example_file_path):
-        pytest.skip("TODO: make test_dedupe")
+        dfmodel = dialog.df_manager.get_model(example_file_path)
+        column = 'construction'
+        compare_df = dfmodel.dataFrame().copy()
+        compare_df.drop_duplicates(column, inplace=True)
+        compare_size = compare_df.index.size
+        assert compare_size < dfmodel.dataFrame().index.size
+
+        for view in dialog.findChildren(QtGui.QListView):
+            if 'right' in view.objectName().lower():
+                model = view.model()
+                assert model is None or model.rowCount() == 0
+
+        left_model = dialog.dedupeOnLeftView.model()
+        col_match = left_model.findItems(column)
+        assert col_match
+        col_match = col_match[0]
+        dialog.dedupeOnLeftView.setCurrentIndex(col_match.index())
+        dialog.dedupeOnRightButton.click()
+        pushed_match = dialog.dedupeOnRightView.model().findItems(column)
+        assert pushed_match
+
+        compare_path = dialog.destPathLineEdit.text()
+        assert not os.path.exists(compare_path)
+        dialog.btnExecute.click()
+        assert os.path.exists(compare_path)
+
+        dialog.df_manager.read_file(compare_path)
+        df = dialog.df_manager.get_frame(compare_path)
+        assert df.index.size == compare_size
+
+        final_check_df = df.loc[df['policyid'].isin(compare_df.loc[:, 'policyid'].unique()), :]
+        assert final_check_df.index.size == df.index.size
 
     def test_merge(self, dialog: MergePurgeDialog, example_file_path):
         pytest.skip("TODO: make test_merge")
-
+        
     def test_purge(self, dialog: MergePurgeDialog, example_file_path):
         pytest.skip("TODO: make test_purge")
