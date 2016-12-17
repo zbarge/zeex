@@ -31,6 +31,17 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+import os, sys
+
+source_dir = os.path.dirname(__file__)
+docs_dir = os.path.dirname(source_dir)
+zeex_dir = os.path.dirname(docs_dir)
+python_dir = os.path.dirname(zeex_dir)
+qtpandas_dir = os.path.join(python_dir, "qtpandas")
+package_dir = os.path.join(zeex_dir, "zeex")
+sys.path.insert(0, package_dir)
+sys.path.insert(0, qtpandas_dir)
+
 extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',

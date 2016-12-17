@@ -10,7 +10,16 @@ Welcome to zeex's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. automodule:: core.views
+.. automodule:: core.models
+.. automodule:: core.ctrls
 
+.. autoclass:: core.main.ZeexApp
+	:members:
+.. autoclass:: core.views.main.ZeexMainWindow
+	:members:
+.. autoclass:: core.views.settings.SettingsDialog
+	:members:
 
 Indices and tables
 ==================

@@ -59,7 +59,7 @@ setup(
     name='zeex',
     version=__version__,
     url='https://github.com/zbarge/zeex',
-    license='GPL',
+    license='MIT',
     namespace_packages=['zeex'],
     author='Zeke Barge',
     tests_require=tests_require,
@@ -82,7 +82,7 @@ setup(
         'Natural Language :: English',
         'Environment :: X11 Applications :: Qt',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GPL',
+        'License :: OSI Approved :: MIT',
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: User Interfaces'
