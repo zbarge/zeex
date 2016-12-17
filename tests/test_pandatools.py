@@ -25,8 +25,11 @@ import pytest
 from core.utility.pandatools import *
 from tests.main import MainTestClass
 
+SAMPLE_DATE_PASSES = ['2016-10-01', '9/15/2016', '2016-01-01 12:33:45 AM', '09-15-2016', '10-05-88']
+SAMPLE_DATE_FAILS = [np.nan, '', '0', 'apples', 1500, 2500]
 
-class TestClass(MainTestClass):
+
+class TestPandaTools(MainTestClass):
 
     def test_super_read_file(self):
         """
@@ -49,6 +52,29 @@ class TestClass(MainTestClass):
                 assert check_df.index.size == df.index.size, "Extension {} should be supported with sep {}".format(
                                                               ext, sep)
                 os.remove(filepath)
+
+    @pytest.mark.parametrize("value", SAMPLE_DATE_PASSES)
+    def test_series_to_datetime_pass(self, df, value):
+        df.loc[:, 'date_series'] = str(value)
+        dtype = str(df.loc[:, 'date_series'].dtype)
+        assert dtype == 'object'
+        assert series_is_datetime(df.loc[:, 'date_series'])
+
+    @pytest.mark.parametrize("value", SAMPLE_DATE_FAILS)
+    def test_series_to_datetime_fail(self, df, value):
+        df.loc[:, 'date_series'] = str(value)
+        dtype = str(df.loc[:, 'date_series'].dtype)
+        assert dtype == 'object'
+        assert not series_is_datetime(df.loc[:, 'date_series'])
+
+    @pytest.mark.parametrize("value", SAMPLE_DATE_PASSES)
+    def test_dataframe_to_datetime(self, df, value):
+        df.loc[:, 'date_series'] = value
+        pre_type = str(df['date_series'].dtype)
+        df = dataframe_to_datetime(df)
+        post_type = str(df['date_series'].dtype)
+        assert pre_type == 'object'
+        assert post_type == 'datetime64[ns]'
 
     def test_rename_dupe_cols(self, df):
         df.loc[:, 'NEW_COL'] = ''

@@ -27,7 +27,7 @@ SOFTWARE.
 import os
 import datetime
 import pandas as pd
-
+import numpy as np
 
 def force_int(integer):
     integer = ''.join(e for e in str(integer) if e.isdigit() or e is '.')
@@ -371,6 +371,82 @@ def gather_frame_fields(df: pd.DataFrame, other_df: pd.DataFrame, index_label: s
 
     return df
 
+
+def series_is_datetime(series: pd.Series, check_num: int=10, dropna: bool=True):
+    """
+    Checks random rows in a Series comparing rows that coerce to datetime.
+    :param series:
+    :param check_num:
+    :param dropna:
+    :return:
+    """
+    if dropna:
+        series = series.dropna(axis=0)
+    got, lost = 0, 0
+    size = (check_num if series.index.size > check_num else series.index.size)
+
+    if size > 0:
+        checks = np.random.randint(0, high=series.index.size, size=size)
+        for x in series[checks].tolist():
+            try:
+                x = pd.Timestamp(x)
+                if pd.notnull(x):
+                    got += 1
+            except (ValueError, OverflowError):
+                lost += 1
+
+    return got > lost
+
+
+def series_to_datetime(series, check_num: int=10, dropna: bool=True, **kwargs):
+    """
+
+    :param series: (pd.Series)
+        The series object to modify.
+    :param check_num: (int, default 10)
+        The max number of rows to test for coerceable datetime values.
+    :param dropna: (bool, default True)
+        True drops na values from the series before checking random rows.
+    :param kwargs: pd.to_datetime(**kwargs)
+        errors: defaults to 'coerce'
+    :return: (pd.Series)
+        With dtype converted to a datetime if possible.
+    """
+    if series_is_datetime(series, check_num=check_num, dropna=dropna):
+        kwargs['errors'] = kwargs.get('errors', 'coerce')
+        series = pd.to_datetime(series, **kwargs)
+    return series
+
+
+def dataframe_to_datetime(df, dtypes=['object'], check_num:int = 10, dropna: bool=True, raise_on_error=False, **kwargs):
+    """
+    Scans columns in a dataframe looking for columns to convert into a DateTime.
+
+    :param df: (pd.DataFrame)
+        The dataframe to modify.
+    :param dtypes: (list, default ['object'])
+        A list of data types to check.
+    :param check_num: (int, default 10)
+        The max number of rows to test for coerceable datetime values.
+    :param dropna: (bool, default True)
+        True drops na values from the series before checking random rows.
+    :param raise_on_error: (bool, default False)
+        True raises ValueError or OverflowError if any occur doing the conversion.
+    :param kwargs: pd.to_datetime(**kwargs)
+        errors: defaults to 'coerce'
+    :return: (pd.DataFrame)
+        DataFrame with found datetime columns converted.
+    """
+    for column in df.columns:
+        dtype = str(df[column].dtype)
+        if dtype in dtypes:
+            try:
+                converted = series_to_datetime(df.loc[:, column], check_num=check_num, dropna=dropna, **kwargs)
+                df.loc[:, column] = converted
+            except (ValueError, OverflowError):
+                if raise_on_error:
+                    raise
+    return df
 
 
 
