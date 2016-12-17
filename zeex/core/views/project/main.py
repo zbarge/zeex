@@ -88,7 +88,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionNew.triggered.connect(self.open_import_dialog)
         self.actionOpen.triggered.connect(self.open_tableview_window)
         self.actionSave.triggered.connect(self.open_export_dialog)
-        self.actionRemove.triggered.connect(self.remove_tree_selected_model)
+        self.actionRemove.triggered.connect(self.remove_tree_selected_path)
         self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
 
     def connect_icons(self):
@@ -195,17 +195,12 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     def open_merge_purge_dialog(self, model: DataFrameModel=None):
         if model is None:
             model = self.get_tree_selected_model()
-        df = model.dataFrame()
-        file_base, ext = os.path.splitext(model.filePath)
-        dedupe_model = create_standard_item_model(df.columns)
-        sort_model = create_standard_item_model(df.columns)
-
-        self.dialog_merge_purge.set_handler_dedupe_on(column_model=dedupe_model, default_model=None)
-        self.dialog_merge_purge.set_handler_sort_on(column_model=sort_model, default_model=None)
-        self.dialog_merge_purge.configure(source_path=model.filePath, dest_path=file_base + "_merged" + ext)
+        current_model = self.dialog_merge_purge.source_model
+        if current_model is None or current_model.filePath is not model.filePath:
+            self.dialog_merge_purge.set_source_model(model=model, configure=True)
         self.dialog_merge_purge.show()
 
-    def get_tree_selected_model(self) -> (DataFrameModel, None):
+    def get_tree_selected_model(self, raise_on_error=True) -> (DataFrameModel, None):
         """
         Returns a DataFrameModel based on the filepath selected
         in the ProjectMainWindow.ProjectsTreeView.
@@ -219,13 +214,20 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             return self.df_manager.read_file(file_path)
         return None
 
-    def remove_tree_selected_model(self):
+    def get_tree_selected_path(self):
+        selected = self.ProjectsTreeView.selectedIndexes()
+        if selected:
+            idx = selected[0]
+            return self.ProjectsTreeView.model().filePath(idx)
+        return None
+
+    def remove_tree_selected_path(self):
         #TODO: need to emit a signal here.
-        model = self.get_tree_selected_model()
-        if model is not None:
-            os.remove(model.filePath)
+        filename = self.get_tree_selected_path()
+        if filename is not None:
+            os.remove(filename)
         else:
-            display_ok_msg(self, "Unable to remove file.")
+            display_ok_msg(self, "No file selected.")
 
     def open_tableview_current(self, model: DataFrameModel=None):
         """

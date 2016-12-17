@@ -15,7 +15,7 @@ def configureComboBox(box, options, default):
     return box
 
 
-def create_standard_item_model(columns: list = None):
+def create_standard_item_model(columns: list = None, editable=False, checkable=False):
         if columns is None:
             columns = []
         elif not isinstance(columns, list):
@@ -23,9 +23,8 @@ def create_standard_item_model(columns: list = None):
         model = QtGui.QStandardItemModel()
         for idx, col in enumerate(columns):
             item = QtGui.QStandardItem(col)
-            for order in ['asc', 'desc']:
-                oitem = QtGui.QStandardItem(order)
-                item.appendRow(oitem)
+            item.setEditable(editable)
+            item.setCheckable(checkable)
             model.appendRow(item)
         return model
 

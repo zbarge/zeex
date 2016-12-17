@@ -12,10 +12,7 @@ class TestMergePurgeDialog(MainTestClass):
         manager = DataFrameModelManager()
         manager.read_file(example_file_path)
         dialog = MergePurgeDialog(manager)
-        dialog.set_line_edit_paths(example_file_path)
-        dialog.configure()
-        dialog.set_source_model(manager.get_model(example_file_path))
-        dialog.set_push_grid_handlers()
+        dialog.set_source_model(manager.get_model(example_file_path), configure=True)
         qtbot.addWidget(dialog)
         check_path = dialog.destPathLineEdit.text()
         rpt_path = os.path.splitext(check_path)[0] + "_report.txt"
@@ -159,11 +156,90 @@ class TestMergePurgeDialog(MainTestClass):
         df = dialog.df_manager.get_frame(compare_path)
         assert df.index.size == compare_size
 
-        final_check_df = df.loc[df['policyid'].isin(compare_df.loc[:, 'policyid'].unique()), :]
+        final_check_df = df.loc[df.loc[:,'policyid'].isin(compare_df.loc[:, 'policyid'].unique()), :]
         assert final_check_df.index.size == df.index.size
 
     def test_merge(self, dialog: MergePurgeDialog, example_file_path):
-        pytest.skip("TODO: make test_merge")
-        
+
+        # Cut the example file in half for our merge simulation.
+        orig_df = dialog.df_manager.get_frame(example_file_path)
+        merge_path = os.path.splitext(example_file_path)[0] + "_merge_me.csv"
+        check_path = dialog.destPathLineEdit.text()
+
+        # Split the data based on construction type.
+        df1 = orig_df.loc[orig_df.loc[:, 'construction'].isin(['Wood']), :]
+        df2 = orig_df.loc[~orig_df.loc[:, 'construction'].isin(['Wood']), :]
+
+        assert df1.index.size != df2.index.size
+        df2.to_csv(merge_path)
+
+        # Register the source file with the first split
+        dialog.df_manager.update_file(example_file_path, df1, notes="Took first half")
+        dialog.open_file(file_names=[merge_path], model_signal=dialog.signalMergeFileOpened)
+        assert merge_path in dialog.df_manager.file_paths
+
+        # Make sure merge path made it into the MergeView's model
+        table_model = dialog.mergeFileTable.model()
+        items = table_model.findItems(merge_path)
+        assert items
+
+        dialog.btnExecute.click()
+
+        try:
+            assert os.path.exists(check_path)
+            check_model = dialog.df_manager.read_file(check_path)
+            check_df = check_model.dataFrame()
+            assert check_df.index.size == orig_df.index.size, "Expected the merged dataframe \
+                                                               to be the same size as the original."
+            chmask = orig_df.loc[:, 'policyid'].isin(check_df.loc[:, 'policyid'].unique())
+            check_df2 = orig_df.loc[chmask, :]
+            assert check_df2.index.size == orig_df.index.size, "Expected every policyid in the original\
+                                                                frame to exist in the merged one"
+        finally:
+            for p in [merge_path, check_path]:
+                if os.path.exists(p):
+                    os.remove(p)
+
     def test_purge(self, dialog: MergePurgeDialog, example_file_path):
-        pytest.skip("TODO: make test_purge")
+
+        # Cut the example file in half for our merge simulation.
+        orig_df = dialog.df_manager.get_frame(example_file_path)
+        kill_path = os.path.splitext(example_file_path)[0] + "_kill_me.csv"
+        check_path = dialog.destPathLineEdit.text()
+
+        # Split/export the data based on construction type.
+        df_kill = orig_df.loc[orig_df.loc[:, 'construction'].isin(['Wood']), :]
+        df_kill.to_csv(kill_path)
+
+        # Open the kill_path with the dialog's open file function.
+        dialog.open_file(file_names=[kill_path], model_signal=dialog.signalSFileOpened)
+        assert kill_path in dialog.df_manager.file_paths
+
+        # Make sure merge path made it into the MergeView's model
+        table_model = dialog.sFileTable.model()
+        items = table_model.findItems(kill_path)
+        assert items
+
+        # Push a dedupe-on field to use for suppression.
+        items = dialog.dedupeOnLeftView.model().findItems("policyid")
+        assert items
+        item = items[0]
+        dialog.dedupeOnLeftView.setCurrentIndex(item.index())
+        dialog.dedupeOnRightButton.click()
+
+        dialog.btnExecute.click()
+
+        try:
+            assert os.path.exists(check_path)
+            check_model = dialog.df_manager.read_file(check_path)
+            check_df = check_model.dataFrame()
+            check_size = check_df.index.size == orig_df.index.size - df_kill.index.size
+            assert check_size, "Expected the purged dataframe \
+                                to have lost {} records.".format(df_kill.index.size)
+
+            check_df2 = check_df.loc[check_df.loc[:, 'construction'].isin(['Wood']), :]
+            assert check_df2.empty, "Expected no records with construction in Wood."
+        finally:
+            for p in [kill_path, check_path]:
+                if os.path.exists(p):
+                    os.remove(p)
