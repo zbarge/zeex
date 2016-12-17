@@ -10,7 +10,7 @@ from core.views.file import FileTableWindow
 from core.views.actions.map_grid import MapGridDialog
 from core.ctrls.dataframe import DataFrameModelManager
 from core.utility.widgets import create_standard_item_model
-
+from core.utility.pandatools import gather_frame_fields
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
     signalMergeFileOpened = QtCore.Signal(str) # file path
@@ -193,7 +193,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         model = self.df_manager.get_model(file_path)
         model.enableEditing(True)
         self._merge_files.update({file_path:model})
-        self._merge_view_model.appendDataFrameModel(model)
+        self._merge_view_model.append_df_model(model)
         self.mergeFileTable.setColumnWidth(0, 500)
 
     @QtCore.Slot(str)
@@ -201,7 +201,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         model = self.df_manager.get_model(file_path)
         model.enableEditing(True)
         self._suppress_files.update({file_path:model})
-        self._suppress_view_model.appendDataFrameModel(model)
+        self._suppress_view_model.append_df_model(model)
         self.sFileTable.setColumnWidth(0, 500)
 
     def remove_file(self, view, indexes=None):
@@ -294,10 +294,13 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         source_df = self.source_model.dataFrame().copy()
         source_df.loc[:, 'ORIG_IDXER'] = source_df.index
         source_size = source_df.index.size
+        index_label = self.primaryKeyComboBox.currentText()
 
         sort_on = self.sortOnHandler.get_model_list(left=False)
         ascending = self.sortAscHandler.get_model_list(left=False)
         dedupe_on = self.dedupeOnHandler.get_model_list(left=False)
+        gather_fields = self.gatherFieldsHandler.get_model_list(left=False)
+        overwrite_existing = self.gatherFieldsOverWriteCheckBox.isChecked()
 
         # Make sure ascending/sort_on lists are equal.
         while len(sort_on) < len(ascending):
@@ -311,9 +314,15 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         for file_path, merge_model in self._merge_files.items():
             pre_size = source_df.index.size
             other_df = merge_model.dataFrame()
-            source_df = pd.concat([source_df, other_df])
+            if gather_fields:
+                assert index_label in other_df.columns, "DataFrameModel for {} missing column {}".format(
+                                                         merge_model.filePath, index_label)
+                source_df = gather_frame_fields(source_df, other_df, index_label=index_label,
+                                                fields=gather_fields, copy_frames=True,
+                                                append_missing=True, overwrite=overwrite_existing)
+            else:
+                source_df = pd.concat([source_df, other_df])
             merged_results.update({merge_model.filePath: source_df.index.size - pre_size})
-
         # Get all suppression models and suppress.
         for file_path, suppress_model in self._suppress_files.items():
             map_dict = self._field_map_data.get(file_path, {})

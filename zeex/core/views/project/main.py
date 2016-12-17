@@ -32,6 +32,10 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     signalModelDestroyed = QtCore.Signal(str)
 
     def __init__(self, settings_ini: (str, SettingsINI)):
+        """
+        :param settings_ini: (str, SettingsINI)
+            can be a settings_ini file path or configured SettingsINI object.
+        """
         self.df_manager = DataFrameModelManager()
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)

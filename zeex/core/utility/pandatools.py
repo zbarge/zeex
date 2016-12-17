@@ -312,7 +312,17 @@ def get_frame_duplicates(df, id_label, unique_cols, sort_cols, ascending=None):
 def gather_frame_fields(df: pd.DataFrame, other_df: pd.DataFrame, index_label: str=None,
                         fields: list=None, copy_frames: bool=False,
                         append_missing: bool=True, **kwargs):
-
+    """
+    Updates df with other_df
+    :param df:
+    :param other_df:
+    :param index_label:
+    :param fields:
+    :param copy_frames:
+    :param append_missing:
+    :param kwargs:
+    :return:
+    """
     if copy_frames:
         df = df.copy()
         other_df = other_df.copy()
@@ -324,6 +334,12 @@ def gather_frame_fields(df: pd.DataFrame, other_df: pd.DataFrame, index_label: s
 
     if fields:
         other_df_orig = other_df.copy()
+        if isinstance(fields, str):
+            fields = [fields]
+        elif not hasattr(fields, '__iter__'):
+            raise Exception("Fields must be iterable or a string.. not {}".format(type(fields)))
+        elif not isinstance(fields, list):
+            fields = list(fields)
         other_df = other_df.loc[:, fields]
     else:
         other_df_orig = other_df
