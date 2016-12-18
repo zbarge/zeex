@@ -81,7 +81,13 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         :param kwargs:
         :return:
         """
+        cur_ct = self.fmodel.rowCount()
         df = self.dfmodel.dataFrame()
+        if cur_ct > 0:
+            for i in range(self.fmodel.rowCount()):
+                item = self.fmodel.item(i, 0)
+                if item and item.text() not in df.columns:
+                    self.fmodel.takeRow(i)
         for col in df.columns:
             self.fmodel.set_field(col, dtype=df[col].dtype)
 

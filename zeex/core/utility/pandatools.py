@@ -37,6 +37,29 @@ def force_int(integer):
         return 0
 
 
+def dataframe_export(df, filepath, **kwargs):
+    """
+    A simple dataframe-export either to csv or excel.
+
+    :param df: (pd.DataFrame)
+        The dataframe to export
+    :param filepath: (str)
+        The filepath to export to.
+
+    :param kwargs: (pd.to_csv/pd.to_excel kwargs)
+        Look at pandas documentation for kwargs.
+    :return: None
+    """
+    filebase, ext = os.path.splitext(filepath)
+    ext = ext.lower()
+    if ext is '.xlsx':
+        df.to_excel(filepath, **kwargs)
+    elif ext in ['.txt','.csv']:
+        df.to_csv(filepath, **kwargs)
+    else:
+        raise NotImplementedError("Not sure how to export '{}' files.".format(ext))
+
+
 def superReadCSV(filepath, first_codec='utf8', usecols=None, 
                  low_memory=False, dtype=None, parse_dates=True, 
                  sep=',', chunksize=None, verbose=False, **kwargs):
@@ -110,17 +133,17 @@ def superReadText(filepath,**kwargs):
     
     if sep is None:
         if ext == '.tsv':
-            kwargs['sep'] = '\t'
+            kwargs['sep'] = kwargs.get('sep', '\t')
             
         elif ext == '.csv':
-            kwargs['sep'] = ','
+            kwargs['sep'] = kwargs.get('sep', ',')
             
         else:
             found_sep = identify_sep(filepath)
-            print(found_sep)
             kwargs['sep'] = found_sep
             
     return superReadCSV(filepath,**kwargs)
+
 
 def superReadFile(filepath,**kwargs):
     """ 
@@ -128,30 +151,35 @@ def superReadFile(filepath,**kwargs):
     Uses superReadText (on .txt,.tsv, or .csv files) and returns a dataframe of the data.
     One function to read almost all types of data files.    
     """
-    if isinstance(filepath,pd.DataFrame): return filepath
-        
-    excels = ['.xlsx','.xls']
-    texts = ['.txt','.tsv','.csv']
+    if isinstance(filepath, pd.DataFrame):
+        return filepath
+
     ext = os.path.splitext(filepath)[1].lower()
     
-    if ext in excels:
+    if ext in ['.xlsx', '.xls']:
         return pd.read_excel(filepath,**kwargs)
-    elif ext in texts:
+
+    elif ext in ['.txt','.tsv','.csv']:
         return superReadText(filepath,**kwargs)
+
     else:
-        raise Exception("Unsupported filetype: {}\n Supported filetypes: {}".format(ext,excels + texts))
+        raise NotImplementedError("Unable to read '{}' files".format(ext))
     
   
-def dedupe_cols(frame):
+def dedupe_cols(df):
     """
-    Need to dedupe columns that have the same name.
+    Removes duplicate columns from a dataframe.
+    Only the first occurrence of each column label
+    is kept.
     """
-    cols = list(frame.columns)
-    for i, item in enumerate(frame.columns):
-        if item in frame.columns[:i]: 
-            cols[i] = "toDROP"
-    frame.columns = cols
-    return frame.drop("toDROP", 1, errors='ignore')
+    tag = "REMOVE_ME_PLEASE"
+    cols = list(df.columns)
+    for i, item in enumerate(df.columns):
+        if item in df.columns[:i]:
+            cols[i] = tag
+        df.columns = cols
+    return df.drop(tag, 1, errors='ignore')
+
 
 def rename_dupe_cols(cols):
     """Takes a list of strings and appends 2,3,4 etc to duplicates. Never appends a 0 or 1. 
@@ -168,17 +196,17 @@ def rename_dupe_cols(cols):
             
     fixed_cols = {}
     
-    for pos,col in positions.items():
+    for pos, col in positions.items():
         if counts[col] > 1:
             fix_cols = {pos: fld for pos,fld in positions.items() if fld == col}
             keys = [p for p in fix_cols.keys()]
             min_pos = min(keys)
             cnt = 1
-            for p,c in fix_cols.items():
+            for p, c in fix_cols.items():
                 if not p == min_pos:
                     cnt += 1
                     c = c + str(cnt)
-                    fixed_cols.update({p:c})
+                    fixed_cols.update({p: c})
                     
     positions.update(fixed_cols)
     
@@ -332,15 +360,28 @@ def gather_frame_fields(df: pd.DataFrame, other_df: pd.DataFrame, index_label: s
                         fields: list=None, copy_frames: bool=False,
                         append_missing: bool=True, **kwargs):
     """
-    Updates df with other_df
-    :param df:
-    :param other_df:
-    :param index_label:
-    :param fields:
-    :param copy_frames:
-    :param append_missing:
-    :param kwargs:
-    :return:
+    Updates a dataframe from another based on common index (or index_label) keys.
+
+    :param df: (pd.DataFrame)
+        The master dataframe to be updated
+    :param other_df: (pd.DataFrame)
+        The other dataframe to gather data from
+    :param index_label: (str, default None)
+        The name of the index column
+        This column will be set to the index of the dataFrame if it's not already.
+        If the index has no name, and the index_label is not in the frame's columns
+        The current index's name will be set to index_label.
+    :param fields: (list, default None)
+        An optional subset of field names to gather data from rather than updating from all
+        fields in the :param other_df.
+    :param copy_frames: (bool, default False)
+        True creates a copy of the data before doing any operations (safer?)
+    :param append_missing: (bool, default True)
+        True appends records to :param df from :param other_df with an index did not exist in :param df.
+    :param kwargs: pd.DataFrame.update(**kwargs)
+
+    :return: (pd.DataFrame)
+        :param df that has updated data from :param other_df
     """
     if copy_frames:
         df = df.copy()
@@ -350,6 +391,8 @@ def gather_frame_fields(df: pd.DataFrame, other_df: pd.DataFrame, index_label: s
         for frame in [df, other_df]:
             if frame.index.name is not index_label and index_label in frame.columns:
                 frame.set_index(index_label, drop=False, inplace=True)
+            else:
+                frame.index.name = index_label
 
     if fields:
         other_df_orig = other_df.copy()
@@ -449,7 +492,92 @@ def dataframe_to_datetime(df, dtypes=['object'], check_num:int = 5, dropna: bool
     return df
 
 
+def dataframe_split_to_files(df: pd.DataFrame, source_path: str, split_on: list,
+                             fields: list=None, dropna: bool=False, dest_dirname:str =None, **kwargs):
+    """
+    Somewhat intelligently splits and exports a DataFrame into separate files based on the given parameters.
 
+    :param df: (pd.DataFrame)
+        The dataframe to split
+    :param source_path: (str)
+        A filepath to use as the base filename/extension for exports
+        (and directory name if dest_dirname is None)
+    :param split_on: (list)
+        The list of column(s) to split the dataframe on.
+        Each value in a split_on column will be paired with a value from
+        the other column(s) (if any) and will
+    :param fields: (list, default None)
+        A subset of fields to export in each split.
+        If None, all fields will be exported.
+    :param dropna: (bool, default False)
+        NA values are either dropped or filled with the word 'blank'
+        which will show up in the filename.
+    :param dest_dirname: (str, default None)
+        A destination directory to store the splits.
+        If None is specified, the source_path's directory will be used.
+
+    :return: list(exported filepaths)
+    """
+    source_base, source_ext = os.path.splitext(os.path.basename(source_path))
+    if dest_dirname is not None:
+        dirname = dest_dirname
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+    else:
+        dirname = os.path.dirname(source_path)
+
+    if not fields:
+        fields = df.columns.tolist()
+
+    if dropna:
+        df.dropna(how='any', subset=split_on, inplace=True)
+    else:
+        [df.loc[:, c].fillna('blank', inplace=True) for c in split_on]
+
+    combos = {c: list(df.loc[:, c].unique()) for c in split_on}
+    keys, exported_paths = [], []
+
+    # TODO: This feels like it should be some sort of recursive function...
+    # Learn this shit and make it split better using all available options
+    # From the combos.
+    for col, values in combos.items():
+        other_cols = [c for c in combos.keys() if c != col]
+        if other_cols:
+            for val in values:
+                for other_col in other_cols:
+
+                    other_vals = combos[other_col]
+                    for other_val in other_vals:
+
+                        key = ''.join(list(sorted([str(val), str(other_val)])))
+                        if key not in keys:
+
+                            mask = ((df.loc[:, col] == val) & (df.loc[:, other_col] == other_val))
+                            df_part = df.loc[mask, fields]
+                            if not df_part.empty:
+
+                                name_str = "{}_{}_{}_{}".format(str(col)[:5], val, str(other_col)[:5], other_val)
+                                name_str = ''.join(e for e in str(name_str) if e.isalnum() or e == '_').strip().lower()
+                                name_str = "{}_{}{}".format(source_base, name_str, source_ext)
+                                out_path = os.path.join(dirname, name_str)
+
+                                dataframe_export(df_part, out_path, **kwargs)
+                                keys.append(key)
+                                exported_paths.append(out_path)
+        else:
+            for val in values:
+
+                df_part = df.loc[df[col] == val, fields]
+                if not df_part.empty:
+
+                    val = ''.join(e for e in str(val) if e.isalnum() or e == '_').strip().lower()
+                    name_str = "{}_{}{}".format(source_base, val, source_ext)
+                    out_path = os.path.join(dirname, name_str)
+
+                    dataframe_export(df_part, out_path, **kwargs)
+                    exported_paths.append(out_path)
+
+    return exported_paths
 
 
 

@@ -49,6 +49,7 @@
     </property>
     <addaction name="actionEditFields"/>
     <addaction name="actionMergePurge"/>
+    <addaction name="actionSplit"/>
     <addaction name="actionSuppress"/>
     <addaction name="actionExecuteScript"/>
    </widget>
@@ -89,6 +90,11 @@
   <action name="actionEditFields">
    <property name="text">
     <string>Edit Fields</string>
+   </property>
+  </action>
+  <action name="actionSplit">
+   <property name="text">
+    <string>Split</string>
    </property>
   </action>
  </widget>

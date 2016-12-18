@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'file.ui'
 #
-# Created: Sun Dec 11 00:48:11 2016
+# Created: Sat Dec 17 21:07:40 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,10 +51,13 @@ class Ui_FileWindow(object):
         self.actionExecuteScript.setObjectName("actionExecuteScript")
         self.actionEditFields = QtGui.QAction(FileWindow)
         self.actionEditFields.setObjectName("actionEditFields")
+        self.actionSplit = QtGui.QAction(FileWindow)
+        self.actionSplit.setObjectName("actionSplit")
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionDelete)
         self.menuAction.addAction(self.actionEditFields)
         self.menuAction.addAction(self.actionMergePurge)
+        self.menuAction.addAction(self.actionSplit)
         self.menuAction.addAction(self.actionSuppress)
         self.menuAction.addAction(self.actionExecuteScript)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -74,4 +77,5 @@ class Ui_FileWindow(object):
         self.actionRename.setText(QtGui.QApplication.translate("FileWindow", "Rename Headers", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteScript.setText(QtGui.QApplication.translate("FileWindow", "Execute Script", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEditFields.setText(QtGui.QApplication.translate("FileWindow", "Edit Fields", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSplit.setText(QtGui.QApplication.translate("FileWindow", "Split", None, QtGui.QApplication.UnicodeUTF8))
 

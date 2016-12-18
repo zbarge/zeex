@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
 import os
 from icons import Icons
 from core.compat import QtGui, QtCore
@@ -31,7 +30,7 @@ from core.ui.file_ui import Ui_FileWindow
 from core.views.actions.rename import RenameDialog
 from core.views.actions.fields_edit import FieldsEditDialog
 from core.ctrls.dataframe import DataFrameModelManager
-
+from core.views.actions.split import SplitFileDialog
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     def __init__(self, model: DataFrameModel, df_manager: DataFrameModelManager, **kwargs):
@@ -45,6 +44,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.setupUi(self)
         self.dialog_rename = None
         self.dialog_fields_edit = None
+        self.dialog_split = SplitFileDialog(model, parent=self)
         self.connect_actions()
         self.connect_icons()
 
@@ -68,6 +68,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
 
     def connect_actions(self):
         self.actionEditFields.triggered.connect(self.open_fields_edit_dialog)
+        self.actionSplit.triggered.connect(self.dialog_split.show)
 
     def connect_icons(self):
         self.setWindowTitle("{}".format(self.currentModel.filePath))
@@ -76,6 +77,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionDelete.setIcon(self.icons['delete'])
         self.actionMergePurge.setVisible(False)
         self.actionSave.setIcon(self.icons['save'])
+        self.actionSplit.setIcon(self.icons['split'])
         self.actionSuppress.setIcon(self.icons['suppress'])
         self.actionEditFields.setIcon(self.icons['add_column'])
 
@@ -88,6 +90,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         if self.dialog_fields_edit is None:
             self.dialog_fields_edit = FieldsEditDialog(self.currentModel, parent=self)
         self.dialog_fields_edit.show()
+
 
 
 

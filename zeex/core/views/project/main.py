@@ -39,6 +39,7 @@ from core.utility.widgets import get_ok_msg_box, create_standard_item_model
 from core.utility.collection import SettingsINI
 
 
+
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     """
     The ProjectMainWindow displays a project that the user wants to work on.

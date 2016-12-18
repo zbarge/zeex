@@ -89,7 +89,7 @@ class PushGridHandler(object):
                 self._right_model.removeRow(item.row())
 
     def set_model_from_list(self, items: list):
-        if self._left_model is None:
+        if not isinstance(self._left_model, QtGui.QStandardItemModel):
             self._left_model = QtGui.QStandardItemModel()
 
         for i in items:

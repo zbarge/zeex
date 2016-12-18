@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import pytest
+import shutil
 from core.utility.pandatools import *
 from tests.main import MainTestClass
 
@@ -31,12 +32,11 @@ SAMPLE_DATE_FAILS = [np.nan, '', '0', 'apples', 1500, 2500]
 
 class TestPandaTools(MainTestClass):
 
-    def test_super_read_file(self):
+    def test_super_read_file(self, df):
         """
         Covering core cases.
         :return:
         """
-        df = self.df()
         exts = ['.csv','.txt']
         separators = [';',',','|','\t']
 
@@ -120,6 +120,37 @@ class TestPandaTools(MainTestClass):
         assert (df5['updated'] == df2['updated']).all()
         assert df4.index.size + df5.index.size == df3.index.size
 
+    def test_dataframe_split_to_file(self, example_file_path):
+        df = superReadFile(example_file_path)
+        dirname = os.path.dirname(example_file_path)
+        test_dir = os.path.join(dirname, "split_file_test")
+        split_on = 'construction'
+        categories = list(df.loc[:, split_on].unique())
+        fields = None
+        exported_files = None
+        return_df = pd.DataFrame()
+
+        try:
+            exported_files = dataframe_split_to_files(df, example_file_path, [split_on],
+                                                      fields=fields, dropna=False, dest_dirname=test_dir)
+            return_frames = [superReadFile(f) for f in exported_files]
+            return_df = pd.concat(return_frames)
+            assert return_df.index.size == df.index.size
+        finally:
+            shutil.rmtree(test_dir, ignore_errors=True)
+
+        assert exported_files and len(exported_files) == len(categories)
+        assert return_df.index.size == df.index.size
+
+        # Verify all policy id's exist both ways
+        for idx in return_df.loc[:, 'policyid'].unique():
+            match = df.loc[df['policyid'] == idx]
+            assert not match.empty
+
+        for idx in df.loc[:, 'policyid'].unique():
+            match = return_df.loc[return_df['policyid'] == idx]
+            assert not match.empty
+
     def test_gather_frame_fields(self):
         sample_cols = ['id', 'name', 'address', 'updated']
         sample_recs = [[1000, 'zeke', '123 street'],
@@ -172,7 +203,6 @@ class TestPandaTools(MainTestClass):
                 # Expecting 1 IndexError here.
                 if error_count > 1:
                     raise
-                pass
 
         assert updated_df.index.size == sample_df.index.size + 1, "Should have had 1 additional record appended."
 
