@@ -101,6 +101,7 @@ class TestMergePurgeDialog(MainTestClass):
 
         assert caught_ascending
         assert caught_left >= 3
+        dialog.close()
 
     def test_sorting(self, dialog: MergePurgeDialog, example_file_path):
         """
@@ -175,6 +176,7 @@ class TestMergePurgeDialog(MainTestClass):
             last = check_entry[check]
         assert len(bads) < 0.1 * check_df.index.size
         os.remove(check_path)
+        dialog.close()
 
     def test_dedupe(self, dialog: MergePurgeDialog, example_file_path):
         """
@@ -218,6 +220,7 @@ class TestMergePurgeDialog(MainTestClass):
 
         final_check_df = df.loc[df.loc[:,'policyid'].isin(compare_df.loc[:, 'policyid'].unique()), :]
         assert final_check_df.index.size == df.index.size
+        dialog.close()
 
     def test_merge(self, dialog: MergePurgeDialog, example_file_path):
         """
@@ -269,6 +272,7 @@ class TestMergePurgeDialog(MainTestClass):
             for p in [merge_path, check_path, report_path]:
                 if os.path.exists(p):
                     os.remove(p)
+        dialog.close()
 
     @pytest.mark.parametrize("overwrite", [True, False])
     def test_merge_gathered(self, dialog: MergePurgeDialog, example_file_path, overwrite):
@@ -357,6 +361,7 @@ class TestMergePurgeDialog(MainTestClass):
             for p in [merge_path, check_path, report_path]:
                 if os.path.exists(p):
                     os.remove(p)
+        dialog.close()
 
     def test_purge(self, dialog: MergePurgeDialog, example_file_path):
         """
@@ -412,3 +417,4 @@ class TestMergePurgeDialog(MainTestClass):
             for p in [kill_path, check_path, report_path]:
                 if os.path.exists(p):
                     os.remove(p)
+        dialog.close()

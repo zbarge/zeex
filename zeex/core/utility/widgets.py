@@ -59,10 +59,10 @@ def ensure_modeled(item: (str, list, QtGui.QStandardItemModel)):
     return item
 
 
-def display_ok_msg(parent, msg):
+def get_ok_msg_box(parent, msg):
     msgBox = QtGui.QMessageBox(parent)
     msgBox.setText(msg)
-    msgBox.show()
+    return msgBox
 
 
 def shift_grid_layout_down(layout):

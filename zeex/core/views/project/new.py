@@ -31,8 +31,8 @@ from core.ui.project.new_ui import Ui_NewProjectDialog
 class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
     signalProjectNew = QtCore.Signal(list) #[dirname, settings.ini]
 
-    def __init__(self):
-        QtGui.QDialog.__init__(self)
+    def __init__(self, parent=None):
+        QtGui.QDialog.__init__(self, parent=parent)
         self.setupUi(self)
         self.namePushButton.clicked.connect(self.set_dirname)
         self.settingsFilePushButton.clicked.connect(self.set_config_ini)

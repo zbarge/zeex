@@ -192,7 +192,18 @@ class FieldModel(QtGui.QStandardItemModel):
         :param dtype: the data type of the column
         :return: None
         """
-        ct = self.rowCount()
+        match = self.findItems(field_name)
+        if match:
+            ct = match[0].row()
+            # Pass along existing values instead of nulls
+            # But don't override the new set.
+            new_name = (self.item(ct, 1).text() if new_name is None else new_name)
+            dtype = (self.item(ct, 2).text() if dtype is None else dtype)
+        else:
+            ct = self.rowCount()
+            new_name = (field_name if new_name is None else new_name)
+            dtype = ('object' if dtype is None else dtype)
+
         self.setItem(ct, 0, self._handle_field_name(field_name))
         self.setItem(ct, 1, self._handle_new_name(new_name))
         self.setItem(ct, 2, self._handle_dtype(dtype))

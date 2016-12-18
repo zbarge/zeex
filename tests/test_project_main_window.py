@@ -45,6 +45,9 @@ class TestProjectMainWindow(MainTestClass):
         dialog = window.dialog_settings
         window.actionPreferences.trigger()
         assert dialog.isVisible()
+        dialog.close()
+        window.close()
+
 
     def test_merge_purge_dialog(self, qtbot, window: ProjectMainWindow, example_file_path):
         file_base, ext = os.path.splitext(os.path.basename(example_file_path))
@@ -82,6 +85,7 @@ class TestProjectMainWindow(MainTestClass):
 
         assert caught_ascending
         assert caught_left >= 3
+        window.close()
 
     def test_export_dialog(self, qtbot, window: ProjectMainWindow, example_file_path):
         """
@@ -107,7 +111,7 @@ class TestProjectMainWindow(MainTestClass):
 
         window.open_export_dialog()
         dialog = window.dialog_export
-        qtbot.addWidget(dialog)
+        #qtbot.addWidget(dialog)
         current_idx = dialog.comboBoxSource.findText(example_file_path)
         comma_idx = dialog.comboBoxSeparator.findText("Comma")
         encode_idx = dialog.comboBoxEncoding.findText("UTF-8")
@@ -128,6 +132,7 @@ class TestProjectMainWindow(MainTestClass):
         assert dialog.comboBoxSource.currentText() == example_file_path
         dialog.buttonBox.accepted.emit()
         assert os.path.exists(example_export_path)
+        dialog.close()
 
     def test_import_dialog(self, qtbot, window: ProjectMainWindow, example_file_path):
         """
@@ -143,6 +148,7 @@ class TestProjectMainWindow(MainTestClass):
         assert example_file_path not in window.df_manager.file_paths
         window.open_import_dialog()
         assert window.dialog_import.isVisible()
+        window.dialog_import.close()
 
 
 

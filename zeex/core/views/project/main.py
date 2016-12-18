@@ -35,7 +35,7 @@ from core.views.actions.export import DataFrameModelExportDialog
 from core.views.actions.merge_purge import MergePurgeDialog
 from core.views.file import FileTableWindow
 from core.views.settings import SettingsDialog
-from core.utility.widgets import display_ok_msg, create_standard_item_model
+from core.utility.widgets import get_ok_msg_box, create_standard_item_model
 from core.utility.collection import SettingsINI
 
 
@@ -55,13 +55,13 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     signalModelOpened = QtCore.Signal(str)
     signalModelDestroyed = QtCore.Signal(str)
 
-    def __init__(self, settings_ini: (str, SettingsINI)):
+    def __init__(self, settings_ini: (str, SettingsINI), parent=None):
         """
         :param settings_ini: (str, SettingsINI)
             can be a settings_ini file path or configured SettingsINI object.
         """
         self.df_manager = DataFrameModelManager()
-        QtGui.QMainWindow.__init__(self)
+        QtGui.QMainWindow.__init__(self, parent=parent)
         self.setupUi(self)
         self.icons = Icons()
         self.dialog_settings = SettingsDialog(settings=settings_ini)
@@ -209,7 +209,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             model = self.get_tree_selected_model()
             if model is None:
                 # No, not sure why this was called..
-                return display_ok_msg(self, "No model available to open.")
+                #box = get_ok_msg_box(self, "No model available to open.")
+                #box.show()
+                pass
 
         name = os.path.basename(model.filePath)
 
@@ -255,7 +257,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         if filename is not None:
             os.remove(filename)
         else:
-            display_ok_msg(self, "No file selected.")
+            #box = get_ok_msg_box(self, "No file selected.")
+            #box.show()
+            pass
 
     def open_tableview_current(self, model: DataFrameModel=None):
         """

@@ -372,7 +372,7 @@ def gather_frame_fields(df: pd.DataFrame, other_df: pd.DataFrame, index_label: s
     return df
 
 
-def series_is_datetime(series: pd.Series, check_num: int=10, dropna: bool=True):
+def series_is_datetime(series: pd.Series, check_num: int=5, dropna: bool=True):
     """
     Checks random rows in a Series comparing rows that coerce to datetime.
     :param series:
@@ -398,7 +398,7 @@ def series_is_datetime(series: pd.Series, check_num: int=10, dropna: bool=True):
     return got > lost
 
 
-def series_to_datetime(series, check_num: int=10, dropna: bool=True, **kwargs):
+def series_to_datetime(series, check_num: int=5, dropna: bool=True, **kwargs):
     """
 
     :param series: (pd.Series)
@@ -418,7 +418,7 @@ def series_to_datetime(series, check_num: int=10, dropna: bool=True, **kwargs):
     return series
 
 
-def dataframe_to_datetime(df, dtypes=['object'], check_num:int = 10, dropna: bool=True, raise_on_error=False, **kwargs):
+def dataframe_to_datetime(df, dtypes=['object'], check_num:int = 5, dropna: bool=True, raise_on_error=False, **kwargs):
     """
     Scans columns in a dataframe looking for columns to convert into a DateTime.
 

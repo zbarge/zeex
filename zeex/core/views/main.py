@@ -45,7 +45,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.setMaximumWidth(800)
         self.icons = Icons()
         self.SettingsDialog = SettingsDialog(parent=self)
-        self.NewProjectDialog = NewProjectDialog()
+        self.NewProjectDialog = NewProjectDialog(parent=self)
 
         self.connect_actions()
         self.connect_filetree()
@@ -145,7 +145,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             settings.save_as(ini, set_self=True)
 
             # Build & cache window
-            window = ProjectMainWindow(ini)
+            window = ProjectMainWindow(ini, parent=self)
             self._cache_project(dirname, window)
             self.signalProjectOpened.emit([dirname, ini])
             window.show()
@@ -153,7 +153,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
     def display_ok_msg(self, msg):
         box = QtGui.QMessageBox(self)
         box.setText(msg)
-        box.exec_()
+        box.show()
 
     def create_new_project(self):
         # Creates new project dialog and

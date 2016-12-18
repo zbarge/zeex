@@ -72,7 +72,7 @@ class TestMainWindow(MainTestClass):
 
         assert dialog.Config.get('GENERAL', 'ROOT_DIRECTORY') == orig_root
         assert dialog.Config.get('GENERAL', 'LOG_DIRECTORY') == orig_log
-        dialog.hide()
+        dialog.close()
 
     def test_new_project_dialog(self, qtbot, window: ZeexMainWindow, fixtures_dir):
         window.actionNew.trigger()
@@ -101,6 +101,7 @@ class TestMainWindow(MainTestClass):
                     found = True
 
         assert found
+        window.close()
 
 
 
