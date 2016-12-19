@@ -53,8 +53,9 @@ def dataframe_chunks(df, chunksize=None):
         yield df
     else:
         while df.index.size > 0:
-            take = df.iloc[:chunksize]
-            df = df.loc[~df.index.isin(take.index), :]
+            take = df.iloc[0:chunksize]
+            #df = df.loc[~df.index.isin(take.index), :]
+            df = df.iloc[chunksize:df.index.size]
             yield take
 
 
