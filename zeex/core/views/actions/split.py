@@ -77,16 +77,23 @@ class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):
         dropna = self.checkBoxDropNulls.isChecked()
         dirname = self.lineEditExportPath.text()
         source_path = self.lineEditSourcePath.text()
+        max_rows = self.lineEditMaxRows.text()
+
+        try:
+            max_rows = int(max_rows)
+        except ValueError:
+            max_rows = None
 
         df = self.df_model.dataFrame()
-        assert split_on, "No fields selected to split on..."
 
         exported_paths = dataframe_split_to_files(df,
                                                   source_path,
                                                   split_on,
                                                   fields=fields,
                                                   dropna=dropna,
-                                                  dest_dirname=dirname)
+                                                  dest_dirname=dirname,
+                                                  chunksize=max_rows,
+                                                  index=False)
         emission = [source_path, exported_paths]
         self.signalFileSplit.emit(emission)
         [print(e) for e in emission[1]]

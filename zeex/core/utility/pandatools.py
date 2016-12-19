@@ -28,6 +28,7 @@ import os
 import datetime
 import pandas as pd
 import numpy as np
+from core.utility.ostools import path_incremented
 
 def force_int(integer):
     integer = ''.join(e for e in str(integer) if e.isdigit() or e is '.')
@@ -35,6 +36,26 @@ def force_int(integer):
         return int(integer)
     except:
         return 0
+
+
+def dataframe_chunks(df, chunksize=None):
+    """
+    Yields chunks from a dataframe as large as chunksize until
+    there are no records left.
+
+    :param df: (pd.DataFrame)
+    :param chunksize: (int, default None)
+        The max rows for each chunk.
+    :return: (pd.DataFrame)
+        Portions of the dataframe
+    """
+    if chunksize is None or chunksize <= 0 or chunksize >= df.index.size:
+        yield df
+    else:
+        while df.index.size > 0:
+            take = df.iloc[:chunksize]
+            df = df.loc[~df.index.isin(take.index), :]
+            yield take
 
 
 def dataframe_export(df, filepath, **kwargs):
@@ -58,6 +79,29 @@ def dataframe_export(df, filepath, **kwargs):
         df.to_csv(filepath, **kwargs)
     else:
         raise NotImplementedError("Not sure how to export '{}' files.".format(ext))
+
+
+def dataframe_export_chunks(df, filepath, max_size=None, overwrite=True, **kwargs):
+    """
+    Exports a dataframe into chunks and returns the filepaths.
+
+    :param df: (pd.DataFrame)
+        The DataFrame to export in chunks.
+    :param filepath: (str)
+        The base filepath (will be incremented by 1 for each export)
+    :param max_size: (int, default None)
+        The max size of each dataframe to export.
+    :param kwargs: (pd.to_csv/pd.to_excel kwargs)
+        Look at pandas documentation for kwargs.
+    :return: list(filepaths exported)
+    """
+    paths = []
+    for chunk in dataframe_chunks(df, chunksize=max_size):
+        dataframe_export(chunk, filepath, **kwargs)
+        paths.append(filepath)
+        filepath = path_incremented(filepath, overwrite=overwrite)
+
+    return paths
 
 
 def superReadCSV(filepath, first_codec='utf8', usecols=None, 
@@ -133,10 +177,10 @@ def superReadText(filepath,**kwargs):
     
     if sep is None:
         if ext == '.tsv':
-            kwargs['sep'] = kwargs.get('sep', '\t')
+            kwargs['sep'] = '\t'
             
         elif ext == '.csv':
-            kwargs['sep'] = kwargs.get('sep', ',')
+            kwargs['sep'] = ','
             
         else:
             found_sep = identify_sep(filepath)
@@ -493,7 +537,8 @@ def dataframe_to_datetime(df, dtypes=['object'], check_num:int = 5, dropna: bool
 
 
 def dataframe_split_to_files(df: pd.DataFrame, source_path: str, split_on: list,
-                             fields: list=None, dropna: bool=False, dest_dirname:str =None, **kwargs):
+                             fields: list=None, dropna: bool=False, dest_dirname:str =None,
+                             chunksize: int=None, **kwargs):
     """
     Somewhat intelligently splits and exports a DataFrame into separate files based on the given parameters.
 
@@ -515,7 +560,8 @@ def dataframe_split_to_files(df: pd.DataFrame, source_path: str, split_on: list,
     :param dest_dirname: (str, default None)
         A destination directory to store the splits.
         If None is specified, the source_path's directory will be used.
-
+    :param chunksize: (int, default None)
+        The max # of records to export per file.
     :return: list(exported filepaths)
     """
     source_base, source_ext = os.path.splitext(os.path.basename(source_path))
@@ -530,52 +576,64 @@ def dataframe_split_to_files(df: pd.DataFrame, source_path: str, split_on: list,
         fields = df.columns.tolist()
 
     if dropna:
-        df.dropna(how='any', subset=split_on, inplace=True)
-    else:
+        if not split_on:
+            subset = None
+        else:
+            subset = split_on
+        df.dropna(how='any', subset=subset, inplace=True)
+    elif split_on:
         [df.loc[:, c].fillna('blank', inplace=True) for c in split_on]
 
-    combos = {c: list(df.loc[:, c].unique()) for c in split_on}
-    keys, exported_paths = [], []
+    if not split_on:
+        df = df.loc[:, fields]
+        file_path = os.path.join(dirname, source_base + source_ext)
+        exported_paths = dataframe_export_chunks(df, file_path, max_size=chunksize, **kwargs)
 
-    # TODO: This feels like it should be some sort of recursive function...
-    # Learn this shit and make it split better using all available options
-    # From the combos.
-    for col, values in combos.items():
-        other_cols = [c for c in combos.keys() if c != col]
-        if other_cols:
-            for val in values:
-                for other_col in other_cols:
+    else:
 
-                    other_vals = combos[other_col]
-                    for other_val in other_vals:
+        combos = {c: list(df.loc[:, c].unique()) for c in split_on}
+        keys, exported_paths = [], []
 
-                        key = ''.join(list(sorted([str(val), str(other_val)])))
-                        if key not in keys:
+        # TODO: This feels like it should be some sort of recursive function...
+        # Learn this shit and make it split better using all available options
+        # From the combos.
+        for col, values in combos.items():
+            other_cols = [c for c in combos.keys() if c != col]
+            if other_cols:
+                for val in values:
+                    for other_col in other_cols:
 
-                            mask = ((df.loc[:, col] == val) & (df.loc[:, other_col] == other_val))
-                            df_part = df.loc[mask, fields]
-                            if not df_part.empty:
+                        other_vals = combos[other_col]
+                        for other_val in other_vals:
 
-                                name_str = "{}_{}_{}_{}".format(str(col)[:5], val, str(other_col)[:5], other_val)
-                                name_str = ''.join(e for e in str(name_str) if e.isalnum() or e == '_').strip().lower()
-                                name_str = "{}_{}{}".format(source_base, name_str, source_ext)
-                                out_path = os.path.join(dirname, name_str)
+                            key = ''.join(list(sorted([str(val), str(other_val)])))
+                            if key not in keys:
 
-                                dataframe_export(df_part, out_path, **kwargs)
-                                keys.append(key)
-                                exported_paths.append(out_path)
-        else:
-            for val in values:
+                                mask = ((df.loc[:, col] == val) & (df.loc[:, other_col] == other_val))
+                                df_part = df.loc[mask, fields]
+                                if not df_part.empty:
 
-                df_part = df.loc[df[col] == val, fields]
-                if not df_part.empty:
+                                    name_str = "{}_{}_{}_{}".format(str(col)[:5], val, str(other_col)[:5], other_val)
+                                    name_str = ''.join(e for e in str(name_str)
+                                                       if e.isalnum() or e == '_').strip().lower()
+                                    name_str = "{}_{}{}".format(source_base, name_str, source_ext)
+                                    out_path = os.path.join(dirname, name_str)
 
-                    val = ''.join(e for e in str(val) if e.isalnum() or e == '_').strip().lower()
-                    name_str = "{}_{}{}".format(source_base, val, source_ext)
-                    out_path = os.path.join(dirname, name_str)
+                                    paths = dataframe_export_chunks(df_part, out_path, max_size=chunksize, **kwargs)
+                                    keys.append(key)
+                                    exported_paths.extend(paths)
+            else:
+                for val in values:
 
-                    dataframe_export(df_part, out_path, **kwargs)
-                    exported_paths.append(out_path)
+                    df_part = df.loc[df[col] == val, fields]
+                    if not df_part.empty:
+
+                        val = ''.join(e for e in str(val) if e.isalnum() or e == '_').strip().lower()
+                        name_str = "{}_{}{}".format(source_base, val, source_ext)
+                        out_path = os.path.join(dirname, name_str)
+
+                        paths = dataframe_export_chunks(df_part, out_path, max_size=chunksize, **kwargs)
+                        exported_paths.extend(paths)
 
     return exported_paths
 

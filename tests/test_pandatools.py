@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import pytest
 import shutil
 from core.utility.pandatools import *
@@ -119,6 +120,41 @@ class TestPandaTools(MainTestClass):
         assert (df4['updated'] == df['updated']).all()
         assert (df5['updated'] == df2['updated']).all()
         assert df4.index.size + df5.index.size == df3.index.size
+
+    @pytest.mark.parametrize('chunksize', list(x for x in range(1, 30, 10)))
+    def test_dataframe_chunks(self, example_file_path, chunksize):
+        df = superReadFile(example_file_path)
+        count, size = 0, 0
+        for chunk in dataframe_chunks(df, chunksize=chunksize):
+            count += 1
+            size += chunk.index.size
+        assert count >= int(df.index.size / chunksize)
+        assert size == df.index.size
+
+    @pytest.mark.parametrize('chunksize', list(x for x in range(1, 30, 10)))
+    def test_dataframe_export_chunks(self, example_file_path, chunksize):
+        df = superReadFile(example_file_path)
+        check_path = os.path.splitext(example_file_path)[0] + "test_export_dataframe_chunks.csv"
+        paths = dataframe_export_chunks(df, check_path, max_size=chunksize)
+        return_frame = pd.DataFrame()
+        check_base = os.path.splitext(check_path)[0]
+        try:
+            for p in paths:
+                p_base = os.path.splitext(p)[0]
+                assert check_base in p_base
+            return_frame = pd.concat([superReadFile(p) for p in paths])
+        finally:
+            [os.remove(p) for p in paths if os.path.exists(p)]
+
+        # Make sure we didnt gain or lose anything.
+        assert return_frame.index.size == df.index.size
+
+        # Verify ids of the records.
+        for i in range(df.index.size):
+            rec = df.iloc[i]
+            id = rec['policyid']
+            check = return_frame.loc[return_frame['policyid'] == id]
+            assert not check.empty
 
     def test_dataframe_split_to_file(self, example_file_path):
         df = superReadFile(example_file_path)
