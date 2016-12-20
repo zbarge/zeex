@@ -39,7 +39,6 @@ from core.utility.widgets import get_ok_msg_box, create_standard_item_model
 from core.utility.collection import SettingsINI
 
 
-
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     """
     The ProjectMainWindow displays a project that the user wants to work on.
@@ -69,6 +68,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
         self.dialog_export = DataFrameModelExportDialog(self.df_manager, parent=self)
         self.dialog_import = CSVImportDialog(self)
+        self.key_delete = QtGui.QShortcut(self)
+        self.key_enter = QtGui.QShortcut(self)
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
@@ -113,12 +114,16 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         Connects all project actions.
         :return: None
         """
+        self.key_delete.setKey('del')
+        self.key_enter.setKey('return')
         self.actionPreferences.triggered.connect(self.open_settings_dialog)
         self.actionNew.triggered.connect(self.open_import_dialog)
         self.actionOpen.triggered.connect(self.open_tableview_window)
         self.actionSave.triggered.connect(self.open_export_dialog)
         self.actionRemove.triggered.connect(self.remove_tree_selected_path)
         self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
+        self.key_delete.activated.connect(self.remove_tree_selected_path)
+        self.key_enter.activated.connect(self.open_tableview_window)
 
     def connect_icons(self):
         """

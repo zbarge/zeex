@@ -47,6 +47,7 @@
     <property name="title">
      <string>Action</string>
     </property>
+    <addaction name="actionAnalyze"/>
     <addaction name="actionEditFields"/>
     <addaction name="actionMergePurge"/>
     <addaction name="actionSplit"/>
@@ -95,6 +96,11 @@
   <action name="actionSplit">
    <property name="text">
     <string>Split</string>
+   </property>
+  </action>
+  <action name="actionAnalyze">
+   <property name="text">
+    <string>Analyze</string>
    </property>
   </action>
  </widget>

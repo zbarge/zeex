@@ -46,6 +46,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.icons = Icons()
         self.SettingsDialog = SettingsDialog(parent=self)
         self.NewProjectDialog = NewProjectDialog(parent=self)
+        self.key_enter = QtGui.QShortcut(self)
 
         self.connect_actions()
         self.connect_filetree()
@@ -53,12 +54,14 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self._project_cache = {}
         
     def connect_actions(self):
+        self.key_enter.setKey('return')
         self.NewProjectDialog.signalProjectNew.connect(self.open_project)
         self.SettingsDialog.signalSettingsSaved.connect(self.connect_filetree)
         self.actionSettings.triggered.connect(self.open_settings)
         self.actionOpen.triggered.connect(self.open_project)
         self.actionNew.triggered.connect(self.create_new_project)
         self.actionEdit.setVisible(False)
+        self.key_enter.activated.connect(self.open_project)
 
     def connect_icons(self):
         self.setWindowIcon(self.icons['home'])

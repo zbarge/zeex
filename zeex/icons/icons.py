@@ -31,7 +31,7 @@ ICON_NAMES = ['add', 'delete', 'download', 'export_csv',
               'import','merge','redo','save','saveas', 'send','split',
               'suppress', 'undo', 'edit', 'settings', 'home','ok',
               'cancel','delete_database', 'lightning','add_column', 'add_row',
-              'delete_column', 'delete_row', 'filter', 'rename', 'spreadsheet']
+              'delete_column', 'delete_row', 'filter', 'rename', 'spreadsheet', 'count']
 
 
 def path_for(name: str, directory: str = None,  verify=False):

@@ -31,6 +31,8 @@ from core.views.actions.rename import RenameDialog
 from core.views.actions.fields_edit import FieldsEditDialog
 from core.ctrls.dataframe import DataFrameModelManager
 from core.views.actions.split import SplitFileDialog
+from core.views.actions.analyze import FileAnalyzerDialog
+
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     def __init__(self, model: DataFrameModel, df_manager: DataFrameModelManager, **kwargs):
@@ -38,13 +40,13 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.df_manager = df_manager
         self._widget = DataTableWidget()
         self._widget.setModel(model)
-
         kwargs['parent'] = self
         self.icons = Icons()
         self.setupUi(self)
         self.dialog_rename = None
         self.dialog_fields_edit = None
         self.dialog_split = SplitFileDialog(model, parent=self)
+        self.dialog_analyze = FileAnalyzerDialog(model, parent=self)
         self.connect_actions()
         self.connect_icons()
 
@@ -64,11 +66,12 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
 
     @property
     def currentDataFrame(self):
-        return self.currentModel._dataFrame
+        return self.currentModel.dataFrame()
 
     def connect_actions(self):
         self.actionEditFields.triggered.connect(self.open_fields_edit_dialog)
         self.actionSplit.triggered.connect(self.dialog_split.show)
+        self.actionAnalyze.triggered.connect(self.dialog_analyze.show)
 
     def connect_icons(self):
         self.setWindowTitle("{}".format(self.currentModel.filePath))
@@ -80,6 +83,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionSplit.setIcon(self.icons['split'])
         self.actionSuppress.setIcon(self.icons['suppress'])
         self.actionEditFields.setIcon(self.icons['add_column'])
+        self.actionAnalyze.setIcon(self.icons['count'])
 
     def open_rename_dialog(self):
         if self.dialog_rename is None:
