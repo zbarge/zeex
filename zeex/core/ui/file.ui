@@ -49,10 +49,11 @@
     </property>
     <addaction name="actionAnalyze"/>
     <addaction name="actionEditFields"/>
+    <addaction name="actionExecuteScript"/>
     <addaction name="actionMergePurge"/>
+    <addaction name="actionNormalize"/>
     <addaction name="actionSplit"/>
     <addaction name="actionSuppress"/>
-    <addaction name="actionExecuteScript"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAction"/>
@@ -101,6 +102,11 @@
   <action name="actionAnalyze">
    <property name="text">
     <string>Analyze</string>
+   </property>
+  </action>
+  <action name="actionNormalize">
+   <property name="text">
+    <string>Normalize</string>
    </property>
   </action>
  </widget>

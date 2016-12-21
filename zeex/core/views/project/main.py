@@ -39,6 +39,7 @@ from core.utility.widgets import get_ok_msg_box, create_standard_item_model
 from core.utility.collection import SettingsINI
 from core.utility.ostools import zipfile_compress
 
+
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     """
     The ProjectMainWindow displays a project that the user wants to work on.
@@ -159,8 +160,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.treeView.setModel(model)
         self.treeView.setRootIndex(model.index(rootdir))
         self.treeView.setColumnWidth(0, 400)
-        self.treeView.setDragEnabled(True)
-        self.treeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
 
     def connect_settings_dialog(self):
         """
@@ -172,8 +171,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         #Adjust the box to remove irrelevant items.
         self.dialog_settings.cloudProviderComboBox.hide()
         self.dialog_settings.cloudProviderLabel.hide()
-        #self.dialog_settings.rootDirectoryLabel.hide()
-        #self.dialog_settings.rootDirectoryLineEdit.hide()
         self.dialog_settings.btnLogDirectory.hide()
         self.dialog_settings.btnRootDirectory.hide()
         self.dialog_settings.themeComboBox.hide()

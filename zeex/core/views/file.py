@@ -32,7 +32,7 @@ from core.views.actions.fields_edit import FieldsEditDialog
 from core.ctrls.dataframe import DataFrameModelManager
 from core.views.actions.split import SplitFileDialog
 from core.views.actions.analyze import FileAnalyzerDialog
-
+from core.views.actions.normalize import ColumnNormalizerDialog
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     def __init__(self, model: DataFrameModel, df_manager: DataFrameModelManager, **kwargs):
@@ -47,6 +47,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.dialog_fields_edit = None
         self.dialog_split = SplitFileDialog(model, parent=self)
         self.dialog_analyze = FileAnalyzerDialog(model, parent=self)
+        self.dialog_normalize = ColumnNormalizerDialog(model, parent=self)
         self.connect_actions()
         self.connect_icons()
 
@@ -72,6 +73,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionEditFields.triggered.connect(self.open_fields_edit_dialog)
         self.actionSplit.triggered.connect(self.dialog_split.show)
         self.actionAnalyze.triggered.connect(self.dialog_analyze.show)
+        self.actionNormalize.triggered.connect(self.dialog_normalize.show)
 
     def connect_icons(self):
         self.setWindowTitle("{}".format(self.currentModel.filePath))

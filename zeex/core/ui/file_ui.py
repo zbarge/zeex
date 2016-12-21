@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'file.ui'
 #
-# Created: Mon Dec 19 13:07:22 2016
+# Created: Wed Dec 21 04:37:19 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,14 +55,17 @@ class Ui_FileWindow(object):
         self.actionSplit.setObjectName("actionSplit")
         self.actionAnalyze = QtGui.QAction(FileWindow)
         self.actionAnalyze.setObjectName("actionAnalyze")
+        self.actionNormalize = QtGui.QAction(FileWindow)
+        self.actionNormalize.setObjectName("actionNormalize")
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionDelete)
         self.menuAction.addAction(self.actionAnalyze)
         self.menuAction.addAction(self.actionEditFields)
+        self.menuAction.addAction(self.actionExecuteScript)
         self.menuAction.addAction(self.actionMergePurge)
+        self.menuAction.addAction(self.actionNormalize)
         self.menuAction.addAction(self.actionSplit)
         self.menuAction.addAction(self.actionSuppress)
-        self.menuAction.addAction(self.actionExecuteScript)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAction.menuAction())
 
@@ -82,4 +85,5 @@ class Ui_FileWindow(object):
         self.actionEditFields.setText(QtGui.QApplication.translate("FileWindow", "Edit Fields", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSplit.setText(QtGui.QApplication.translate("FileWindow", "Split", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAnalyze.setText(QtGui.QApplication.translate("FileWindow", "Analyze", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNormalize.setText(QtGui.QApplication.translate("FileWindow", "Normalize", None, QtGui.QApplication.UnicodeUTF8))
 
