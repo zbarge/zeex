@@ -42,7 +42,7 @@ class TestMainWindow(MainTestClass):
 
     @pytest.fixture
     def settings_dialog(self, window):
-        return window.SettingsDialog
+        return window.dialog_settings
 
     def test_settings_dialog(self, qtbot, window, settings_dialog: SettingsDialog, fixtures_dir):
         window.actionSettings.trigger()
@@ -76,7 +76,7 @@ class TestMainWindow(MainTestClass):
 
     def test_new_project_dialog(self, qtbot, window: ZeexMainWindow, fixtures_dir):
         window.actionNew.trigger()
-        dialog = window.NewProjectDialog
+        dialog = window.dialog_new_project
         assert dialog.isEnabled()
         proj_dir = os.path.join(fixtures_dir, "project")
         if os.path.exists(proj_dir):
@@ -84,7 +84,7 @@ class TestMainWindow(MainTestClass):
 
         log_dir = os.path.join(proj_dir, "logs")
 
-        dialog.settingsFileLineEdit.setText(window.SettingsDialog.Config.default_path)
+        dialog.settingsFileLineEdit.setText(window.dialog_settings.Config.default_path)
         dialog.nameLineEdit.setText(proj_dir)
 
         button = dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok)

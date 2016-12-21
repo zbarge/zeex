@@ -25,10 +25,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from PySide import QtGui
+from core.compat import QtGui, QtCore
+
 
 class FileTreeModel(QtGui.QFileSystemModel):
     def __init__(self, parent=None, root_dir=None):
         super(FileTreeModel, self).__init__(parent)
         self._root_dir = root_dir
         self.setRootPath(self._root_dir)
+
+    def dropMimeData(self, mimedata, action, row, column, parentIndex):
+        print(mimedata)
+        print(action)
+        print(row)
+        print(column)
+        print(parentIndex)
+
+    def mimeData(self, indexes):
+        print("MimeData")
+        index = indexes[0]
+        mimedata = QtCore.QMimeData()
+        mimedata.setData(u'filepath', QtCore.QByteArray(u'testtest'))
+        return mimedata
+
+    def setData(self, index, value, role):
+        print("setData")
+        super(FileTreeModel, self).setData(index, value, role)
+

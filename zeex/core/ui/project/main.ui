@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QTreeView" name="ProjectsTreeView"/>
+     <widget class="FileSystemTreeView" name="treeView"/>
     </item>
    </layout>
   </widget>
@@ -55,6 +55,7 @@
     </property>
     <addaction name="actionMerge_Purge"/>
     <addaction name="actionRename"/>
+    <addaction name="actionZip"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRecent_Files"/>
@@ -109,7 +110,19 @@
     <string>Rename</string>
    </property>
   </action>
+  <action name="actionZip">
+   <property name="text">
+    <string>Zip</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FileSystemTreeView</class>
+   <extends>QTreeView</extends>
+   <header>core/views/treeview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

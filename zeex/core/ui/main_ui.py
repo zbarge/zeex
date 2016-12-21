@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Dec  4 09:43:09 2016
+# Created: Tue Dec 20 16:52:45 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,9 +15,9 @@ class Ui_HomeWindow(object):
         HomeWindow.resize(800, 600)
         self.HomeWidget = QtGui.QWidget(HomeWindow)
         self.HomeWidget.setObjectName("HomeWidget")
-        self.ProjectsTreeView = QtGui.QTreeView(self.HomeWidget)
-        self.ProjectsTreeView.setGeometry(QtCore.QRect(35, 81, 721, 441))
-        self.ProjectsTreeView.setObjectName("ProjectsTreeView")
+        self.treeView = FileSystemTreeView(self.HomeWidget)
+        self.treeView.setGeometry(QtCore.QRect(35, 81, 721, 441))
+        self.treeView.setObjectName("treeView")
         HomeWindow.setCentralWidget(self.HomeWidget)
         self.homemenu = QtGui.QMenuBar(HomeWindow)
         self.homemenu.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -38,11 +38,14 @@ class Ui_HomeWindow(object):
         self.actionEdit.setObjectName("actionEdit")
         self.actionSettings = QtGui.QAction(HomeWindow)
         self.actionSettings.setObjectName("actionSettings")
+        self.actionZip = QtGui.QAction(HomeWindow)
+        self.actionZip.setObjectName("actionZip")
         self.menuProjects.addAction(self.actionOpen)
         self.menuProjects.addAction(self.actionNew)
         self.menuProjects.addAction(self.actionSave)
         self.menuProjects.addAction(self.actionEdit)
         self.menuProjects.addAction(self.actionSettings)
+        self.menuProjects.addAction(self.actionZip)
         self.homemenu.addAction(self.menuProjects.menuAction())
 
         self.retranslateUi(HomeWindow)
@@ -56,4 +59,6 @@ class Ui_HomeWindow(object):
         self.actionSave.setText(QtGui.QApplication.translate("HomeWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit.setText(QtGui.QApplication.translate("HomeWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSettings.setText(QtGui.QApplication.translate("HomeWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZip.setText(QtGui.QApplication.translate("HomeWindow", "Zip", None, QtGui.QApplication.UnicodeUTF8))
 
+from core.views.treeview import FileSystemTreeView

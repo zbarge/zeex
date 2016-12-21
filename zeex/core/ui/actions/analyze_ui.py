@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'analyze.ui'
 #
-# Created: Mon Dec 19 15:14:18 2016
+# Created: Tue Dec 20 13:10:25 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_FileAnalyzerDialog(object):
     def setupUi(self, FileAnalyzerDialog):
         FileAnalyzerDialog.setObjectName("FileAnalyzerDialog")
-        FileAnalyzerDialog.resize(904, 645)
+        FileAnalyzerDialog.resize(904, 505)
         self.gridLayoutWidget = QtGui.QWidget(FileAnalyzerDialog)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 20, 881, 471))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")

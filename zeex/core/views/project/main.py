@@ -37,7 +37,7 @@ from core.views.file import FileTableWindow
 from core.views.settings import SettingsDialog
 from core.utility.widgets import get_ok_msg_box, create_standard_item_model
 from core.utility.collection import SettingsINI
-
+from core.utility.ostools import zipfile_compress
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     """
@@ -70,6 +70,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_import = CSVImportDialog(self)
         self.key_delete = QtGui.QShortcut(self)
         self.key_enter = QtGui.QShortcut(self)
+        self.key_zip = QtGui.QShortcut(self)
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
@@ -86,9 +87,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         The project's root directory stores everything for the project.
 
         :return: (str)
-            ProjectMainWindow.ProjectsTreeView.QFileSystemModel.rootPath
+            ProjectMainWindow.treeView.QFileSystemModel.rootPath
         """
-        return self.ProjectsTreeView.model().rootPath()
+        return self.treeView.model().rootPath()
 
     @property
     def log_directory(self):
@@ -116,14 +117,17 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         """
         self.key_delete.setKey('del')
         self.key_enter.setKey('return')
+        self.key_zip.setKey(QtGui.QKeySequence(self.tr('Ctrl+Z')))
         self.actionPreferences.triggered.connect(self.open_settings_dialog)
         self.actionNew.triggered.connect(self.open_import_dialog)
         self.actionOpen.triggered.connect(self.open_tableview_window)
         self.actionSave.triggered.connect(self.open_export_dialog)
         self.actionRemove.triggered.connect(self.remove_tree_selected_path)
         self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
+        self.actionZip.triggered.connect(self.zip_path)
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         self.key_enter.activated.connect(self.open_tableview_window)
+        self.key_zip.activated.connect(self.zip_path)
 
     def connect_icons(self):
         """
@@ -140,6 +144,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionMerge_Purge.setIcon(self.icons['merge'])
         self.actionRename.setIcon(self.icons['rename'])
         self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
+        self.actionZip.setIcon(self.icons['archive'])
 
     def connect_filetree(self):
         """
@@ -150,9 +155,12 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         """
         rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
         model = FileTreeModel(root_dir=rootdir)
-        self.ProjectsTreeView.setModel(model)
-        self.ProjectsTreeView.setRootIndex(model.index(rootdir))
-        self.ProjectsTreeView.setColumnWidth(0, 400)
+
+        self.treeView.setModel(model)
+        self.treeView.setRootIndex(model.index(rootdir))
+        self.treeView.setColumnWidth(0, 400)
+        self.treeView.setDragEnabled(True)
+        self.treeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
 
     def connect_settings_dialog(self):
         """
@@ -205,7 +213,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     def open_tableview_window(self, model: DataFrameModel = None):
         """
         Opens a FileTableWindow for the filename selected in the
-        ProjectMainWindow.ProjectsTreeView.
+        ProjectMainWindow.treeView.
 
         :param model: The qtpandas.models.DataFrameModel to edit.
         :return: None
@@ -239,22 +247,22 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     def get_tree_selected_model(self, raise_on_error=True) -> (DataFrameModel, None):
         """
         Returns a DataFrameModel based on the filepath selected
-        in the ProjectMainWindow.ProjectsTreeView.
+        in the ProjectMainWindow.treeView.
         :return: qtpandas.DataFrameModel
         """
         # Check if file is selected in tree view
-        selected = self.ProjectsTreeView.selectedIndexes()
+        selected = self.treeView.selectedIndexes()
         if selected:
             idx = selected[0]
-            file_path = self.ProjectsTreeView.model().filePath(idx)
+            file_path = self.treeView.model().filePath(idx)
             return self.df_manager.read_file(file_path)
         return None
 
     def get_tree_selected_path(self):
-        selected = self.ProjectsTreeView.selectedIndexes()
+        selected = self.treeView.selectedIndexes()
         if selected:
             idx = selected[0]
-            return self.ProjectsTreeView.model().filePath(idx)
+            return self.treeView.model().filePath(idx)
         return None
 
     def remove_tree_selected_path(self):
@@ -338,3 +346,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     def _flush_export(self, orig_path, new_path):
         if orig_path != new_path:
             self.add_recent_file_menu_entry(new_path, self.df_manager.get_model(new_path))
+
+    def zip_path(self, fpath=None, **kwargs):
+        if fpath is None:
+            fpath = self.get_tree_selected_path()
+        assert fpath is not None, "No selected path!"
+        return zipfile_compress(fpath, **kwargs)

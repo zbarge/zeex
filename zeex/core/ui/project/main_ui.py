@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Thu Dec  8 23:41:34 2016
+# Created: Tue Dec 20 17:03:01 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,9 +17,9 @@ class Ui_ProjectWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtGui.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.ProjectsTreeView = QtGui.QTreeView(self.centralwidget)
-        self.ProjectsTreeView.setObjectName("ProjectsTreeView")
-        self.horizontalLayout.addWidget(self.ProjectsTreeView)
+        self.treeView = FileSystemTreeView(self.centralwidget)
+        self.treeView.setObjectName("treeView")
+        self.horizontalLayout.addWidget(self.treeView)
         ProjectWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(ProjectWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 644, 21))
@@ -53,6 +53,8 @@ class Ui_ProjectWindow(object):
         self.actionMerge_Purge.setObjectName("actionMerge_Purge")
         self.actionRename = QtGui.QAction(ProjectWindow)
         self.actionRename.setObjectName("actionRename")
+        self.actionZip = QtGui.QAction(ProjectWindow)
+        self.actionZip.setObjectName("actionZip")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -60,6 +62,7 @@ class Ui_ProjectWindow(object):
         self.menuSettings.addAction(self.actionPreferences)
         self.menuActions.addAction(self.actionMerge_Purge)
         self.menuActions.addAction(self.actionRename)
+        self.menuActions.addAction(self.actionZip)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuRecent_Files.menuAction())
         self.menubar.addAction(self.menuActions.menuAction())
@@ -83,4 +86,6 @@ class Ui_ProjectWindow(object):
         self.actionPreferences.setText(QtGui.QApplication.translate("ProjectWindow", "Preferences", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMerge_Purge.setText(QtGui.QApplication.translate("ProjectWindow", "Merge/Purge", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRename.setText(QtGui.QApplication.translate("ProjectWindow", "Rename", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZip.setText(QtGui.QApplication.translate("ProjectWindow", "Zip", None, QtGui.QApplication.UnicodeUTF8))
 
+from core.views.treeview import FileSystemTreeView

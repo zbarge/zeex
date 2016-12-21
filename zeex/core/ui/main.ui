@@ -14,7 +14,7 @@
    <string>Zeex Home</string>
   </property>
   <widget class="QWidget" name="HomeWidget">
-   <widget class="QTreeView" name="ProjectsTreeView">
+   <widget class="FileSystemTreeView" name="treeView">
     <property name="geometry">
      <rect>
       <x>35</x>
@@ -43,6 +43,7 @@
     <addaction name="actionSave"/>
     <addaction name="actionEdit"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionZip"/>
    </widget>
    <addaction name="menuProjects"/>
   </widget>
@@ -72,7 +73,19 @@
     <string>Settings</string>
    </property>
   </action>
+  <action name="actionZip">
+   <property name="text">
+    <string>Zip</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FileSystemTreeView</class>
+   <extends>QTreeView</extends>
+   <header>core/views/treeview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -33,6 +33,7 @@ from core.utility.collection import get_ini_file, SettingsINI
 from core.views.project.main import ProjectMainWindow
 from core.views.project.new import NewProjectDialog
 from core.views.settings import SettingsDialog
+from core.utility.ostools import zipfile_compress
 
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
@@ -44,10 +45,10 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.setMaximumHeight(600)
         self.setMaximumWidth(800)
         self.icons = Icons()
-        self.SettingsDialog = SettingsDialog(parent=self)
-        self.NewProjectDialog = NewProjectDialog(parent=self)
+        self.dialog_settings = SettingsDialog(parent=self)
+        self.dialog_new_project = NewProjectDialog(parent=self)
         self.key_enter = QtGui.QShortcut(self)
-
+        
         self.connect_actions()
         self.connect_filetree()
         self.connect_icons()
@@ -55,8 +56,8 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         
     def connect_actions(self):
         self.key_enter.setKey('return')
-        self.NewProjectDialog.signalProjectNew.connect(self.open_project)
-        self.SettingsDialog.signalSettingsSaved.connect(self.connect_filetree)
+        self.dialog_new_project.signalProjectNew.connect(self.open_project)
+        self.dialog_settings.signalSettingsSaved.connect(self.connect_filetree)
         self.actionSettings.triggered.connect(self.open_settings)
         self.actionOpen.triggered.connect(self.open_project)
         self.actionNew.triggered.connect(self.create_new_project)
@@ -65,47 +66,48 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
 
     def connect_icons(self):
         self.setWindowIcon(self.icons['home'])
-        self.NewProjectDialog.setWindowIcon(self.icons['spreadsheet'])
-        self.SettingsDialog.setWindowIcon(self.icons['settings'])
+        self.dialog_new_project.setWindowIcon(self.icons['spreadsheet'])
+        self.dialog_settings.setWindowIcon(self.icons['settings'])
 
         self.actionSettings.setIcon(self.icons['settings'])
         self.actionNew.setIcon(self.icons['add'])
         self.actionOpen.setIcon(self.icons['folder'])
         self.actionEdit.setIcon(self.icons['edit'])
         self.actionSave.setIcon(self.icons['save'])
+        self.actionZip.setIcon(self.icons['archive'])
 
     @QtCore.Slot()
     def connect_filetree(self, rootdir=None):
         """
         Handles the FileSystemModel for the home view.
-        Connects with SettingsDialog.signalProjectSaved.
+        Connects with dialog_settings.signalProjectSaved.
         Ignores the SettingsINI file emitted.
 
         :param rootdir: (str, default=None)
             a filepath to set as the root of the filetree.
-            The SettingsDialog.rootDirectoryLineEdit is used
+            The dialog_settings.rootDirectoryLineEdit is used
             as a backup.
         :return: None
         
         """
         if rootdir is None or isinstance(rootdir, SettingsINI):
-            rootdir = self.SettingsDialog.rootDirectoryLineEdit.text()
+            rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
 
         if not os.path.exists(rootdir):
             os.mkdir(rootdir)
 
-        model = self.ProjectsTreeView.model()
+        model = self.treeView.model()
 
         if model is None:
             model = FileTreeModel(root_dir=rootdir)
-            self.ProjectsTreeView.setModel(model)
+            self.treeView.setModel(model)
 
         if model.rootPath() is not rootdir:
-            self.ProjectsTreeView.setRootIndex(model.index(rootdir))
-            self.ProjectsTreeView.setColumnWidth(0, 175)
+            self.treeView.setRootIndex(model.index(rootdir))
+            self.treeView.setColumnWidth(0, 175)
         
     def open_settings(self):
-        self.SettingsDialog.show()
+        self.dialog_settings.show()
 
     @QtCore.Slot(list)
     def open_project(self, contents: list = None):
@@ -115,7 +117,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         else:
             # User must have selected off the tree.
             try:
-                idx = self.ProjectsTreeView.selectedIndexes()[0]
+                idx = self.treeView.selectedIndexes()[0]
             except IndexError:
                 # User failed to select anything..
                 return self.display_ok_msg("No project folder selected")
@@ -134,7 +136,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             assert ini and os.path.exists(ini), "Need a settings.ini file for project '{}'- got: '{}'".format(dirname, ini)
             assert dirname and os.path.exists(dirname), "Directory '{}' needs to exist!".format(dirname)
             p = os.path.normpath
-            root_dir = p(self.SettingsDialog.rootDirectoryLineEdit.text())
+            root_dir = p(self.dialog_settings.rootDirectoryLineEdit.text())
             assert not p(dirname) == root_dir, "Project directory cannot be the root!"
 
             # Update ROOT_DIRECTORY in settings.
@@ -161,7 +163,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
     def create_new_project(self):
         # Creates new project dialog and
         # Routes the user back to self.open_existing_project
-        self.NewProjectDialog.show()
+        self.dialog_new_project.show()
 
     def _cache_project(self, dirname, window):
         self._project_cache.update({dirname: window})
