@@ -49,7 +49,8 @@ class ColumnsModel(QtGui.QStandardItemModel):
         current_checked = [i.text() for i in self.get_items_checked()]
         checkstates = {c:(True if c in current_checked else False) for c in current_items}
         self.clear()
-        cols = [QtGui.QStandardItem(c) for c in sorted(self.df.columns)]
+        cols = [str(c) for c in self.df.columns]
+        cols = [QtGui.QStandardItem(c) for c in sorted(cols)]
         for c in cols:
             checked = checkstates.get(c.text(), False)
             if not checked:

@@ -89,6 +89,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
                 if item and item.text() not in df.columns:
                     self.fmodel.takeRow(i)
         for col in df.columns:
+            col = str(col)
             self.fmodel.set_field(col, dtype=df[col].dtype)
 
     def apply_template(self, df, columns=['old', 'new', 'dtype']):

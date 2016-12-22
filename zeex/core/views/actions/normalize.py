@@ -47,7 +47,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         return self.listViewColumns.model().df_model
 
     def configure(self):
-        seps = [',','-','|',';',':','/']
+        seps = [' ', ',', '-', '|', ';', ':', '/']
         cases = ['', 'lower', 'upper', 'proper']
         configureComboBox(self.comboBoxMergeOrSplitSep, seps, ',')
         configureComboBox(self.comboBoxSetCase, cases, 'lower')
@@ -67,6 +67,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
 
     def execute(self):
         df = self.df_model.dataFrame()
+        df.columns = [str(x) for x in df.columns]
         columns = self.listViewColumns.model().get_items_checked()
         columns = [i.text() for i in columns]
         if not columns:
@@ -84,7 +85,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         drop_fill = self.comboBoxDropFillNA.currentText().lower()
         dof_how = self.comboBoxDropFillNAHow.currentText()
         dof_with = self.lineEditDropFillNA.text()
-        merge_or_split = self.comboBoxMergeOrSplit.currentText()
+        merge_or_split = self.comboBoxMergeOrSplit.currentText().lower()
         mos_sep = self.comboBoxMergeOrSplitSep.currentText()
         replace_spaces = self.lineEditReplaceSpaces.text()
         trim_spaces = self.checkBoxTrimSpaces.isChecked()
@@ -115,16 +116,21 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
                 df.loc[:, c] = pandatools.series_set_case(df.loc[:, c], how=case)
 
         if mos_active:
-            if merge_or_split is 'merge':
+            if merge_or_split == 'merge':
                 series = pandatools.dataframe_merge_to_series(df, columns, sep=mos_sep)
                 frame = series.to_frame()
                 df = pd.merge(df, frame, left_index=True, right_index=True)
+                df.columns = pandatools.rename_dupe_cols(df.columns)
 
-            elif merge_or_split is 'split':
+            elif merge_or_split == 'split':
                 column = columns[0]
-                df.loc[:, column] = pandatools.series_split(df.loc[:, column],sep=mos_sep)
+                add_df = pandatools.series_split(df.loc[:, column],sep=mos_sep)
+                df = pd.merge(df, add_df, left_index=True, right_index=True)
+                df.columns = pandatools.rename_dupe_cols(df.columns)
+                print("Split column {} on {}".format(column, mos_sep))
 
         if any(activation_options):
+            print("Applying changes: {}".format([a for a in activation_options if a]))
             self.df_model.setDataFrame(df, filePath=self.df_model.filePath)
 
 

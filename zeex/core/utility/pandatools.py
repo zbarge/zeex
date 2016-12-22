@@ -226,11 +226,12 @@ def dedupe_cols(df):
     return df.drop(tag, 1, errors='ignore')
 
 
-def rename_dupe_cols(cols):
+def _rename_dupe_cols(cols):
     """Takes a list of strings and appends 2,3,4 etc to duplicates. Never appends a 0 or 1. 
     Appended #s are not always in order...but if you wrap this in a dataframe.to_sql function you're guaranteed
     to not have dupe column name errors importing data to SQL...you'll just have to check yourself to see which fields were renamed."""
     counts = {}
+    cols = [str(c) for c in cols]
     positions = {pos: fld for pos, fld in enumerate(cols)}
     
     for c in cols:
@@ -258,6 +259,31 @@ def rename_dupe_cols(cols):
     cols = [x for x in positions.values()]
     
     return cols
+
+def rename_dupe_cols(cols):
+    """
+    Renames duplicate columns in order of occurrence.
+    columns [0, 0, 0, 0]
+    turn into [0, 1, 2, 3]
+
+    columns [name10, name10, name10, name10]
+    turn into [name10, name11, name12, name13]
+
+    :param cols: iterable of columns
+    :return: unique columns with digits incremented.
+    """
+    cols = [str(c) for c in cols]
+    new_cols = []
+    for i in range(len(cols)):
+        c = cols.pop(0)
+        while c in new_cols:
+            try:
+                num = int(''.join(x for x in c if x.isdigit()))
+                c = c.replace(str(num), str(num + 1))
+            except:
+                c = c + str(2)
+        new_cols.append(c)
+    return new_cols
 
 
 def set_frame_id(df, unique_cols, id_label, start=1):
