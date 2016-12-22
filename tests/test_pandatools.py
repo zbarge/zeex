@@ -187,6 +187,39 @@ class TestPandaTools(MainTestClass):
             match = return_df.loc[return_df['policyid'] == idx]
             assert not match.empty
 
+    def test_series_split(self):
+        rows = [['zeke', 'Oceanside, CA 92058'], ['john', 'San Clemente, CA 92673']]
+        df = pd.DataFrame(rows, columns=['name', 'csz'], index=range(len(rows)))
+        split_colnames = ['city', 'state', 'zip']
+
+        csz_df = series_split(df.loc[:, 'csz'], colnames=split_colnames,
+                              sep=[',', ' '])
+
+        for c in split_colnames:
+            assert c in csz_df.columns
+        assert not csz_df[csz_df['city'] == 'Oceanside'].empty
+        assert not csz_df[csz_df['state'] == 'CA'].empty
+        assert not csz_df[csz_df['zip'] == '92673'].empty
+        assert csz_df.index.size == df.index.size
+
+    def test_series_set_case(self):
+        series = pd.Series(data=['zeke', 'john', 'james', 'todd'])
+        for h in [str.upper, str.title, str.lower]:
+            b = series_set_case(series, how=h)
+            for i in b.unique():
+                assert i == h(i)
+
+    def test_dataframe_merge_to_series(self):
+        rows = [['zeke', 'barge'], ['james', 'smith']]
+        columns = ['first', 'last']
+        df = pd.DataFrame(rows, columns=columns, index=range(len(rows)))
+        df.loc[:, 'full'] = dataframe_merge_to_series(df, columns, new_column='full', sep=' ')
+
+        assert df.index.size == 2
+        assert 'full' in df.columns
+        assert not df[df['full'] == 'zeke barge'].empty
+        assert not df[((df['full'] == 'james smith') & (df['first'] == 'james'))].empty
+
     def test_gather_frame_fields(self):
         sample_cols = ['id', 'name', 'address', 'updated']
         sample_recs = [[1000, 'zeke', '123 street'],

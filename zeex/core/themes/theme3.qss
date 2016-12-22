@@ -373,12 +373,7 @@ QMenu::separator
     margin-right: 5px;
 }
 
-QRadioButton::indicator:unchecked{
-    color: #b1b1b1;
-    background-color: #EEEEEE;
-    border: 1px solid #444;
-    border-radius: 5px;
-}
+
 
 
 QCheckBox, QRadioButton
@@ -778,14 +773,6 @@ QTreeView, QListView
     background-color: #FFFFF7;
 }
 
-QListView::indicator:unchecked { image:url(icons/checkbox_unchecked.png); }
-
-QListView::indicator:checked, QGroupBox::indicator:checked, QMenu::indicator:non-exclusive:checked
-{
-    image:url(icons/checkbox.png);
-    color: #b1b1b1;
-    background-color: #EEEEEE;
-}
 
 QTreeView:branch:selected, QTreeView:branch:hover
 {
@@ -886,10 +873,7 @@ QToolButton:hover, QToolButton::menu-button:hover {
     border: 1px solid #78879b;
 }
 
-QToolButton:checked, QToolButton:pressed, QToolButton::menu-button:pressed {
-    background-color: #4A4949;
-    border: 1px solid #78879b;
-}
+
 
 /* the subcontrol below is used only in the InstantPopup or DelayedPopup mode */
 QToolButton::menu-indicator {
@@ -973,11 +957,7 @@ QHeaderView::section::horizontal
 }
 
 
-QHeaderView::section:checked
- {
-    color: white;
-    background-color: #5A5959;
- }
+
 
  /* style the sort indicator */
 QHeaderView::down-arrow {

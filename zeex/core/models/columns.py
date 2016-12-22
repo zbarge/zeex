@@ -21,11 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
 from core.compat import QtGui, QtCore
 from qtpandas.models.DataFrameModel import DataFrameModel
-
-
 
 
 class ColumnsModel(QtGui.QStandardItemModel):
@@ -66,8 +63,8 @@ class ColumnsModel(QtGui.QStandardItemModel):
             self.appendRow(c)
 
     def get_items_checked(self):
-        return [i for i in self.get_items() if i.isChecked()]
+        return [i for i in self.get_items() if i.checkState() is QtCore.Qt.Checked]
 
     def get_items(self):
-        return [self.itemFromIndex(i) for i in range(self.rowCount())]
+        return [self.item(i) for i in range(self.rowCount())]
 

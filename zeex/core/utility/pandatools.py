@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import re
 import os
 import datetime
 import pandas as pd
@@ -638,7 +639,132 @@ def dataframe_split_to_files(df: pd.DataFrame, source_path: str, split_on: list,
     return exported_paths
 
 
+def string_strip(x):
+    return str(x).strip()
 
+
+def series_strip(series: pd.Series):
+    return series.str.strip()
+
+
+def string_remove_special_chars(x, excludes=[' ']):
+    return ''.join(e for e in x if not e.isalnum() or e in excludes)
+
+
+def series_remove_special_chars(series: pd.Series):
+    return series.apply(string_remove_special_chars)
+
+
+def integer_coerce(x):
+    """
+    Tries every possible way to return an integer from x.
+    Returns np.nan as worst case.
+    :param x: (str, int, float)
+    :return: (int | np.nan)
+        if any integers exist (except 0)
+    """
+    try:
+        return int(x)
+    except ValueError:
+        try:
+            return int(float(x))
+        except ValueError:
+            try:
+                return int(''.join(e for e in x if e.isdigit()))
+            except ValueError:
+                return np.nan
+
+NAN_LIST = ['', 'nan', 'NAN', '0']
+
+
+def nan_coerce(x):
+    v = str(x)
+    if pd.notnull(v) is False or v in NAN_LIST:
+        return np.nan
+    return x
+
+
+def dataframe_merge_to_series(df, columns, new_column=None, sep=None, **kwargs):
+    """
+    Concatenates columns from a dataframe. returning a combined series.
+
+    :param df: (pd.DataFrame)
+        The dataframe with columns to merge.
+    :param columns: (list, iterable)
+        The columns to concatenate.
+    :param new_column: (str, default None)
+        The name of the new series.
+    :param sep: (str, default None)
+        A separator to use when concatenating.
+    :param **kwargs: (pd.Series.str.cat(**kwargs))
+        :param na_rep (str, default None)
+        :param sep (str, default None)
+    :return: (pd.Series)
+        A series named :param new_column with the data joined.
+    """
+    if not isinstance(columns, list):
+        columns = list(columns)
+    if not new_column:
+        new_column = '_'.join(columns)
+
+    first_col = columns.pop(0)
+    series = pd.Series(data=df.loc[:, first_col].astype(str), name=first_col, dtype=str)
+
+    for c in columns:
+        series = series.str.cat(df.loc[:, c].astype(str), sep=sep)
+
+    return series
+
+
+def series_split(series, colnames=None, sep=None):
+    """
+    Splits a column of a dataframe into separate series objects.
+
+    :param series: pd.Series
+        The series to split.
+    :param colnames: (list)
+        The name of the columns that will be available once the splits happen.
+    :param sep: (str, list, default=None)
+        The separator (or list of separators) to apply to the series.
+    :return: (pd.DataFrame)
+    """
+    series = series.astype(str).str.strip()
+    if isinstance(sep, str):
+        sep = [sep]
+
+    assert isinstance(sep, list), ":param sep must be a string or list!, not {}".format(type(sep))
+    sep = sep.copy()
+    bits = []
+    while sep:
+        s = sep.pop(0)
+        s = (None if s is ' ' else s)
+        ex = series.str.split(pat=s, expand=True)
+        add = [ex.loc[:, c] for c in ex.columns]
+        if len(add) > 1 and sep:
+            # Reset series to last series in add
+            series = add.pop()
+        bits.extend(add)
+
+    if colnames:
+        if not len(colnames) == len(bits):
+            raise IndexError("There are {} column names given and {} split series objects.",
+                             "Invalid colnames.".format(len(colnames), len(bits)))
+        for i, b in enumerate(bits):
+            b.name = colnames[i]
+
+    return pd.concat(bits, axis=1)
+
+
+case_map = {str.upper: str.upper, 'upper': str.upper,
+            str.title: str.title, 'title': str.title, 'proper': str.title,
+            str.lower: str.lower, 'lower': str.lower,
+            'default': lambda x: str(x)}
+
+
+def series_set_case(series, how=str.upper):
+    if not callable(how):
+        how = case_map.get(str(how).lower(), case_map['default'])
+    return series.astype(str).apply(how)
 
 
 

@@ -86,6 +86,8 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionSuppress.setIcon(self.icons['suppress'])
         self.actionEditFields.setIcon(self.icons['add_column'])
         self.actionAnalyze.setIcon(self.icons['count'])
+        self.actionNormalize.setIcon(self.icons['normalize'])
+        self.dialog_normalize.setWindowIcon(self.icons['normalize'])
 
     def open_rename_dialog(self):
         if self.dialog_rename is None:
