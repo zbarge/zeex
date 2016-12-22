@@ -4,12 +4,19 @@ A Python GUI studio for data analysis. Utilizes Qt/PySide and Pandas libraries t
 
 
 # Features:
-- A configuration template-maker for common tasks like
+- A template-maker for common tasks like
     - renaming headers
     - sorting
     - merging
     - purging
-    - deduplicating.
+    - removing duplicates
+
+- 1-click data normalizations
+    - Drop/fill missing values
+    - Merge or split columns
+    - Set case (upper/lower/proper)
+    - Parse dates into YYYY-MM-DD format
+    - Remove special characters
 
 - A file reader that guesses the encoding and delimiter of most file formats
     - .csv
