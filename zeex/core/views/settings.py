@@ -70,16 +70,16 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.setupUi(self)
 
         if isinstance(settings, SettingsINI):
-            self.Config = settings
+            self.settings_ini = settings
         else:
-            self.Config = SettingsINI(settings)
+            self.settings_ini = SettingsINI(settings)
 
-        self.configure_settings(self.Config)
+        self.configure_settings(self.settings_ini)
         self.connect_buttons()
 
     @property
     def _settings_filename(self):
-        return self.Config._filename
+        return self.settings_ini._filename
 
     def connect_buttons(self):
         self.btnSave.clicked.connect(self.save_settings)
@@ -87,10 +87,10 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.btnImport.clicked.connect(self.import_settings)
         self.btnLogDirectory.clicked.connect(self.open_log_directory)
         self.btnRootDirectory.clicked.connect(self.open_root_directory)
-        self.btnSetDefault.clicked.connect(partial(self.export_settings, self.Config.default_path, set_self=True))
+        self.btnSetDefault.clicked.connect(partial(self.export_settings, self.settings_ini.default_path, set_self=True))
         self.btnReset.clicked.connect(self.reset_settings)
 
-    def configure_settings(self, config):
+    def configure_settings(self, config: SettingsINI):
         """
         Configures settings based on a SettingsINI object.
         Defaults are contained in here.
@@ -103,46 +103,40 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         """
         if not isinstance(config, SettingsINI):
             raise NotImplementedError("config must be a SettingsINI object.")
-            
-        try:
-            genconfig = config['GENERAL']
-            inconfig  = config['INPUT']
-            outconfig = config['OUTPUT']
-            dbconfig  = config['DATABASE']
-        except KeyError as e:
-            raise KeyError("SettingsINI object missing config option '{}'".format(e))
+
+        c = config
             
         # Get items/set defaults.
-        ROOT_DIR =        genconfig.get('ROOT_DIRECTORY',  DEFAULT_ROOT_DIR)
-        LOG_DIR =         genconfig.get('LOG_DIRECTORY',   DEFAULT_LOG_DIR)
-        LOG_LEVEL =       genconfig.get('LOG_LEVEL',       "Low")
-        CLOUD_PROVIDER =  genconfig.get('CLOUD_PROVIDER',  "S3")
-        THEME_NAME     =  genconfig.get('THEME',           DEFAULT_THEME)
-        HEADER_CASE =     inconfig.get('HEADER_CASE',      "Lower")
-        HEADER_SPACE =    inconfig.get('HEADER_SPACE',     "_")
-        AUTO_SORT =       inconfig.get('AUTO_SORT',        False)
-        AUTO_DEDUPE =     inconfig.get('AUTO_DEDUPE',      False)
-        OUTPUT_FORMAT =   outconfig.get('OUTPUT_FORMAT',   ".csv")
-        FILENAME_PFX =    outconfig.get('FILENAME_PREFIX', "z_")
-        CHART_FILE =      outconfig.get('CHART_FILENAME',  "")
-        SEPARATOR =       outconfig.get('SEPARATOR',       ",")
-        ENCODING =        outconfig.get('ENCODING',        "UTF_8")
-        DB_FLAVOR =       dbconfig.get('FLAVOR',           "SQLITE")
-        DB_URL =          dbconfig.get('URL',              "")
-        DB_NAME =         dbconfig.get('DEFAULT_DATABASE', None)
-        DB_USERNAME =     dbconfig.get('USERNAME',         None)
-        DB_PASSWORD =     dbconfig.get('PASSWORD',         None)
-        DB_PORT =         dbconfig.get('PORT',             None)
+        ROOT_DIR =        c.get_safe('GENERAL', 'ROOT_DIRECTORY',  fallback=DEFAULT_ROOT_DIR)
+        LOG_DIR =         c.get_safe('GENERAL','LOG_DIRECTORY',   fallback=DEFAULT_LOG_DIR)
+        LOG_LEVEL =       c.get_safe('GENERAL', 'LOG_LEVEL',       fallback="Low")
+        CLOUD_PROVIDER =  c.get_safe('GENERAL', 'CLOUD_PROVIDER',  fallback="S3")
+        THEME_NAME     =  c.get_safe('GENERAL', 'THEME',           fallback=DEFAULT_THEME)
+        HEADER_CASE =     c.get_safe('INPUT', 'HEADER_CASE',      fallback="Lower")
+        HEADER_SPACE =    c.get_safe('INPUT', 'HEADER_SPACE',     fallback="_")
+        AUTO_SORT =       c.get_safe('INPUT', 'AUTO_SORT',        fallback=False)
+        AUTO_DEDUPE =     c.get_safe('INPUT', 'AUTO_DEDUPE',      fallback=False)
+        OUTPUT_FORMAT =   c.get_safe('OUTPUT', 'OUTPUT_FORMAT',   fallback=".csv")
+        FILENAME_PFX =    c.get_safe('OUTPUT', 'FILENAME_PREFIX', fallback="z_")
+        CHART_FILE =      c.get_safe('OUTPUT', 'CHART_FILENAME',  fallback="")
+        SEPARATOR =       c.get_safe('OUTPUT', 'SEPARATOR',       fallback=",")
+        ENCODING =        c.get_safe('OUTPUT', 'ENCODING',        fallback="UTF_8")
+        DB_FLAVOR =       c.get_safe('DATABASE', 'FLAVOR',           fallback="SQLITE")
+        DB_URL =          c.get_safe('DATABASE', 'URL',              fallback="")
+        DB_NAME =         c.get_safe('DATABASE', 'DEFAULT_DATABASE', fallback=None)
+        DB_USERNAME =     c.get_safe('DATABASE', 'USERNAME',        fallback= None)
+        DB_PASSWORD =     c.get_safe('DATABASE', 'PASSWORD',         fallback=None)
+        DB_PORT =         c.get_safe('DATABASE', 'PORT',             fallback=None)
 
 
-        DEDUPE_FIELDS =   config.get_safe('FIELDS', 'DEDUPE', fallback=[])
-        SORT_FIELDS   =   config.get_safe('FIELDS', 'SORT',   fallback=['updatedate', 'insertdate'])
-        STRING_FIELDS =   config.get_safe('FIELDS', 'STRING', fallback=['address1','firstname','lastname',
+        DEDUPE_FIELDS =   c.get_safe('FIELDS', 'DEDUPE', fallback=[])
+        SORT_FIELDS   =   c.get_safe('FIELDS', 'SORT',   fallback=['updatedate', 'insertdate'])
+        STRING_FIELDS =   c.get_safe('FIELDS', 'STRING', fallback=['address1','firstname','lastname',
                                                               'city','state','zipcode', 'fullname',
                                                               'email','homephone','cellphone'])
-        INTEGER_FIELDS =  config.get_safe('FIELDS', 'INTEGER',fallback=['id','users_id'])
-        DATE_FIELDS   =   config.get_safe('FIELDS', 'DATE',   fallback=['insertdate','updatedate'])
-        FLOAT_FIELDS =    config.get_safe('FIELDS', 'FLOAT',   fallback=[])
+        INTEGER_FIELDS =  c.get_safe('FIELDS', 'INTEGER',fallback=['id','users_id'])
+        DATE_FIELDS   =   c.get_safe('FIELDS', 'DATE',   fallback=['insertdate','updatedate'])
+        FLOAT_FIELDS =    c.get_safe('FIELDS', 'FLOAT',   fallback=[])
 
         #Make sure the directories exist.
         for fp in [ROOT_DIR, LOG_DIR]:
@@ -205,43 +199,43 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
     def save_settings(self, to_path=None, write=False):
         self.set_theme()
 
-        self.Config.set('GENERAL', 'ROOT_DIRECTORY', self.rootDirectoryLineEdit.text())
-        self.Config.set('GENERAL', 'LOG_DIRECTORY', self.logDirectoryLineEdit.text())
-        self.Config.set('GENERAL', 'LOG_LEVEL', self.logLevelComboBox.currentText())
-        self.Config.set('GENERAL', 'CLOUD_PROVIDER', self.cloudProviderComboBox.currentText())
-        self.Config.set('GENERAL', 'THEME', self.themeComboBox.currentText())
+        self.settings_ini.set_safe('GENERAL', 'ROOT_DIRECTORY', self.rootDirectoryLineEdit.text())
+        self.settings_ini.set('GENERAL', 'LOG_DIRECTORY', self.logDirectoryLineEdit.text())
+        self.settings_ini.set('GENERAL', 'LOG_LEVEL', self.logLevelComboBox.currentText())
+        self.settings_ini.set('GENERAL', 'CLOUD_PROVIDER', self.cloudProviderComboBox.currentText())
+        self.settings_ini.set('GENERAL', 'THEME', self.themeComboBox.currentText())
 
-        self.Config.set('INPUT', 'HEADER_CASE', self.headerCaseComboBox.currentText())
-        self.Config.set('INPUT', 'HEADER_SPACE', self.headerSpacesComboBox.currentText())
-        self.Config.set_safe('INPUT', 'AUTO_SORT', self.autoSortCheckBox.isChecked())
-        self.Config.set_safe('INPUT', 'AUTO_DEDUPE', self.autoDedupeCheckBox.isChecked())
+        self.settings_ini.set_safe('INPUT', 'HEADER_CASE', self.headerCaseComboBox.currentText())
+        self.settings_ini.set('INPUT', 'HEADER_SPACE', self.headerSpacesComboBox.currentText())
+        self.settings_ini.set_safe('INPUT', 'AUTO_SORT', self.autoSortCheckBox.isChecked())
+        self.settings_ini.set_safe('INPUT', 'AUTO_DEDUPE', self.autoDedupeCheckBox.isChecked())
 
-        self.Config.set('OUTPUT', 'OUTPUT_FORMAT', self.fileFormatComboBox.currentText())
-        self.Config.set('OUTPUT', 'FILENAME_PREFIX', self.fileNamePrefixLineEdit.text())
-        self.Config.set('OUTPUT', 'CHART_FILENAME', self.chartSettingsFileLineEdit.text())
+        self.settings_ini.set_safe('OUTPUT', 'OUTPUT_FORMAT', self.fileFormatComboBox.currentText())
+        self.settings_ini.set('OUTPUT', 'FILENAME_PREFIX', self.fileNamePrefixLineEdit.text())
+        self.settings_ini.set('OUTPUT', 'CHART_FILENAME', self.chartSettingsFileLineEdit.text())
 
-        self.Config.set('DATABASE', 'FLAVOR', self.flavorComboBox.currentText())
-        self.Config.set('DATABASE', 'URL', self.urlLineEdit.text())
-        self.Config.set('DATABASE', 'DEFAULT_DATABASE', self.defaultDatabaseLineEdit.text())
-        self.Config.set('DATABASE', 'USERNAME', self.usernameLineEdit.text())
-        self.Config.set('DATABASE', 'PASSWORD', self.passwordLineEdit.text())
+        self.settings_ini.set_safe('DATABASE', 'FLAVOR', self.flavorComboBox.currentText())
+        self.settings_ini.set('DATABASE', 'URL', self.urlLineEdit.text())
+        self.settings_ini.set('DATABASE', 'DEFAULT_DATABASE', self.defaultDatabaseLineEdit.text())
+        self.settings_ini.set('DATABASE', 'USERNAME', self.usernameLineEdit.text())
+        self.settings_ini.set('DATABASE', 'PASSWORD', self.passwordLineEdit.text())
 
-        self.Config.set_safe('FIELDS', 'DEDUPE',  self.dedupeFieldsModel.get_data_list())
-        self.Config.set_safe('FIELDS', 'SORT',    self.sortFieldsModel.get_data_list())
-        self.Config.set_safe('FIELDS', 'STRING',  self.strFieldsModel.get_data_list())
-        self.Config.set_safe('FIELDS', 'DATE',    self.dateFieldsModel.get_data_list())
-        self.Config.set_safe('FIELDS', 'INTEGER', self.intFieldsModel.get_data_list())
-        self.Config.set_safe('FIELDS', 'FLOAT', self.floatFieldsModel.get_data_list())
+        self.settings_ini.set_safe('FIELDS', 'DEDUPE', self.dedupeFieldsModel.get_data_list())
+        self.settings_ini.set_safe('FIELDS', 'SORT', self.sortFieldsModel.get_data_list())
+        self.settings_ini.set_safe('FIELDS', 'STRING', self.strFieldsModel.get_data_list())
+        self.settings_ini.set_safe('FIELDS', 'DATE', self.dateFieldsModel.get_data_list())
+        self.settings_ini.set_safe('FIELDS', 'INTEGER', self.intFieldsModel.get_data_list())
+        self.settings_ini.set_safe('FIELDS', 'FLOAT', self.floatFieldsModel.get_data_list())
 
         if write or to_path is not None:
             if to_path is None:
-                to_path = self.Config._filename
+                to_path = self.settings_ini._filename
 
-            self.Config._filename = to_path
+            self.settings_ini._filename = to_path
 
-            self.Config.save()
+            self.settings_ini.save()
 
-        self.signalSettingsSaved.emit(self.Config, self.Config.filename)
+        self.signalSettingsSaved.emit(self.settings_ini, self.settings_ini.filename)
 
     def clear_settings(self):
         self.cloudProviderComboBox.clear()
@@ -259,8 +253,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         if to is None:
             to = QtGui.QFileDialog.getSaveFileName()[0]
         self.save_settings(to_path=None, write=False)
-        self.Config.save_as(to, set_self=set_self)
-        self.signalSettingsExported.emit(self.Config, to)
+        self.settings_ini.save_as(to, set_self=set_self)
+        self.signalSettingsExported.emit(self.settings_ini, to)
 
     def set_theme(self, theme_name=None):
         if theme_name is None:
@@ -282,19 +276,19 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         if filename is None:
             filename = QtGui.QFileDialog.getOpenFileName()
 
-        self.Config.save()
-        self.Config.clear()
-        self.Config.read(filename)
-        self.Config._filename = filename
+        self.settings_ini.save()
+        self.settings_ini.clear()
+        self.settings_ini.read(filename)
+        self.settings_ini._filename = filename
         self.clear_settings()
-        self.configure_settings(self.Config)
+        self.configure_settings(self.settings_ini)
 
     def reset_settings(self):
-        self.Config.clear()
-        self.Config.read(self.Config.backup_path)
-        self.Config.save_as(self.Config.default_path, set_self=True)
+        self.settings_ini.clear()
+        self.settings_ini.read(self.settings_ini.backup_path)
+        self.settings_ini.save_as(self.settings_ini.default_path, set_self=True)
         self.clear_settings()
-        self.configure_settings(self.Config)
+        self.configure_settings(self.settings_ini)
 
     def open_root_directory(self):
         dirname = QtGui.QFileDialog.getExistingDirectory()

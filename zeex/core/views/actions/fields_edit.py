@@ -93,7 +93,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
             self.fmodel.set_field(col, dtype=df[col].dtype)
 
     def apply_template(self, df, columns=['old', 'new', 'dtype']):
-        df.columns = columns #Make or break this frame.
+        df.columns = columns  # Make or break this frame.
         for i in range(df.index.size):
             entry = df.iloc[i]
             matches = self.fmodel.findItems(entry['old'])
@@ -145,7 +145,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
     def apply_changes(self, rename=True, dtype=True):
         renames = {}
         dtypes = {}
-        df = self.dfmodel._dataFrame
+        df = self.dfmodel.dataFrame()
         df_dtypes = self.dfmodel._columnDtypeModel
 
         # Gather rename/dtype info from FieldsModel
@@ -170,7 +170,6 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
 
         # Use the DataFrameModel's rename method.
         if rename is True:
-            print("Applying renames {}".format(renames))
             self.dfmodel.rename(columns=renames)
 
 

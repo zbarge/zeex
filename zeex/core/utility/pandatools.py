@@ -756,7 +756,7 @@ def series_split(series, colnames=None, sep=None):
     """
     series = series.astype(str).str.strip()
     if isinstance(sep, str):
-        sep = [sep]
+        sep = [s for s in sep]
 
     assert isinstance(sep, list), ":param sep must be a string or list!, not {}".format(type(sep))
     sep = sep.copy()

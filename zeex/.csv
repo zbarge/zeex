@@ -1,0 +1,7 @@
+old,new,dtype
+name,name,object
+address,address,object
+citystatezip,citystatezip,object
+0,city,object
+1,state,object
+2,2,object

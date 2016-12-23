@@ -62,28 +62,24 @@ def get_config_backup_path(default):
     return f
 
 
-class _ConfParse(ConfigParser):
+class BaseConfig(ConfigParser):
     """
     Credits: http://codereview.stackexchange.com/questions/2775/python-subclassing-configparser
     """
 
-    _default_path = get_default_config_path()
-    _default_backup_path = get_config_backup_path(_default_path)
-
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, default_path=None, default_backup_path=None):
         ConfigParser.__init__(self)
-        if filename is None:
-            self._filename = self._default_path
-        else:
-            self._filename = filename
-
-        try:
-            self.read(self._filename)
-        except IOError as Err:
-            if Err.errno == 2:
-                pass
-            else:
-                raise Err
+        self._default_path = default_path
+        self._default_backup_path = default_backup_path
+        self._filename = filename
+        if filename is not None:
+            try:
+                self.read(self._filename)
+            except IOError as Err:
+                if Err.errno == 2:
+                    pass
+                else:
+                    raise Err
 
     @property
     def filename(self):
@@ -122,12 +118,33 @@ class _ConfParse(ConfigParser):
             self._filename = orig
 
 
+class FileConfig(BaseConfig):
+    _default_path = get_default_config_path()
+    _default_backup_path = get_config_backup_path(_default_path)
 
-
-    
-class SettingsINI(_ConfParse):
     def __init__(self, filename=None):
-        _ConfParse.__init__(self, filename=filename)
+        default = get_default_config_path()
+        backup = get_config_backup_path(default)
+        BaseConfig.__init__(self, filename=filename, default_path=default, default_backup_path=backup)
+        if filename is None:
+            self._filename = default
+        else:
+            self._filename = filename
+
+
+class DictConfig(BaseConfig):
+    """
+    Convenient way to get a BaseConfig without needing a filepath.
+    """
+    def __init__(self, dictionary=None, filename=None, **kwargs):
+        if dictionary is not None:
+            self.read_dict(dictionary, **kwargs)
+        self.filename = filename
+
+
+class SettingsINI(FileConfig):
+    def __init__(self, filename=None):
+        FileConfig.__init__(self, filename=filename)
 
 if __name__ == '__main__':
     s = SettingsINI()

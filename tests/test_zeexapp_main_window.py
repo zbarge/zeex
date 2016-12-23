@@ -52,26 +52,26 @@ class TestMainWindow(MainTestClass):
         assert window.homemenu.isEnabled()
 
         settings_path = os.path.join(fixtures_dir, "main_config_test.ini")
-        orig_root = dialog.Config.get('GENERAL', 'ROOT_DIRECTORY')
-        orig_log = dialog.Config.get('GENERAL', 'LOG_DIRECTORY')
+        orig_root = dialog.settings_ini.get('GENERAL', 'ROOT_DIRECTORY')
+        orig_log = dialog.settings_ini.get('GENERAL', 'LOG_DIRECTORY')
         root_dir = os.path.join(fixtures_dir, "sample_root_dir")
         log_dir = os.path.join(root_dir, "logs")
 
         if os.path.exists(root_dir):
             shutil.rmtree(root_dir)
 
-        dialog.Config._filename = settings_path
+        dialog.settings_ini._filename = settings_path
         dialog.rootDirectoryLineEdit.setText(root_dir)
         dialog.logDirectoryLineEdit.setText(log_dir)
 
         qtbot.mouseClick(dialog.btnSave, QtCore.Qt.LeftButton)
 
-        assert dialog.Config.get('GENERAL', 'ROOT_DIRECTORY') == root_dir
-        assert dialog.Config.get('GENERAL', 'LOG_DIRECTORY') == log_dir
+        assert dialog.settings_ini.get('GENERAL', 'ROOT_DIRECTORY') == root_dir
+        assert dialog.settings_ini.get('GENERAL', 'LOG_DIRECTORY') == log_dir
         qtbot.mouseClick(dialog.btnReset, QtCore.Qt.LeftButton)
 
-        assert dialog.Config.get('GENERAL', 'ROOT_DIRECTORY') == orig_root
-        assert dialog.Config.get('GENERAL', 'LOG_DIRECTORY') == orig_log
+        assert dialog.settings_ini.get('GENERAL', 'ROOT_DIRECTORY') == orig_root
+        assert dialog.settings_ini.get('GENERAL', 'LOG_DIRECTORY') == orig_log
         dialog.close()
 
     def test_new_project_dialog(self, qtbot, window: ZeexMainWindow, fixtures_dir):
@@ -84,7 +84,7 @@ class TestMainWindow(MainTestClass):
 
         log_dir = os.path.join(proj_dir, "logs")
 
-        dialog.settingsFileLineEdit.setText(window.dialog_settings.Config.default_path)
+        dialog.settingsFileLineEdit.setText(window.dialog_settings.settings_ini.default_path)
         dialog.nameLineEdit.setText(proj_dir)
 
         button = dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok)

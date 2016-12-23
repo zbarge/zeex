@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>326</width>
-    <height>416</height>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,25 +48,8 @@
        <item row="2" column="1">
         <widget class="QCheckBox" name="checkBoxTrimSpaces"/>
        </item>
-       <item row="3" column="0">
-        <widget class="QComboBox" name="comboBoxMergeOrSplit">
-         <item>
-          <property name="text">
-           <string>Merge</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Split</string>
-          </property>
-         </item>
-        </widget>
-       </item>
        <item row="3" column="1">
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="2">
-          <widget class="QComboBox" name="comboBoxMergeOrSplitSep"/>
-         </item>
          <item row="0" column="1">
           <widget class="QLabel" name="label">
            <property name="text">
@@ -76,6 +59,9 @@
          </item>
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxMergeOrSplit"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLineEdit" name="lineEditMergeOrSplitSep"/>
          </item>
         </layout>
        </item>
@@ -112,20 +98,6 @@
           <widget class="QComboBox" name="comboBoxSetCase"/>
          </item>
         </layout>
-       </item>
-       <item row="6" column="0">
-        <widget class="QComboBox" name="comboBoxDropFillNA">
-         <item>
-          <property name="text">
-           <string>Drop NA</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Fill NA</string>
-          </property>
-         </item>
-        </widget>
        </item>
        <item row="6" column="1">
         <layout class="QGridLayout" name="gridLayout_4">
@@ -174,6 +146,62 @@
           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
          </property>
         </widget>
+       </item>
+       <item row="3" column="0">
+        <layout class="QGridLayout" name="gridLayout_6">
+         <property name="verticalSpacing">
+          <number>6</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelMergeOrSplit">
+           <property name="text">
+            <string>Merge/Split</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBoxMergeOrSplit">
+           <item>
+            <property name="text">
+             <string>Split</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Merge</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="0">
+        <layout class="QGridLayout" name="gridLayout_7">
+         <property name="verticalSpacing">
+          <number>6</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelDropFillNA">
+           <property name="text">
+            <string>Drop/Fill NA</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBoxDropFillNA">
+           <item>
+            <property name="text">
+             <string>Drop NA</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Fill NA</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>

@@ -28,6 +28,7 @@ from core.compat import QtGui, QtCore
 import core.utility.pandatools as pandatools
 from qtpandas import DataFrameModel
 from core.utility.widgets import configureComboBox
+from core.utility.collection import SettingsINI
 
 
 class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
@@ -47,9 +48,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         return self.listViewColumns.model().df_model
 
     def configure(self):
-        seps = [' ', ',', '-', '|', ';', ':', '/']
         cases = ['', 'lower', 'upper', 'proper']
-        configureComboBox(self.comboBoxMergeOrSplitSep, seps, ',')
         configureComboBox(self.comboBoxSetCase, cases, 'lower')
         if self.df_model is not None:
             title = "Normalize - {}".format(os.path.basename(self.df_model.filePath))
@@ -64,6 +63,48 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         self.checkBoxRemoveSpecialChars.setChecked(False)
         self.checkBoxReplaceSpaces.setChecked(False)
         self.checkBoxSetCase.setChecked(False)
+
+    def get_settings(self):
+        settings = dict(case_active = self.checkBoxSetCase.isChecked(),
+                        merge_or_split_active = self.checkBoxMergeOrSplit.isChecked(),
+                        replace_spaces_active = self.checkBoxReplaceSpaces.isChecked(),
+                        trim_spaces_active = self.checkBoxTrimSpaces.isChecked(),
+                        drop_or_fill_active = self.checkBoxDropFillNA.isChecked(),
+
+                        case = self.comboBoxSetCase.currentText(),
+                        drop_or_fill = self.comboBoxDropFillNA.currentText().lower(),
+                        drop_or_fill_how = self.comboBoxDropFillNAHow.currentText(),
+                        drop_or_fill_with = self.lineEditDropFillNA.text(),
+                        merge_or_split = self.comboBoxMergeOrSplit.currentText().lower(),
+                        merge_or_split_sep = self.lineEditMergeOrSplitSep.text(),
+                        replace_spaces = self.lineEditReplaceSpaces.text(),
+                        trim_spaces = self.checkBoxTrimSpaces.isChecked())
+        return settings
+
+    def set_settings(self, settings: dict):
+        s = settings
+        case = s.get('case', '')
+        drop_or_fill = s.get('drop_or_fill', 'Drop NA')
+        drop_or_fill_how = s.get('drop_or_fill_how', 'any')
+        merge_or_split = s.get('merge_or_split', 'split')
+        self.checkBoxSetCase.setChecked(s.get('case_active', False))
+        self.checkBoxMergeOrSplit.setChecked(s.get('merge_or_split_active', False))
+        self.checkBoxReplaceSpaces.setChecked(s.get('replace_spaces_active', False))
+        self.checkBoxTrimSpaces.setChecked(s.get('trim_spaces_active', False))
+        self.checkBoxDropFillNA.setchecked(s.get('drop_or_fill_active', False))
+        self.comboBoxDropFillNA.setCurrentIndex(self.comboBoxDropFillNA.findText(drop_or_fill))
+        self.comboBoxSetCase.setCurrentIndex(self.comboBoxSetCase.findText(case))
+        self.comboBoxMergeOrSplit.setCurrentIndex(self.comboBoxMergeOrSplit.findText(merge_or_split))
+        self.comboBoxDropFillNAHow.setCurrentIndex(self.comboBoxDropFillNAHow.findText(drop_or_fill_how))
+        self.lineEditDropFillNA.setText(s.get('drop_or_fill_with', ''))
+        self.lineEditMergeOrSplitSep.setText(s.get('merge_or_split_sep', ''))
+        self.lineEditReplaceSpaces.setText(s.get('replace_spaces', ''))
+    def export_settings(self, to=None):
+        if to is None:
+            to = QtGui.QFileDialog.getSaveFileName(self)
+        settings = self.get_settings()
+        ini = None
+
 
     def execute(self):
         df = self.df_model.dataFrame()
@@ -86,7 +127,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         dof_how = self.comboBoxDropFillNAHow.currentText()
         dof_with = self.lineEditDropFillNA.text()
         merge_or_split = self.comboBoxMergeOrSplit.currentText().lower()
-        mos_sep = self.comboBoxMergeOrSplitSep.currentText()
+        mos_sep = self.lineEditMergeOrSplitSep.text()
         replace_spaces = self.lineEditReplaceSpaces.text()
         trim_spaces = self.checkBoxTrimSpaces.isChecked()
 
@@ -130,7 +171,6 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
                 print("Split column {} on {}".format(column, mos_sep))
 
         if any(activation_options):
-            print("Applying changes: {}".format([a for a in activation_options if a]))
             self.df_model.setDataFrame(df, filePath=self.df_model.filePath)
 
 
