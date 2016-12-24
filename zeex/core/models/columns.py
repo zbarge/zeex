@@ -53,6 +53,7 @@ class ColumnsModel(QtGui.QStandardItemModel):
         cols = [QtGui.QStandardItem(c) for c in sorted(cols)]
         for c in cols:
             checked = checkstates.get(c.text(), False)
+
             if not checked:
                 checkstate = QtCore.Qt.Unchecked
             else:

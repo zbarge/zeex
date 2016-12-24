@@ -51,7 +51,10 @@ class PushGridHandler(object):
             self._right_model = create_standard_item_model(right_model)
         else:
             self._right_model = right_model
-
+        if isinstance(left_model, list):
+            self._left_model = create_standard_item_model(left_model)
+        elif not isinstance(self._left_model, QtGui.QStandardItemModel):
+            self._left_model = QtGui.QStandardItemModel()
         self.listViewRight.setModel(self._right_model)
         self.connect_buttons()
 
@@ -65,8 +68,11 @@ class PushGridHandler(object):
         self.btnPushLeft.clicked.connect(self.push_left)
         self.btnPushRight.clicked.connect(self.push_right)
 
-    def set_model(self, model):
-        self.listViewLeft.setModel(model)
+    def set_model(self, model, left=True):
+        if left:
+            self.listViewLeft.setModel(model)
+        else:
+            self.listViewRight.setModel(model)
 
     def push_right(self):
         selected = self.listViewLeft.selectedIndexes()
@@ -90,14 +96,16 @@ class PushGridHandler(object):
             if self._right_delete:
                 self._right_model.removeRow(item.row())
 
-    def set_model_from_list(self, items: list):
-        if not isinstance(self._left_model, QtGui.QStandardItemModel):
-            self._left_model = QtGui.QStandardItemModel()
+    def set_model_from_list(self, items: list, left=True):
+        if left:
+            model = self._left_model
+        else:
+            model = self._right_model
 
         for i in items:
             it = QtGui.QStandardItem(i)
-            self._left_model.appendRow(it)
-        self.set_model(self._left_model)
+            model.appendRow(it)
+        self.set_model(model, left=left)
 
     def set_deletes(self, left: bool = True, right: bool = True):
         self._left_delete = left
@@ -109,6 +117,22 @@ class PushGridHandler(object):
         else:
             model = self._right_model
         return [model.item(i).text() for i in range(model.rowCount())]
+
+    def drop_duplicates(self, left_priority=True):
+        if left_priority:
+            keep_model = self.listViewLeft.model()
+            drop_model = self.listViewRight.model()
+
+        else:
+            keep_model = self.listViewRight.model()
+            drop_model = self.listViewLeft.model()
+
+
+        keep_text = [keep_model.item(i).text() for i in range(keep_model.rowCount())]
+        for i in range(drop_model.rowCount()):
+            check = drop_model.item(i)
+            if check and check.text().lower() in keep_text:
+                drop_model.takeRow(i)
 
 
 class PushGridWidget(QtGui.QWidget, Ui_PushGridWidget):

@@ -32,6 +32,7 @@ from core.views.actions.push_grid import PushGridHandler
 from core.ctrls.dataframe import DataFrameModelManager
 from core.utility.widgets import create_standard_item_model
 from core.utility.pandatools import dataframe_split_to_files
+from core.utility.collection import SettingsINI,DictConfig, import_settings, export_settings
 
 
 class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):
@@ -39,12 +40,9 @@ class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):
 
     def __init__(self, source_model, parent=None):
         QtGui.QDialog.__init__(self, parent=parent)
-        source_model.dataChanged.connect(partial(self.configure_model, reset=True))
         self.df_model = source_model
         self.setupUi(self)
         self.configure_model()
-        self.buttonBox.accepted.connect(self.execute)
-        self.buttonBox.rejected.connect(self.close)
         cols = source_model.dataFrame().columns.tolist()
         self.handler_split_on = PushGridHandler(left_button=self.btnSplitOnPushLeft,
                                                 left_view=self.listViewSplitOnLeft,
@@ -56,6 +54,14 @@ class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):
                                                 right_button=self.btnUseColsPushRight,
                                                 right_view=self.listViewUseColsRight,
                                                 left_model=cols)
+        self.configure()
+
+    def configure(self):
+        self.btnExportTemplate.clicked.connect(self.export_settings)
+        self.btnImportTemplate.clicked.connect(self.import_settings)
+        self.df_model.dataChanged.connect(partial(self.configure_model, reset=True))
+        self.buttonBox.accepted.connect(self.execute)
+        self.buttonBox.rejected.connect(self.close)
 
     def configure_model(self, reset=False):
         p = self.df_model.filePath
@@ -70,6 +76,41 @@ class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):
             cols = self.df_model.dataFrame().columns.tolist()
             self.handler_split_on.set_model_from_list(cols)
             self.handler_use_cols.set_model_from_list(cols)
+
+    def get_settings(self, dc:DictConfig=None, section:str="SPLIT"):
+        if dc is None:
+            dc = DictConfig()
+        if dc.has_section(section):
+            dc.remove_section(section)
+        dictionary = dict(dropna = self.checkBoxDropNulls.isChecked(),
+                          dirname = self.lineEditExportPath.text(),
+                          source_path = self.lineEditSourcePath.text(),
+                          max_rows = self.lineEditMaxRows.text())
+        dc.update({section: dictionary})
+        dc.set_safe(section, 'split_on', self.handler_split_on.get_model_list(left=False))
+        dc.set_safe(section, 'fields', self.handler_use_cols.get_model_list(left=False))
+        return dc
+
+    def set_settings(self, dc:DictConfig, section='SPLIT'):
+        self.lineEditTemplate.setText(dc.filename)
+        self.handler_split_on.set_model_from_list(dc.get_safe(section, 'split_on',
+                                                              fallback=self.handler_split_on.get_model_list(left=False)),
+                                                  left=False)
+        self.handler_split_on.drop_duplicates(left_priority=False)
+        self.handler_use_cols.set_model_from_list(dc.get_safe(section, 'fields',
+                                                              fallback=self.handler_use_cols.get_model_list(left=False)),
+                                                  left=False)
+        self.handler_use_cols.drop_duplicates(left_priority=False)
+        self.checkBoxDropNulls.setChecked(dc.getboolean(section, 'dropna', fallback=self.checkBoxDropNulls.isChecked()))
+        self.lineEditSourcePath.setText(dc.get(section, 'source_path', fallback=self.lineEditSourcePath.text()))
+        self.lineEditExportPath.setText(dc.get(section, 'dirname', fallback=self.lineEditExportPath.text()))
+        self.lineEditMaxRows.setText(dc.get(section, 'max_rows', fallback=self.lineEditMaxRows.text()))
+
+    def import_settings(self):
+        import_settings(self.set_settings, parent=self)
+
+    def export_settings(self):
+        export_settings(self.get_settings(),parent=self)
 
     def execute(self):
         split_on = self.handler_split_on.get_model_list(left=False)
@@ -96,7 +137,6 @@ class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):
                                                   index=False)
         emission = [source_path, exported_paths]
         self.signalFileSplit.emit(emission)
-        [print(e) for e in emission[1]]
 
 
 

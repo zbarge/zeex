@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'split.ui'
 #
-# Created: Sat Dec 17 20:18:32 2016
+# Created: Sat Dec 24 13:15:07 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -96,9 +96,22 @@ class Ui_FileSplitDialog(object):
         self.gridLayout_3.addWidget(self.checkBoxDropNulls, 0, 0, 1, 1)
         self.formLayout.setLayout(7, QtGui.QFormLayout.FieldRole, self.gridLayout_3)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.formLayout.setItem(3, QtGui.QFormLayout.LabelRole, spacerItem)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.formLayout.setItem(6, QtGui.QFormLayout.LabelRole, spacerItem1)
+        self.formLayout.setItem(6, QtGui.QFormLayout.LabelRole, spacerItem)
+        self.gridLayout_4 = QtGui.QGridLayout()
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.btnExportTemplate = QtGui.QPushButton(FileSplitDialog)
+        self.btnExportTemplate.setObjectName("btnExportTemplate")
+        self.gridLayout_4.addWidget(self.btnExportTemplate, 0, 3, 1, 1)
+        self.btnImportTemplate = QtGui.QPushButton(FileSplitDialog)
+        self.btnImportTemplate.setObjectName("btnImportTemplate")
+        self.gridLayout_4.addWidget(self.btnImportTemplate, 0, 2, 1, 1)
+        self.lineEditTemplate = QtGui.QLineEdit(FileSplitDialog)
+        self.lineEditTemplate.setObjectName("lineEditTemplate")
+        self.gridLayout_4.addWidget(self.lineEditTemplate, 0, 1, 1, 1)
+        self.formLayout.setLayout(3, QtGui.QFormLayout.FieldRole, self.gridLayout_4)
+        self.labelTemplate = QtGui.QLabel(FileSplitDialog)
+        self.labelTemplate.setObjectName("labelTemplate")
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.labelTemplate)
         self.verticalLayout.addLayout(self.formLayout)
         self.buttonBox = QtGui.QDialogButtonBox(FileSplitDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -125,4 +138,7 @@ class Ui_FileSplitDialog(object):
         self.useColumnsLabel.setText(QtGui.QApplication.translate("FileSplitDialog", "Use Columns", None, QtGui.QApplication.UnicodeUTF8))
         self.maxRowsLabel.setText(QtGui.QApplication.translate("FileSplitDialog", "Max Rows", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxDropNulls.setText(QtGui.QApplication.translate("FileSplitDialog", "Drop Null Values", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnExportTemplate.setText(QtGui.QApplication.translate("FileSplitDialog", "Export", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnImportTemplate.setText(QtGui.QApplication.translate("FileSplitDialog", "Import", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelTemplate.setText(QtGui.QApplication.translate("FileSplitDialog", "Template", None, QtGui.QApplication.UnicodeUTF8))
 

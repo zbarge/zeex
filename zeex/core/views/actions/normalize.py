@@ -179,8 +179,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
 
         :param filename: (str, default None)
             The file path to the configuration settings.
-        :param dictconfig: (DictConfig, SettingsINI)
-            A configuration object that holds the settings.
+        :param diciguration object that holds the settings.
         :param **kwargs: (ColumnNormalizerDialog.set_settings(**kwargs))
 
         :return: None
@@ -194,6 +193,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
             dictconfig = SettingsINI(filename=filename)
 
         self.set_settings(dictconfig, **kwargs)
+
 
     def execute(self):
         """

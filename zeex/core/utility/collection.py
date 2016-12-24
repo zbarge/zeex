@@ -25,6 +25,7 @@ SOFTWARE.
 import os
 import shutil
 from configparser import ConfigParser
+from core.compat import QtGui
 from ast import literal_eval as Eval
 
 DEFAULT_CONFIG_NAME = 'default.ini'
@@ -156,6 +157,46 @@ class DictConfig(BaseConfig):
 class SettingsINI(FileConfig):
     def __init__(self, filename=None):
         FileConfig.__init__(self, filename=filename)
+    def _internals(self):
+        pass
+
+
+def export_settings(dictconfig:DictConfig, parent=None, to=None):
+    """
+    Outputs Dialog's settings to a text-like file object.
+    These settings can be re-imported later.
+
+    :param to: (str, default None)
+        The filepath to output the settings to.
+        None opens a QFileDialog requiring the user to select a filename to
+        save to.
+    :return: None
+    """
+    if to is None:
+        to = QtGui.QFileDialog.getSaveFileName(parent)[0]
+    dictconfig.save_as(to, set_self=True)
+
+
+def import_settings(method, filename=None, dictconfig:DictConfig=None, parent=None, **kwargs):
+    """
+    Imports a filepath or a DictConfig/SettingsINI object and
+    applies settings to the dialog.
+
+    :param filename: (str, default None)
+        The file path to the configuration settings.
+    :param diciguration object that holds the settings.
+    :param **kwargs: (ColumnNormalizerDialog.set_settings(**kwargs))
+
+    :return: None
+    """
+    if filename is None:
+        if dictconfig is None:
+            filename = QtGui.QFileDialog.getOpenFileName(parent)[0]
+            dictconfig = SettingsINI(filename=filename)
+    else:
+        dictconfig = SettingsINI(filename=filename)
+    method(dictconfig, **kwargs)
+
 
 if __name__ == '__main__':
     s = SettingsINI()
