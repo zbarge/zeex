@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fields_edit.ui'
 #
-# Created: Sat Dec 17 17:31:45 2016
+# Created: Sat Dec 24 04:19:39 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,7 +49,7 @@ class Ui_FieldsEditDialog(object):
         self.btnSetCase = QtGui.QPushButton(FieldsEditDialog)
         self.btnSetCase.setObjectName("btnSetCase")
         self.gridLayout_3.addWidget(self.btnSetCase, 0, 1, 1, 1)
-        self.gridLayout_2.addLayout(self.gridLayout_3, 10, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout_3, 11, 0, 1, 1)
         self.radioBtnSyncDatabase = QtGui.QRadioButton(FieldsEditDialog)
         self.radioBtnSyncDatabase.setChecked(True)
         self.radioBtnSyncDatabase.setObjectName("radioBtnSyncDatabase")
@@ -57,11 +57,11 @@ class Ui_FieldsEditDialog(object):
         self.btnReset = QtGui.QPushButton(FieldsEditDialog)
         self.btnReset.setObjectName("btnReset")
         self.gridLayout_2.addWidget(self.btnReset, 1, 0, 1, 1)
-        self.btnParseDates = QtGui.QPushButton(FieldsEditDialog)
-        self.btnParseDates.setObjectName("btnParseDates")
-        self.gridLayout_2.addWidget(self.btnParseDates, 7, 0, 1, 1)
         spacerItem = QtGui.QSpacerItem(150, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem, 6, 0, 1, 1)
+        self.btnParseDates = QtGui.QPushButton(FieldsEditDialog)
+        self.btnParseDates.setObjectName("btnParseDates")
+        self.gridLayout_2.addWidget(self.btnParseDates, 8, 0, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout_2)
 
         self.retranslateUi(FieldsEditDialog)

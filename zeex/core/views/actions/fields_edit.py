@@ -27,7 +27,7 @@ import pandas as pd
 from core.ui.actions.fields_edit_ui import Ui_FieldsEditDialog
 from core.compat import QtGui, QtCore
 from core.models.fieldnames import FieldModel
-from core.utility.pandatools import dataframe_to_datetime
+from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
 from qtpandas import DataFrameModel
 
 CASE_MAP = {'lower': str.lower,
@@ -83,6 +83,12 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         """
         cur_ct = self.fmodel.rowCount()
         df = self.dfmodel.dataFrame()
+        orig_cols = df.columns.tolist()
+
+        if len(list(set(orig_cols))) < len(orig_cols):
+            df.columns = rename_dupe_cols(df.columns)
+            self.dfmodel.dataChanged.emit()
+
         if cur_ct > 0:
             for i in range(self.fmodel.rowCount()):
                 item = self.fmodel.item(i, 0)
