@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'normalize.ui'
 #
-# Created: Thu Dec 22 14:19:48 2016
+# Created: Sat Dec 24 00:13:46 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,9 +28,6 @@ class Ui_ColumnNormalizerDialog(object):
         self.removeSpecialCharactersLabel = QtGui.QLabel(ColumnNormalizerDialog)
         self.removeSpecialCharactersLabel.setObjectName("removeSpecialCharactersLabel")
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.removeSpecialCharactersLabel)
-        self.checkBoxRemoveSpecialChars = QtGui.QCheckBox(ColumnNormalizerDialog)
-        self.checkBoxRemoveSpecialChars.setObjectName("checkBoxRemoveSpecialChars")
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.checkBoxRemoveSpecialChars)
         self.trimSpacesLabel = QtGui.QLabel(ColumnNormalizerDialog)
         self.trimSpacesLabel.setObjectName("trimSpacesLabel")
         self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.trimSpacesLabel)
@@ -122,6 +119,18 @@ class Ui_ColumnNormalizerDialog(object):
         self.comboBoxDropFillNA.addItem("")
         self.gridLayout_7.addWidget(self.comboBoxDropFillNA, 0, 1, 1, 1)
         self.formLayout_2.setLayout(6, QtGui.QFormLayout.LabelRole, self.gridLayout_7)
+        self.gridLayout_8 = QtGui.QGridLayout()
+        self.gridLayout_8.setObjectName("gridLayout_8")
+        self.checkBoxRemoveSpecialChars = QtGui.QCheckBox(ColumnNormalizerDialog)
+        self.checkBoxRemoveSpecialChars.setObjectName("checkBoxRemoveSpecialChars")
+        self.gridLayout_8.addWidget(self.checkBoxRemoveSpecialChars, 0, 0, 1, 1)
+        self.lineEditRemoveSpecialCharsKeeps = QtGui.QLineEdit(ColumnNormalizerDialog)
+        self.lineEditRemoveSpecialCharsKeeps.setObjectName("lineEditRemoveSpecialCharsKeeps")
+        self.gridLayout_8.addWidget(self.lineEditRemoveSpecialCharsKeeps, 0, 2, 1, 1)
+        self.label_2 = QtGui.QLabel(ColumnNormalizerDialog)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_8.addWidget(self.label_2, 0, 1, 1, 1)
+        self.formLayout_2.setLayout(1, QtGui.QFormLayout.FieldRole, self.gridLayout_8)
         self.verticalLayout.addLayout(self.formLayout_2)
         self.gridLayout_5 = QtGui.QGridLayout()
         self.gridLayout_5.setObjectName("gridLayout_5")
@@ -160,6 +169,7 @@ class Ui_ColumnNormalizerDialog(object):
         self.labelDropFillNA.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Drop/Fill NA", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxDropFillNA.setItemText(0, QtGui.QApplication.translate("ColumnNormalizerDialog", "Drop NA", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxDropFillNA.setItemText(1, QtGui.QApplication.translate("ColumnNormalizerDialog", "Fill NA", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Keep", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSaveSettings.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Save Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.btnLoadSettings.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Load Settings", None, QtGui.QApplication.UnicodeUTF8))
 

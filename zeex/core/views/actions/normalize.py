@@ -107,11 +107,13 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
                         replace_spaces_active = self.checkBoxReplaceSpaces.isChecked(),
                         trim_spaces_active = self.checkBoxTrimSpaces.isChecked(),
                         drop_or_fill_active = self.checkBoxDropFillNA.isChecked(),
+                        remove_special_chars_active=self.checkBoxRemoveSpecialChars.isChecked(),
 
                         case = self.comboBoxSetCase.currentText(),
                         drop_or_fill = self.comboBoxDropFillNA.currentText(),
                         drop_or_fill_how = self.comboBoxDropFillNAHow.currentText(),
                         drop_or_fill_with = self.lineEditDropFillNA.text(),
+                        remove_special_chars_keeps=self.lineEditRemoveSpecialCharsKeeps.text(),
                         merge_or_split = self.comboBoxMergeOrSplit.currentText(),
                         merge_or_split_sep = self.lineEditMergeOrSplitSep.text(),
                         replace_spaces = self.lineEditReplaceSpaces.text(),
@@ -136,6 +138,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         merge_or_split = s.get_safe(section, 'merge_or_split', fallback='split')
         columns = [c.lower() for c in s.get_safe(section, 'columns', fallback=[])]
 
+        self.checkBoxRemoveSpecialChars.setChecked(s.getboolean(section, 'remove_special_chars_active', fallback=False))
         self.checkBoxSetCase.setChecked(s.getboolean(section, 'case_active', fallback=False))
         self.checkBoxMergeOrSplit.setChecked(s.getboolean(section, 'merge_or_split_active', fallback=False))
         self.checkBoxReplaceSpaces.setChecked(s.getboolean(section, 'replace_spaces_active', fallback=False))
@@ -148,6 +151,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         self.lineEditDropFillNA.setText(s.get_safe(section, 'drop_or_fill_with', fallback=''))
         self.lineEditMergeOrSplitSep.setText(s.get_safe(section, 'merge_or_split_sep', fallback=''))
         self.lineEditReplaceSpaces.setText(s.get_safe(section, 'replace_spaces', fallback=''))
+        self.lineEditRemoveSpecialCharsKeeps.setText(s.get_safe(section, 'remove_special_chars_keeps', fallback=''))
         current_items = self.listViewColumns.model().get_items()
         [c.setCheckState(QtCore.Qt.Checked) for c in current_items if c.text().lower() in columns]
 
@@ -206,6 +210,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         case_active = self.checkBoxSetCase.isChecked()
         mos_active = self.checkBoxMergeOrSplit.isChecked()
         replace_spaces_active = self.checkBoxReplaceSpaces.isChecked()
+        remove_special_chars_active = self.checkBoxRemoveSpecialChars.isChecked()
         trim_spaces_active = self.checkBoxTrimSpaces.isChecked()
         drop_fill_active = self.checkBoxDropFillNA.isChecked()
         activation_options = [replace_spaces_active, trim_spaces_active,
@@ -218,10 +223,15 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         mos_sep = self.lineEditMergeOrSplitSep.text()
         replace_spaces = self.lineEditReplaceSpaces.text()
         trim_spaces = self.checkBoxTrimSpaces.isChecked()
+        remove_special_chars_keeps = [e for e in self.lineEditRemoveSpecialCharsKeeps.text()
+                                      if not e.isalnum() and e is not '']
 
         if drop_fill_active:
             if 'drop' in drop_fill:
                 df = df.dropna(axis=0, how=dof_how, subset=columns)
+                if dof_how == 'any':
+                    for c in columns:
+                        df = df.loc[~df[c].isin(['']), :]
             else:
                 try:
                     dof_with = int(dof_with)
@@ -235,6 +245,16 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         if trim_spaces and trim_spaces_active:
             for c in columns:
                 df.loc[:, c] = pandatools.series_strip(df.loc[:, c])
+
+        if remove_special_chars_active:
+            if not drop_fill_active:
+                for c in columns:
+                    df.loc[:, c] = df.loc[:, c].fillna(value='')
+            for c in columns:
+
+                df.loc[:, c] = df.loc[:, c].apply(lambda x: ''.join(e for e in str(x)
+                                                                    if e.isalnum()
+                                                                    or e in remove_special_chars_keeps))
 
         if replace_spaces_active:
             for c in columns:
@@ -257,6 +277,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
             df.columns = pandatools.rename_dupe_cols(df.columns)
 
         if any(activation_options):
+            print("Executed normalization on {}".format(self.df_model.filePath))
             self.df_model.setDataFrame(df, filePath=self.df_model.filePath)
 
 

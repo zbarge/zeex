@@ -35,9 +35,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="checkBoxRemoveSpecialChars"/>
-       </item>
        <item row="2" column="0">
         <widget class="QLabel" name="trimSpacesLabel">
          <property name="text">
@@ -199,6 +196,23 @@
              <string>Fill NA</string>
             </property>
            </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="1">
+        <layout class="QGridLayout" name="gridLayout_8">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBoxRemoveSpecialChars"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLineEdit" name="lineEditRemoveSpecialCharsKeeps"/>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Keep</string>
+           </property>
           </widget>
          </item>
         </layout>
