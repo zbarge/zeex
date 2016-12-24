@@ -92,6 +92,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         """
         if rootdir is None or isinstance(rootdir, SettingsINI):
             rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
+            rootdir = os.path.realpath(rootdir)
 
         if not os.path.exists(rootdir):
             os.mkdir(rootdir)
@@ -103,6 +104,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             self.treeView.setModel(model)
 
         if model.rootPath() is not rootdir:
+            print("root directory: {}".format(rootdir))
             self.treeView.setRootIndex(model.index(rootdir))
             self.treeView.setColumnWidth(0, 175)
         
@@ -141,7 +143,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
 
             # Update ROOT_DIRECTORY in settings.
             settings = SettingsINI(ini)
-            settings.set('GENERAL', 'ROOT_DIRECTORY', dirname)
+            settings.set_path('GENERAL', 'ROOT_DIRECTORY', dirname)
             ini_name = os.path.basename(ini)
 
             # Make sure the ini file goes
@@ -150,7 +152,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             settings.save_as(ini, set_self=True)
 
             # Build & cache window
-            window = ProjectMainWindow(ini, parent=self)
+            window = ProjectMainWindow(settings, parent=self)
             self._cache_project(dirname, window)
             self.signalProjectOpened.emit([dirname, ini])
             window.show()

@@ -28,7 +28,7 @@ from core.compat import QtGui, QtCore
 import core.utility.pandatools as pandatools
 from qtpandas import DataFrameModel
 from core.utility.widgets import configureComboBox
-from core.utility.collection import SettingsINI
+from core.utility.collection import DictConfig, SettingsINI
 
 
 class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
@@ -55,6 +55,8 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
             self.setWindowTitle(title)
         self.buttonBox.accepted.connect(self.execute)
         self.btnUncheckAll.clicked.connect(self.uncheck_all)
+        self.btnLoadSettings.clicked.connect(self.import_settings)
+        self.btnSaveSettings.clicked.connect(self.export_settings)
 
     def uncheck_all(self):
         self.checkBoxDropFillNA.setChecked(False)
@@ -81,30 +83,40 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
                         trim_spaces = self.checkBoxTrimSpaces.isChecked())
         return settings
 
-    def set_settings(self, settings: dict):
+    def set_settings(self, settings: DictConfig):
         s = settings
-        case = s.get('case', '')
-        drop_or_fill = s.get('drop_or_fill', 'Drop NA')
-        drop_or_fill_how = s.get('drop_or_fill_how', 'any')
-        merge_or_split = s.get('merge_or_split', 'split')
-        self.checkBoxSetCase.setChecked(s.get('case_active', False))
-        self.checkBoxMergeOrSplit.setChecked(s.get('merge_or_split_active', False))
-        self.checkBoxReplaceSpaces.setChecked(s.get('replace_spaces_active', False))
-        self.checkBoxTrimSpaces.setChecked(s.get('trim_spaces_active', False))
-        self.checkBoxDropFillNA.setchecked(s.get('drop_or_fill_active', False))
+        case = s.get_safe('NORMALIZE', 'case', fallback='')
+        drop_or_fill = s.get_safe('NORMALIZE', 'drop_or_fill', fallback='Drop NA')
+        drop_or_fill_how = s.get_safe('NORMALIZE', 'drop_or_fill_how', fallback='any')
+        merge_or_split = s.get_safe('NORMALIZE', 'merge_or_split', fallback='split')
+        self.checkBoxSetCase.setChecked(s.get_safe('NORMALIZE', 'case_active', fallback=False))
+        self.checkBoxMergeOrSplit.setChecked(s.get_safe('NORMALIZE', 'merge_or_split_active', fallback=False))
+        self.checkBoxReplaceSpaces.setChecked(s.get_safe('NORMALIZE', 'replace_spaces_active', fallback=False))
+        self.checkBoxTrimSpaces.setChecked(s.get_safe('NORMALIZE', 'trim_spaces_active', fallback=False))
+        self.checkBoxDropFillNA.setchecked(s.get_safe('NORMALIZE', 'drop_or_fill_active', fallback=False))
         self.comboBoxDropFillNA.setCurrentIndex(self.comboBoxDropFillNA.findText(drop_or_fill))
         self.comboBoxSetCase.setCurrentIndex(self.comboBoxSetCase.findText(case))
         self.comboBoxMergeOrSplit.setCurrentIndex(self.comboBoxMergeOrSplit.findText(merge_or_split))
         self.comboBoxDropFillNAHow.setCurrentIndex(self.comboBoxDropFillNAHow.findText(drop_or_fill_how))
-        self.lineEditDropFillNA.setText(s.get('drop_or_fill_with', ''))
-        self.lineEditMergeOrSplitSep.setText(s.get('merge_or_split_sep', ''))
-        self.lineEditReplaceSpaces.setText(s.get('replace_spaces', ''))
+        self.lineEditDropFillNA.setText(s.get_safe('NORMALIZE', 'drop_or_fill_with', fallback=''))
+        self.lineEditMergeOrSplitSep.setText(s.get_safe('NORMALIZE', 'merge_or_split_sep', fallback=''))
+        self.lineEditReplaceSpaces.setText(s.get_safe('NORMALIZE', 'replace_spaces', fallback=''))
+
     def export_settings(self, to=None):
         if to is None:
             to = QtGui.QFileDialog.getSaveFileName(self)
         settings = self.get_settings()
-        ini = None
+        ini = DictConfig(dictionary=dict(NORMALIZE=settings), filename=to)
+        ini.save()
 
+    def import_settings(self, filename=None, dictconfig:DictConfig=None):
+        if filename is None:
+            if dictconfig is None:
+                raise TypeError("filename and dictconfig paramaters cannot be both be None.")
+        else:
+            dictconfig = SettingsINI(filename=filename)
+
+        self.set_settings(dictconfig)
 
     def execute(self):
         df = self.df_model.dataFrame()

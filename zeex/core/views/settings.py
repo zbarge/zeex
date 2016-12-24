@@ -29,7 +29,7 @@ from functools import partial
 from core.compat import QtGui, QtCore
 from core.models.main import FieldsListModel
 from core.ui.settings_ui import Ui_settingsDialog
-from core.utility.collection import SettingsINI
+from core.utility.collection import SettingsINI, DictConfig
 from core.utility.widgets import configureComboBox
 
 
@@ -69,10 +69,16 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         QtGui.QDialog.__init__(self, **kwargs)
         self.setupUi(self)
 
-        if isinstance(settings, SettingsINI):
+        if isinstance(settings, (SettingsINI, DictConfig)):
             self.settings_ini = settings
+        elif isinstance(settings, str) or settings is None:
+            if settings is None:
+                print("Using default settings - got settings of type {}".format(type(settings)))
+            self.settings_ini = SettingsINI(filename=settings)
+        elif isinstance(settings, dict):
+            self.settings_ini = DictConfig(dictionary=settings)
         else:
-            self.settings_ini = SettingsINI(settings)
+            raise NotImplementedError("Unsupported settings type: {}".format(type(settings)))
 
         self.configure_settings(self.settings_ini)
         self.connect_buttons()
@@ -105,10 +111,9 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
             raise NotImplementedError("config must be a SettingsINI object.")
 
         c = config
-            
         # Get items/set defaults.
-        ROOT_DIR =        c.get_safe('GENERAL', 'ROOT_DIRECTORY',  fallback=DEFAULT_ROOT_DIR)
-        LOG_DIR =         c.get_safe('GENERAL','LOG_DIRECTORY',   fallback=DEFAULT_LOG_DIR)
+        ROOT_DIR =        c.get('GENERAL', 'root_directory',  fallback=DEFAULT_ROOT_DIR)
+        LOG_DIR =         c.get('GENERAL', 'log_directory',   fallback=DEFAULT_LOG_DIR)
         LOG_LEVEL =       c.get_safe('GENERAL', 'LOG_LEVEL',       fallback="Low")
         CLOUD_PROVIDER =  c.get_safe('GENERAL', 'CLOUD_PROVIDER',  fallback="S3")
         THEME_NAME     =  c.get_safe('GENERAL', 'THEME',           fallback=DEFAULT_THEME)
@@ -144,7 +149,7 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
                 if not os.path.exists(fp):
                     os.mkdir(fp)
             except OSError as e:
-                raise OSError("Cannot initialize settings directory {}".format(fp))
+                raise OSError("Cannot initialize settings directory {} - {}".format(fp, e))
                 sys.exit(1)
 
         self.autoSortCheckBox.setCheckable(True)
@@ -199,8 +204,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
     def save_settings(self, to_path=None, write=False):
         self.set_theme()
 
-        self.settings_ini.set_safe('GENERAL', 'ROOT_DIRECTORY', self.rootDirectoryLineEdit.text())
-        self.settings_ini.set('GENERAL', 'LOG_DIRECTORY', self.logDirectoryLineEdit.text())
+        self.settings_ini.set_path('GENERAL', 'ROOT_DIRECTORY', self.rootDirectoryLineEdit.text())
+        self.settings_ini.set_path('GENERAL', 'LOG_DIRECTORY', self.logDirectoryLineEdit.text())
         self.settings_ini.set('GENERAL', 'LOG_LEVEL', self.logLevelComboBox.currentText())
         self.settings_ini.set('GENERAL', 'CLOUD_PROVIDER', self.cloudProviderComboBox.currentText())
         self.settings_ini.set('GENERAL', 'THEME', self.themeComboBox.currentText())

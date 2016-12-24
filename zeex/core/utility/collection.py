@@ -25,7 +25,6 @@ SOFTWARE.
 import os
 import shutil
 from configparser import ConfigParser
-from core.compat import string_to_list
 from ast import literal_eval as Eval
 
 DEFAULT_CONFIG_NAME = 'default.ini'
@@ -68,18 +67,11 @@ class BaseConfig(ConfigParser):
     """
 
     def __init__(self, filename=None, default_path=None, default_backup_path=None):
-        ConfigParser.__init__(self)
+        ConfigParser.__init__(self, allow_no_value=True)
         self._default_path = default_path
         self._default_backup_path = default_backup_path
         self._filename = filename
-        if filename is not None:
-            try:
-                self.read(self._filename)
-            except IOError as Err:
-                if Err.errno == 2:
-                    pass
-                else:
-                    raise Err
+
 
     @property
     def filename(self):
@@ -102,9 +94,21 @@ class BaseConfig(ConfigParser):
 
     def get_safe(self, section, option, **kwargs):
         try:
-            return Eval(self.get(section, option, **kwargs))
-        except:
+            option = self.get(section, option, **kwargs)
+            return Eval(option)
+        except (SyntaxError, ValueError) as e:
+            try:
+                return self[section][str(option)]
+            except (KeyError, AttributeError) as e:
+                pass
             return kwargs.pop('fallback', None)
+
+    def get_path(self, section, option, **kwargs):
+        return os.path.normpath(self.get_safe(section, option, **kwargs)).replace('\\', '/')
+
+    def set_path(self, section, option, value, **kwargs):
+        value = os.path.normpath(value).replace("\\", '/')
+        self.set_safe(section, option, value, **kwargs)
 
     def save(self):
         with open(self._filename, "w") as fh:
@@ -125,11 +129,17 @@ class FileConfig(BaseConfig):
     def __init__(self, filename=None):
         default = get_default_config_path()
         backup = get_config_backup_path(default)
-        BaseConfig.__init__(self, filename=filename, default_path=default, default_backup_path=backup)
         if filename is None:
-            self._filename = default
-        else:
-            self._filename = filename
+            filename = default
+        BaseConfig.__init__(self, filename=filename, default_path=default, default_backup_path=backup)
+
+        try:
+            self.read(self._filename)
+        except IOError as Err:
+            if Err.errno == 2:
+                pass
+            else:
+                raise Err
 
 
 class DictConfig(BaseConfig):
