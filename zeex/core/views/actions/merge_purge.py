@@ -35,21 +35,40 @@ from core.views.actions.map_grid import MapGridDialog
 from core.ctrls.dataframe import DataFrameModelManager
 from core.utility.widgets import create_standard_item_model
 from core.utility.pandatools import gather_frame_fields
+from core.utility.collection import DictConfig, SettingsINI
 
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
+    """
+    This dialog allows a user to do large updates on a given source DataFrameModel.
+        - Merging other file(s) with the source based on common keys/fields
+        - Purging records from the source using other file(s) based on common keys/fields
+        - Sorting the DataFrame by multiple columns/ascending/descending
+        - Deduplicating the DataFrame based on common keys/fields
+    Settings can exported to a config.ini file and re-imported at a later time.
+
+    """
     signalMergeFileOpened = QtCore.Signal(str) # file path
     signalSFileOpened = QtCore.Signal(str) # file path
     signalExecuted = QtCore.Signal(str, str, str) # source_path, dest_path, report_path
 
     def __init__(self, df_manager: DataFrameModelManager, parent=None, source_model=None):
+        """
+        :param df_manager: (DataFrameModelManager)
+            This will be used to handle reading/updating of DataFrameModels used
+            in the operation.
+        :param parent: (QMainWindow)
+
+        :param source_model: (DataFrameModel)
+            An optional source DataFrameModel
+        """
         self.df_manager = df_manager
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.source_model = source_model
         self._merge_view_model = FileViewModel()
         self._suppress_view_model = FileViewModel()
-        self._suppress_files = {}
+        self._purge_files = {}
         self._merge_files = {}
         self._file_table_windows = {}
         self._field_map_grids = {}
@@ -60,8 +79,16 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.uniqueFieldsHandler = None
         self.gatherFieldsHandler = None
 
-    def configure(self, source_path=None, dest_path=None) -> bool:
+    def configure(self, source_path=None, dest_path=None):
+        """
+        Connects main buttons and actions.
+        :param source_path: (str, default None)
+            If this is None there must be a valid path already in the sourcePathLineEdit or an AssertionError raises.
 
+        :param dest_path: (str, default None)
+            Optional custom destination path to be added to the destPathLineEdit.
+        :return: None
+        """
         if source_path is None:
             source_path = self.sourcePathLineEdit.text()
             assert os.path.exists(source_path), "source_path cannot be None, set ".format(source_path)
@@ -77,18 +104,30 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.btnEditMergeFile.clicked.connect(partial(self.open_edit_file_window, self.mergeFileTable, self._merge_files))
         self.mergeFileTable.setModel(self._merge_view_model)
 
-        self.signalSFileOpened.connect(self.add_suppress_file)
+        self.signalSFileOpened.connect(self.add_purge_file)
         sfile_func = partial(self.open_file, model_signal=self.signalSFileOpened)
-        self.btnEditSFile.clicked.connect(partial(self.open_edit_file_window, self.sFileTable, self._suppress_files))
+        self.btnEditSFile.clicked.connect(partial(self.open_edit_file_window, self.sFileTable, self._purge_files))
         self.btnDeleteSFile.clicked.connect(partial(self.remove_file, self.sFileTable))
         self.btnAddSFile.clicked.connect(sfile_func)
         self.btnBrowseSFile.clicked.connect(sfile_func)
         self.sFileTable.setModel(self._suppress_view_model)
-        self.btnMapSFields.clicked.connect(partial(self.open_field_map, self.sFileTable, self._suppress_files))
+        self.btnMapSFields.clicked.connect(partial(self.open_field_map, self.sFileTable, self._purge_files))
         self.btnMapMergeFields.clicked.connect(partial(self.open_field_map, self.mergeFileTable, self._merge_files))
         self.btnExecute.clicked.connect(self.execute)
+        self.btnExportTemplate.clicked.connect(self.export_settings)
+        self.btnImportTemplate.clicked.connect(self.import_settings)
+        self.btnReset.clicked.connect(self.reset)
 
     def set_source_model(self, model=None, configure=False):
+        """
+        Sets the source DataFrameModel for the Dialog.
+
+        :param model: (DataFrameModel)
+            The DataFrameModel to be set.
+        :param configure:
+            True re-configures file path line edits and the listviews.
+        :return:
+        """
         if not isinstance(model, DataFrameModel):
             if model is None:
                 model = self.sourcePathLineEdit.text()
@@ -100,11 +139,18 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         if configure:
             self.configure(source_path=self.source_model.filePath)
             self.set_push_grid_handlers()
-            combo_model = create_standard_item_model(model.dataFrame().columns.tolist(),
-                                                     editable=False, checkable=True)
-            self.primaryKeyComboBox.setModel(combo_model)
+            self.set_primary_key_combo_box(default=self.primaryKeyComboBox.currentText())
 
     def set_line_edit_paths(self, source_path, dest_path=None):
+        """
+        Sets the source/destination line edits in the Dialog.
+        :param source_path: (str)
+            A valid filepath for the source DataFrameModel
+        :param dest_path: (str, default None)
+            An optional destination path. One will be created automatically
+            if None is given.
+        :return: None
+        """
         if dest_path is None:
             dirname = os.path.dirname(source_path)
             base, ext = os.path.splitext(os.path.basename(source_path))
@@ -142,8 +188,8 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
                                              right_view=self.sortOnRightView,
                                              right_button=self.sortOnRightButton)
 
-    def set_handler_sort_asc(self, default_model=None):
-        if self.sortAscHandler is None or default_model is not None:
+    def set_handler_sort_asc(self, default_model=None, overwrite=False):
+        if self.sortAscHandler is None or default_model is not None or overwrite:
             sort_asc = QtGui.QStandardItemModel()
             sort_asc.appendRow(QtGui.QStandardItem('True'))
             sort_asc.appendRow(QtGui.QStandardItem('False'))
@@ -182,7 +228,13 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
                                                    right_view=self.uniqueFieldsListViewRight,
                                                    right_button=self.uniqueFieldsPushButtonRight)
 
-    def get_source_columns_model(self ,raise_on_error=True):
+    def get_source_columns_model(self, raise_on_error=True) -> QtGui.QStandardItemModel:
+        """
+        Quick way to get a QStandardItemModel form the DataFrameModel's columns.
+        :param raise_on_error: (bool, default True)
+            Raises an error if the source_model has not yet been set.
+        :return: (QtGui.QStandardItemModel)
+        """
         if self.source_model is None:
             if raise_on_error:
                 raise Exception("Cannot get source_columns as source_model is None!")
@@ -194,6 +246,18 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         return create_standard_item_model(columns)
 
     def open_file(self, file_names: list=None, model_signal=None):
+        """
+        Opens a Merge or Purge file (or really any file) and calls the
+        given model signal after registering the DataFrameModel with the DataFrameModelManager.
+        :param file_names: (list, default None)
+            An optional list of filenames to open.
+            The user must select filenames otherwise.
+        :param model_signal: (QtCore.Signal)
+            A signal to be called after successfully reading the DataFrameModel.
+        :return: None
+            You can call MergePurgeDialog.df_manager.get_frame(filename) to
+            retrieve a DataFrameModel.
+        """
         if file_names is None:
             file_names = QtGui.QFileDialog.getOpenFileNames(parent=self)
             #file_names = list(file_names[0])
@@ -205,6 +269,8 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
 
         for f in file_names:
             try:
+                if isinstance(f, list):
+                    f = f[0]
                 if os.path.exists(f):
                     self.df_manager.read_file(f)
                     if model_signal is not None:
@@ -215,6 +281,13 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
 
     @QtCore.Slot(str)
     def add_merge_file(self, file_path):
+        """
+        Adds a merge file to the merge view and
+        also updates the internal dictionary storing the filepath/model.
+        :param file_path: (str)
+            The file path to add.
+        :return: None
+        """
         model = self.df_manager.get_model(file_path)
         model.enableEditing(True)
         self._merge_files.update({file_path:model})
@@ -222,14 +295,30 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.mergeFileTable.setColumnWidth(0, 500)
 
     @QtCore.Slot(str)
-    def add_suppress_file(self, file_path):
+    def add_purge_file(self, file_path):
+        """
+        Adds a purge file to the purge view and
+        also updates the internal dictionary storing the filepath/model.
+        :param file_path: (str)
+            The file path to add.
+        :return: None
+        """
         model = self.df_manager.get_model(file_path)
         model.enableEditing(True)
-        self._suppress_files.update({file_path:model})
+        self._purge_files.update({file_path:model})
         self._suppress_view_model.append_df_model(model)
         self.sFileTable.setColumnWidth(0, 500)
 
     def remove_file(self, view, indexes=None):
+        """
+        Removes selected file(s) from the given view.
+        :param view: (QListView)
+            The view to drop the selected indexes on.
+        :param indexes: (list, default None)
+            A list of given indexes to drop.
+            Otherwise relies on selected indexes in the view.
+        :return: None
+        """
         if indexes is None:
             indexes = [x.row() for x in view.selectedIndexes()]
         model = view.model()
@@ -278,6 +367,13 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             self._field_map_grids[view_item_text].show()
 
     def get_map_grid(self, file_path):
+        """
+        Accessor to the MergePurgeDialog._field_map_grids dictionary.
+        Contains map grid dialogs.
+        :param file_path: (str)
+            The filepath related to the desired MapGridDialog.
+        :return: (MapGridDialog, None)
+        """
         return self._field_map_grids.get(file_path, None)
 
     def open_edit_file_window(self, view, models):
@@ -349,7 +445,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
                 source_df = pd.concat([source_df, other_df])
             merged_results.update({merge_model.filePath: source_df.index.size - pre_size})
         # Get all suppression models and suppress.
-        for file_path, suppress_model in self._suppress_files.items():
+        for file_path, suppress_model in self._purge_files.items():
             map_dict = self._field_map_data.get(file_path, {})
             sframe = suppress_model.dataFrame().copy()
             sframe.drop(['ORIG_IDXER'], axis=1, inplace=True, errors='ignore')
@@ -432,6 +528,138 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             fh.write(report)
 
         self.signalExecuted.emit(source_path, dest_path, report_path)
+
+    def get_settings(self, dc:DictConfig = None, section="MERGE_PURGE") -> DictConfig:
+        """
+        Gathers the settings out of the Dialog and
+        returns a DictConfig object with updated settings.
+
+        :param dc (DictConfig, default None)
+            An optional DictConfig object, one is created if none is given.
+        :param section (str, default 'MERGE_PURGE')
+            An optional section name to apply settings to.
+            A pre-existing section with this name would be overwritten.
+        :return: (DictConfig)
+            An updated DictConfig object.
+        """
+        if dc is None:
+            dc = DictConfig()
+        if dc.has_section(section):
+            dc.remove_section(section)
+        dc.add_section(section)
+
+        dc.set_safe(section, 'source_path',           self.sourcePathLineEdit.text())
+        dc.set_safe(section, 'dest_path',             self.destPathLineEdit.text())
+        dc.set_safe(section, 'primary_key',           self.primaryKeyComboBox.currentText())
+        dc.set_safe(section, 'dedupe_on',             self.dedupeOnHandler.get_model_list(left=False))
+        dc.set_safe(section, 'gather_fields',         self.gatherFieldsHandler.get_model_list(left=False))
+        dc.set_safe(section, 'gather_fields_overwrite', self.gatherFieldsOverWriteCheckBox.isChecked())
+        dc.set_safe(section, 'sort_on',               self.sortOnHandler.get_model_list(left=False))
+        dc.set_safe(section, 'sort_ascending',        self.sortAscHandler.get_model_list(left=False))
+        dc.set_safe(section, 'unique_fields',         self.uniqueFieldsHandler.get_model_list(left=False))
+        dc.set_safe(section, 'field_map_data',        self._field_map_data)
+        dc.set_safe(section, 'merge_files',           list(self._merge_files.keys()))
+        dc.set_safe(section, 'purge_files',           list(self._purge_files.keys()))
+        return dc
+
+    def set_settings(self, dc:DictConfig, section="MERGE_PURGE"):
+        """
+        Applies settings from a DictConfig object to the Dialog.
+
+        :param dc (DictConfig, default None)
+            The DictConfig object that contains the settings to be applied.
+        :param section (str, default 'MERGE_PURGE')
+            The section name to read settings from.
+        :return:
+        """
+        source_path = dc.get(section, 'source_path', fallback=self.sourcePathLineEdit.text())
+        current_path = self.sourcePathLineEdit.text()
+        if source_path != current_path:
+            dfm = self.df_manager.read_file(source_path)
+            dest = dc.get(section, 'dest_path', fallback=None)
+            self.set_source_model(dfm, configure=False)
+            self.set_line_edit_paths(source_path, dest_path=dest)
+            self.primaryKeyComboBox.clear()
+            self.set_primary_key_combo_box()
+
+        key_id = self.primaryKeyComboBox.findText(dc.get(section, 'primary_key',
+                                                         fallback=self.primaryKeyComboBox.currentText()))
+
+        dedupe_on     = dc.get_safe(section, 'dedupe_on', fallback=None)
+        sort_on       = dc.get_safe(section, 'sort_on', fallback=None)
+        gather_fields = dc.get_safe(section, 'gather_fields', fallback=None)
+        unique_fields = dc.get_safe(section, 'unique_fields', fallback=None)
+        gather_fields_overwrite = dc.getboolean(section, 'gather_fields_overwrite', fallback=False)
+        sort_ascending = dc.get_safe(section, 'sort_ascending', fallback=None)
+        merge_files    = dc.get_safe(section, 'merge_files', fallback=[])
+        purge_files    = dc.get_safe(section, 'purge_files', fallback=[])
+        field_map_data = dc.get_safe(section, 'field_map_data', fallback={})
+
+        self.primaryKeyComboBox.setCurrentIndex(key_id)
+        self.set_push_grid_handlers(column_model=None, sorton_model=sort_on, sortasc_model=sort_ascending,
+                               dedupe_model=dedupe_on, gather_model=gather_fields, unique_model=unique_fields)
+        self.gatherFieldsOverWriteCheckBox.setChecked(gather_fields_overwrite)
+        self._field_map_data.update(field_map_data)
+        self.open_file(file_names=merge_files, model_signal=self.signalMergeFileOpened)
+        self.open_file(file_names=purge_files, model_signal=self.signalSFileOpened)
+
+    def reset(self):
+        """
+        Resets ListViews/CheckBoxes.
+        The source/dest line edits are left alone
+        The suppression/merge files are also left alone.
+        :return: None
+        """
+        self.set_push_grid_handlers()
+        self.set_handler_sort_asc(overwrite=True)
+        self.set_primary_key_combo_box()
+        self.gatherFieldsOverWriteCheckBox.setchecked(False)
+
+    def set_primary_key_combo_box(self, default=None):
+        """
+        Sets the primary key combo box.
+        :param default: (str, default None)
+            An optional default field name to select.
+        :return:
+        """
+        combo_model = create_standard_item_model([''] + self.source_model.dataFrame().columns.tolist(),
+                                                 editable=False, checkable=True)
+        self.primaryKeyComboBox.setModel(combo_model)
+        if default is not None:
+            self.primaryKeyComboBox.setCurrentIndex(self.primaryKeyComboBox.findText(default))
+
+    def import_settings(self, from_path=None):
+        """
+        Imports settings to the Dialog from a file.
+        :param from_path: (str, default None)
+            None makes the user enter a file path.
+        :return:
+        """
+        if from_path is None:
+            from_path = QtGui.QFileDialog.getOpenFileName(self)[0]
+        config = SettingsINI(filename=from_path)
+        self.set_settings(config)
+
+    def export_settings(self, to=None):
+        """
+        Exports settings from the Dialog to a file.
+        :param to: (str, default None)
+            None makes the user enter a file path.
+        :return: None
+        """
+        if to is None:
+            to = QtGui.QFileDialog.getSaveFileName(self)[0]
+        config = self.get_settings()
+        config.save_as(to, set_self=True)
+
+
+
+
+
+
+
+
+
 
 
 

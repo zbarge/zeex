@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from core.ui.actions.push_grid_ui import Ui_PushGridWidget
 from core.compat import QtGui, QtCore
-
+from core.utility.widgets import create_standard_item_model
 
 class PushGridHandler(object):
     """
@@ -47,6 +47,8 @@ class PushGridHandler(object):
 
         if right_model is None:
             self._right_model = QtGui.QStandardItemModel()
+        elif isinstance(right_model, list):
+            self._right_model = create_standard_item_model(right_model)
         else:
             self._right_model = right_model
 
