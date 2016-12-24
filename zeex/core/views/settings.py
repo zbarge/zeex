@@ -119,8 +119,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         THEME_NAME     =  c.get_safe('GENERAL', 'THEME',           fallback=DEFAULT_THEME)
         HEADER_CASE =     c.get_safe('INPUT', 'HEADER_CASE',      fallback="Lower")
         HEADER_SPACE =    c.get_safe('INPUT', 'HEADER_SPACE',     fallback="_")
-        AUTO_SORT =       c.get_safe('INPUT', 'AUTO_SORT',        fallback=False)
-        AUTO_DEDUPE =     c.get_safe('INPUT', 'AUTO_DEDUPE',      fallback=False)
+        AUTO_SORT =       c.getboolean('INPUT', 'AUTO_SORT',        fallback=False)
+        AUTO_DEDUPE =     c.getboolean('INPUT', 'AUTO_DEDUPE',      fallback=False)
         OUTPUT_FORMAT =   c.get_safe('OUTPUT', 'OUTPUT_FORMAT',   fallback=".csv")
         FILENAME_PFX =    c.get_safe('OUTPUT', 'FILENAME_PREFIX', fallback="z_")
         CHART_FILE =      c.get_safe('OUTPUT', 'CHART_FILENAME',  fallback="")
@@ -204,8 +204,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
     def save_settings(self, to_path=None, write=False):
         self.set_theme()
 
-        self.settings_ini.set_path('GENERAL', 'ROOT_DIRECTORY', self.rootDirectoryLineEdit.text())
-        self.settings_ini.set_path('GENERAL', 'LOG_DIRECTORY', self.logDirectoryLineEdit.text())
+        self.settings_ini.set_safe('GENERAL', 'ROOT_DIRECTORY', self.rootDirectoryLineEdit.text())
+        self.settings_ini.set('GENERAL', 'LOG_DIRECTORY', self.logDirectoryLineEdit.text())
         self.settings_ini.set('GENERAL', 'LOG_LEVEL', self.logLevelComboBox.currentText())
         self.settings_ini.set('GENERAL', 'CLOUD_PROVIDER', self.cloudProviderComboBox.currentText())
         self.settings_ini.set('GENERAL', 'THEME', self.themeComboBox.currentText())

@@ -104,11 +104,11 @@ class BaseConfig(ConfigParser):
             return kwargs.pop('fallback', None)
 
     def get_path(self, section, option, **kwargs):
-        return os.path.normpath(self.get_safe(section, option, **kwargs)).replace('\\', '/')
+        return os.path.normpath(self.get(section, option, **kwargs)).replace('\\', '/')
 
     def set_path(self, section, option, value, **kwargs):
         value = os.path.normpath(value).replace("\\", '/')
-        self.set_safe(section, option, value, **kwargs)
+        self.set(section, option, value, **kwargs)
 
     def save(self):
         with open(self._filename, "w") as fh:
@@ -147,9 +147,10 @@ class DictConfig(BaseConfig):
     Convenient way to get a BaseConfig without needing a filepath.
     """
     def __init__(self, dictionary=None, filename=None, **kwargs):
+        BaseConfig.__init__(self, filename=None)
+        self._filename = filename
         if dictionary is not None:
             self.read_dict(dictionary, **kwargs)
-        self.filename = filename
 
 
 class SettingsINI(FileConfig):

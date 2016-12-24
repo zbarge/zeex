@@ -66,12 +66,12 @@ class TestMainWindow(MainTestClass):
 
         qtbot.mouseClick(dialog.btnSave, QtCore.Qt.LeftButton)
 
-        assert dialog.settings_ini.get('GENERAL', 'ROOT_DIRECTORY') == root_dir
-        assert dialog.settings_ini.get('GENERAL', 'LOG_DIRECTORY') == log_dir
+        assert dialog.settings_ini.get('GENERAL', 'ROOT_DIRECTORY').replace("\\",'/') == root_dir.replace("\\",'/')
+        assert dialog.settings_ini.get('GENERAL', 'LOG_DIRECTORY').replace("\\",'/') == log_dir.replace("\\",'/')
         qtbot.mouseClick(dialog.btnReset, QtCore.Qt.LeftButton)
 
-        assert dialog.settings_ini.get('GENERAL', 'ROOT_DIRECTORY') == orig_root
-        assert dialog.settings_ini.get('GENERAL', 'LOG_DIRECTORY') == orig_log
+        assert dialog.settings_ini.get('GENERAL', 'ROOT_DIRECTORY').replace("\\",'/') == orig_root.replace("\\",'/')
+        assert dialog.settings_ini.get('GENERAL', 'LOG_DIRECTORY').replace("\\",'/') == orig_log.replace("\\",'/')
         dialog.close()
 
     def test_new_project_dialog(self, qtbot, window: ZeexMainWindow, fixtures_dir):
