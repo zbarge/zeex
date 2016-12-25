@@ -38,7 +38,7 @@ from core.views.settings import SettingsDialog
 from core.utility.widgets import get_ok_msg_box, create_standard_item_model
 from core.utility.collection import SettingsINI
 from core.utility.ostools import zipfile_compress
-
+from core.views.directory import DropBoxViewDialog
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     """
@@ -69,6 +69,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
         self.dialog_export = DataFrameModelExportDialog(self.df_manager, parent=self)
         self.dialog_import = CSVImportDialog(self)
+        self.dialog_cloud = DropBoxViewDialog(None, self)
         self.key_delete = QtGui.QShortcut(self)
         self.key_enter = QtGui.QShortcut(self)
         self.key_zip = QtGui.QShortcut(self)
@@ -77,6 +78,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.connect_filetree()
         self.connect_icons()
         self.connect_settings_dialog()
+        self.connect_cloud_dialog()
         self.current_model = None
 
         # Temp cache
@@ -125,6 +127,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionSave.triggered.connect(self.open_export_dialog)
         self.actionRemove.triggered.connect(self.remove_tree_selected_path)
         self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
+        self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
         self.actionZip.triggered.connect(self.zip_path)
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         self.key_enter.activated.connect(self.open_tableview_window)
@@ -146,6 +149,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionRename.setIcon(self.icons['rename'])
         self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
         self.actionZip.setIcon(self.icons['archive'])
+        self.actionViewCloud.setIcon(self.icons['cloud'])
 
     def connect_filetree(self):
         """
@@ -181,6 +185,9 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings.logDirectoryLineEdit.setReadOnly(True)
         self.dialog_settings.rootDirectoryLineEdit.setText(self.project_directory)
         self.dialog_settings.rootDirectoryLineEdit.setReadOnly(True)
+
+    def connect_cloud_dialog(self):
+        self.dialog_cloud.set_source_view(self.treeView)
 
     def open_export_dialog(self):
         """
@@ -267,10 +274,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         filename = self.get_tree_selected_path()
         if filename is not None:
             os.remove(filename)
-        else:
-            #box = get_ok_msg_box(self, "No file selected.")
-            #box.show()
-            pass
 
     def open_tableview_current(self, model: DataFrameModel=None):
         """

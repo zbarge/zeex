@@ -56,6 +56,7 @@
     <addaction name="actionMerge_Purge"/>
     <addaction name="actionRename"/>
     <addaction name="actionZip"/>
+    <addaction name="actionViewCloud"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRecent_Files"/>
@@ -113,6 +114,11 @@
   <action name="actionZip">
    <property name="text">
     <string>Zip</string>
+   </property>
+  </action>
+  <action name="actionViewCloud">
+   <property name="text">
+    <string>View Cloud</string>
    </property>
   </action>
  </widget>

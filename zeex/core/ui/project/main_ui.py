@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Tue Dec 20 17:03:01 2016
+# Created: Sat Dec 24 21:45:30 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,6 +55,8 @@ class Ui_ProjectWindow(object):
         self.actionRename.setObjectName("actionRename")
         self.actionZip = QtGui.QAction(ProjectWindow)
         self.actionZip.setObjectName("actionZip")
+        self.actionViewCloud = QtGui.QAction(ProjectWindow)
+        self.actionViewCloud.setObjectName("actionViewCloud")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -63,6 +65,7 @@ class Ui_ProjectWindow(object):
         self.menuActions.addAction(self.actionMerge_Purge)
         self.menuActions.addAction(self.actionRename)
         self.menuActions.addAction(self.actionZip)
+        self.menuActions.addAction(self.actionViewCloud)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuRecent_Files.menuAction())
         self.menubar.addAction(self.menuActions.menuAction())
@@ -87,5 +90,6 @@ class Ui_ProjectWindow(object):
         self.actionMerge_Purge.setText(QtGui.QApplication.translate("ProjectWindow", "Merge/Purge", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRename.setText(QtGui.QApplication.translate("ProjectWindow", "Rename", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZip.setText(QtGui.QApplication.translate("ProjectWindow", "Zip", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionViewCloud.setText(QtGui.QApplication.translate("ProjectWindow", "View Cloud", None, QtGui.QApplication.UnicodeUTF8))
 
 from core.views.treeview import FileSystemTreeView
