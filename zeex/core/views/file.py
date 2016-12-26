@@ -75,6 +75,11 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionAnalyze.triggered.connect(self.dialog_analyze.show)
         self.actionNormalize.triggered.connect(self.dialog_normalize.show)
 
+        # TODO: Make these actions do something then activate.
+        self.actionExecuteScript.setVisible(False)
+        self.actionSuppress.setVisible(False)
+        self.actionDelete.setVisible(False)
+
     def connect_icons(self):
         self.setWindowTitle("{}".format(self.currentModel.filePath))
         self.setWindowIcon(self.icons['spreadsheet'])
@@ -88,6 +93,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionAnalyze.setIcon(self.icons['count'])
         self.actionNormalize.setIcon(self.icons['normalize'])
         self.dialog_normalize.setWindowIcon(self.icons['normalize'])
+        self.dialog_analyze.setWindowIcon(self.icons['count'])
 
     def open_rename_dialog(self):
         if self.dialog_rename is None:
@@ -98,6 +104,10 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         if self.dialog_fields_edit is None:
             self.dialog_fields_edit = FieldsEditDialog(self.currentModel, parent=self)
         self.dialog_fields_edit.show()
+
+    def open_analyze_dialog(self):
+        self.dialog_analyze.setWindowTitle("Analyze {}".format(os.path.basename(self.currentModel.filePath)))
+        self.dialog_analyze.show()
 
 
 

@@ -47,5 +47,13 @@ class FileAnalyzerDialog(QtGui.QDialog, Ui_FileAnalyzerDialog):
     def configure(self):
         self.analyzer.process_all_methods()
         self.tableView.setModel(self.analyzer.get_table_view_model())
+        self.btnRefresh.clicked.connect(self.refresh)
+
+        # TODO: Make these buttons work and show them.
+        self.btnExport.setVisible(False)
+        self.btnPivot.setVisible(False)
+
+    def refresh(self):
+        self.analyzer.process_all_methods(reprocess=True)
 
 

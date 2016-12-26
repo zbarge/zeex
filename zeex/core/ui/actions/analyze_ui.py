@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'analyze.ui'
 #
-# Created: Tue Dec 20 13:10:25 2016
+# Created: Sun Dec 25 20:49:01 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,18 +21,15 @@ class Ui_FileAnalyzerDialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.pushButton = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout_2.addWidget(self.pushButton, 3, 0, 1, 1)
-        self.pushButton_3 = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.gridLayout_2.addWidget(self.pushButton_3, 1, 0, 1, 1)
-        self.pushButton_2 = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.gridLayout_2.addWidget(self.pushButton_2, 2, 0, 1, 1)
-        self.pushButton_4 = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.gridLayout_2.addWidget(self.pushButton_4, 0, 0, 1, 1)
+        self.btnRefresh = QtGui.QPushButton(self.gridLayoutWidget)
+        self.btnRefresh.setObjectName("btnRefresh")
+        self.gridLayout_2.addWidget(self.btnRefresh, 1, 0, 1, 1)
+        self.btnExport = QtGui.QPushButton(self.gridLayoutWidget)
+        self.btnExport.setObjectName("btnExport")
+        self.gridLayout_2.addWidget(self.btnExport, 0, 0, 1, 1)
+        self.btnPivot = QtGui.QPushButton(self.gridLayoutWidget)
+        self.btnPivot.setObjectName("btnPivot")
+        self.gridLayout_2.addWidget(self.btnPivot, 2, 0, 1, 1)
         self.gridLayout.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(self.gridLayoutWidget)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -50,8 +47,7 @@ class Ui_FileAnalyzerDialog(object):
 
     def retranslateUi(self, FileAnalyzerDialog):
         FileAnalyzerDialog.setWindowTitle(QtGui.QApplication.translate("FileAnalyzerDialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("FileAnalyzerDialog", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_3.setText(QtGui.QApplication.translate("FileAnalyzerDialog", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("FileAnalyzerDialog", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_4.setText(QtGui.QApplication.translate("FileAnalyzerDialog", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnRefresh.setText(QtGui.QApplication.translate("FileAnalyzerDialog", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnExport.setText(QtGui.QApplication.translate("FileAnalyzerDialog", "Save", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnPivot.setText(QtGui.QApplication.translate("FileAnalyzerDialog", "Pivot", None, QtGui.QApplication.UnicodeUTF8))
 

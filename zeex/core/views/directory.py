@@ -3,6 +3,7 @@ from core.ui.directory_ui import Ui_DirectoryViewDialog
 from icons import Icons
 import os
 
+
 class DirectoryViewDialog(QtGui.QDialog, Ui_DirectoryViewDialog):
     signalDownloadReady = QtCore.Signal()
     def __init__(self, source_view=None, parent=None):
@@ -59,6 +60,7 @@ class DropBoxViewDialog(DirectoryViewDialog):
         to = self.treeView.model().directory(self.treeView.selectedIndexes()[0])
         for p in paths:
             self.dropbox.upload_file(p, to)
+            print("DropBox - Uploaded {} to {}".format(p, to))
 
     def download(self):
         index = self.source_view.selectedIndexes()[0]
@@ -70,7 +72,7 @@ class DropBoxViewDialog(DirectoryViewDialog):
             to = os.path.dirname(to)
         to = os.path.join(to, os.path.basename(from_path))
         self.dropbox.download_file(from_path, to)
-        print("Directory: {}, File: {}".format(os.path.isdir(to), os.path.isfile(to)))
+        print("DropBox - Downloaded {} to {}".format(from_path, to))
 
     def refresh(self):
         self.treeView.setModel(self.dropbox.get_filesystem_model(update=True))
@@ -78,9 +80,8 @@ class DropBoxViewDialog(DirectoryViewDialog):
     def delete(self):
         from_idx = self.treeView.selectedIndexes()[0]
         from_path = self.treeView.model().filePath(from_idx)
-        res = self.dropbox.con.files_delete(from_path)
-        print(res)
-
+        self.dropbox.con.files_delete(from_path)
+        print("DropBox - Deleted {}".format(from_path))
 
     def show(self, *args, **kwargs):
         self.refresh()
