@@ -1,7 +1,8 @@
-from core.compat import QtGui, QtCore
-from core.ui.directory_ui import Ui_DirectoryViewDialog
-from icons import Icons
 import os
+
+from core.compat import QtGui, QtCore
+from core.ui.basic.directory_ui import Ui_DirectoryViewDialog
+from icons import Icons
 
 
 class DirectoryViewDialog(QtGui.QDialog, Ui_DirectoryViewDialog):

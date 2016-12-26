@@ -25,16 +25,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from icons import Icons
 from core.compat import QtGui, QtCore
 from core.models.filetree import FileTreeModel
 from core.ui.main_ui import Ui_HomeWindow
 from core.utility.collection import get_ini_file, SettingsINI
+from core.utility.ostools import zipfile_compress
+from core.views.basic.directory import DropBoxViewDialog
 from core.views.project.main import ProjectMainWindow
 from core.views.project.new import NewProjectDialog
 from core.views.settings import SettingsDialog
-from core.utility.ostools import zipfile_compress
-from core.views.directory import DropBoxViewDialog
+from icons import Icons
 
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):

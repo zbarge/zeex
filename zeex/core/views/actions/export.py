@@ -80,8 +80,6 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         self.buttonBox.accepted.connect(self.export)
 
         if self._default_path is not None:
-            base, ext = os.path.splitext(self._default_path)
-            destination_path = "{}_updated{}".format(base, ext)
             self.lineEditDestination.setText(path_incremented(self._default_path, overwrite=False))
 
     def browse_destination(self):

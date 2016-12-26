@@ -23,22 +23,23 @@ SOFTWARE.
 """
 
 import os
-from icons import Icons
 from functools import partial
+
 from core.compat import QtGui, QtCore
-from core.ui.project.main_ui import Ui_ProjectWindow
-from qtpandas.views.MultiFileDialogs import CSVImportDialog
-from qtpandas.models.DataFrameModel import DataFrameModel
-from core.models.filetree import FileTreeModel
 from core.ctrls.dataframe import DataFrameModelManager
-from core.views.actions.export import DataFrameModelExportDialog
-from core.views.actions.merge_purge import MergePurgeDialog
-from core.views.file import FileTableWindow
-from core.views.settings import SettingsDialog
-from core.utility.widgets import get_ok_msg_box, create_standard_item_model
+from core.models.filetree import FileTreeModel
+from core.ui.project.main_ui import Ui_ProjectWindow
 from core.utility.collection import SettingsINI
 from core.utility.ostools import zipfile_compress
-from core.views.directory import DropBoxViewDialog
+from core.views.actions.export import DataFrameModelExportDialog
+from core.views.actions.merge_purge import MergePurgeDialog
+from core.views.basic.directory import DropBoxViewDialog
+from core.views.file import FileTableWindow
+from core.views.settings import SettingsDialog
+from icons import Icons
+from qtpandas.models.DataFrameModel import DataFrameModel
+from qtpandas.views.MultiFileDialogs import CSVImportDialog
+from core.views.basic.line_edit import FilePathRenameDialog
 
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
@@ -74,6 +75,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.key_delete = QtGui.QShortcut(self)
         self.key_enter = QtGui.QShortcut(self)
         self.key_zip = QtGui.QShortcut(self)
+        self.key_rename = QtGui.QShortcut(self)
         self.connect_window_title()
         self.connect_actions()
         self.connect_filetree()
@@ -122,17 +124,20 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.key_delete.setKey('del')
         self.key_enter.setKey('return')
         self.key_zip.setKey(QtGui.QKeySequence(self.tr('Ctrl+Z')))
+        self.key_rename.setKey(QtGui.QKeySequence(self.tr('Ctrl+R')))
         self.actionPreferences.triggered.connect(self.open_settings_dialog)
         self.actionNew.triggered.connect(self.open_import_dialog)
         self.actionOpen.triggered.connect(self.open_tableview_window)
         self.actionSave.triggered.connect(self.open_export_dialog)
         self.actionRemove.triggered.connect(self.remove_tree_selected_path)
+        self.actionRename.triggered.connect(self.open_rename_path_dialog)
         self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
         self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
         self.actionZip.triggered.connect(self.zip_path)
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         self.key_enter.activated.connect(self.open_tableview_window)
         self.key_zip.activated.connect(self.zip_path)
+        self.key_rename.activated.connect(self.open_rename_path_dialog)
 
     def connect_icons(self):
         """
@@ -358,3 +363,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             fpath = self.get_tree_selected_path()
         assert fpath is not None, "No selected path!"
         return zipfile_compress(fpath, **kwargs)
+
+    def open_rename_path_dialog(self):
+        current_path = self.get_tree_selected_path()
+        dialog = FilePathRenameDialog(current_path, parent=self)
+        dialog.show()

@@ -24,18 +24,20 @@ SOFTWARE.
 
 import os
 from functools import partial
-from core.compat import QtGui, QtCore
+
 import pandas as pd
-from qtpandas.models.DataFrameModel import DataFrameModel
-from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
-from core.views.actions.push_grid import PushGridHandler, PushGridWidget
-from core.models.actions import FileViewModel
-from core.views.file import FileTableWindow
-from core.views.actions.map_grid import MapGridDialog
+
+from core.compat import QtGui, QtCore
 from core.ctrls.dataframe import DataFrameModelManager
-from core.utility.widgets import create_standard_item_model
-from core.utility.pandatools import gather_frame_fields
+from core.models.actions import FileViewModel
+from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
 from core.utility.collection import DictConfig, SettingsINI
+from core.utility.pandatools import gather_frame_fields
+from core.utility.widgets import create_standard_item_model
+from core.views.basic.map_grid import MapGridDialog
+from core.views.basic.push_grid import PushGridHandler
+from core.views.file import FileTableWindow
+from qtpandas.models.DataFrameModel import DataFrameModel
 
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):

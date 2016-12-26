@@ -72,4 +72,4 @@ class Ui_HomeWindow(object):
         self.actionZipFolder.setText(QtGui.QApplication.translate("HomeWindow", "Zip Folder", None, QtGui.QApplication.UnicodeUTF8))
         self.actionViewCloud.setText(QtGui.QApplication.translate("HomeWindow", "View Cloud", None, QtGui.QApplication.UnicodeUTF8))
 
-from core.views.treeview import FileSystemTreeView
+from core.views.basic.treeview import FileSystemTreeView

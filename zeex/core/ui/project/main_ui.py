@@ -92,4 +92,4 @@ class Ui_ProjectWindow(object):
         self.actionZip.setText(QtGui.QApplication.translate("ProjectWindow", "Zip", None, QtGui.QApplication.UnicodeUTF8))
         self.actionViewCloud.setText(QtGui.QApplication.translate("ProjectWindow", "View Cloud", None, QtGui.QApplication.UnicodeUTF8))
 
-from core.views.treeview import FileSystemTreeView
+from core.views.basic.treeview import FileSystemTreeView

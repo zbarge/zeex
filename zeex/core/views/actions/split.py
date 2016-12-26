@@ -23,16 +23,13 @@ SOFTWARE.
 """
 
 import os
-from core.compat import QtGui, QtCore
-import pandas as pd
 from functools import partial
-from qtpandas.models.DataFrameModel import DataFrameModel
+
+from core.compat import QtGui, QtCore
 from core.ui.actions.split_ui import Ui_FileSplitDialog
-from core.views.actions.push_grid import PushGridHandler
-from core.ctrls.dataframe import DataFrameModelManager
-from core.utility.widgets import create_standard_item_model
+from core.utility.collection import DictConfig, import_settings, export_settings
 from core.utility.pandatools import dataframe_split_to_files
-from core.utility.collection import SettingsINI,DictConfig, import_settings, export_settings
+from core.views.basic.push_grid import PushGridHandler
 
 
 class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):

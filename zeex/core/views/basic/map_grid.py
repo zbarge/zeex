@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 from core.compat import QtGui, QtCore
-from core.ui.actions.map_grid_ui import Ui_MapGrid
+from core.ui.basic.map_grid_ui import Ui_MapGrid
 
 
 class MapGridDialog(QtGui.QDialog, Ui_MapGrid):
