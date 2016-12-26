@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fields_edit.ui'
 #
-# Created: Mon Dec 26 03:22:40 2016
+# Created: Mon Dec 26 11:55:09 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,6 +63,12 @@ class Ui_FieldsEditDialog(object):
         self.btnSetCase = QtGui.QPushButton(FieldsEditDialog)
         self.btnSetCase.setObjectName("btnSetCase")
         self.gridLayout_3.addWidget(self.btnSetCase, 0, 1, 1, 1)
+        self.checkBoxSortAscending = QtGui.QCheckBox(FieldsEditDialog)
+        self.checkBoxSortAscending.setObjectName("checkBoxSortAscending")
+        self.gridLayout_3.addWidget(self.checkBoxSortAscending, 1, 0, 1, 1)
+        self.btnSort = QtGui.QPushButton(FieldsEditDialog)
+        self.btnSort.setObjectName("btnSort")
+        self.gridLayout_3.addWidget(self.btnSort, 1, 1, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout_3, 11, 0, 1, 1)
         self.radioBtnSyncDatabase = QtGui.QRadioButton(FieldsEditDialog)
         self.radioBtnSyncDatabase.setChecked(True)
@@ -93,6 +99,8 @@ class Ui_FieldsEditDialog(object):
         self.setCaseComboBox.setItemText(2, QtGui.QApplication.translate("FieldsEditDialog", "Proper", None, QtGui.QApplication.UnicodeUTF8))
         self.setCaseComboBox.setItemText(3, QtGui.QApplication.translate("FieldsEditDialog", "UPPER", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSetCase.setText(QtGui.QApplication.translate("FieldsEditDialog", "Set Case", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxSortAscending.setText(QtGui.QApplication.translate("FieldsEditDialog", "Ascending", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnSort.setText(QtGui.QApplication.translate("FieldsEditDialog", "Sort", None, QtGui.QApplication.UnicodeUTF8))
         self.radioBtnSyncDatabase.setText(QtGui.QApplication.translate("FieldsEditDialog", "Sync Database", None, QtGui.QApplication.UnicodeUTF8))
         self.btnReset.setText(QtGui.QApplication.translate("FieldsEditDialog", "Reset", None, QtGui.QApplication.UnicodeUTF8))
         self.btnParseDates.setText(QtGui.QApplication.translate("FieldsEditDialog", "Parse Dates", None, QtGui.QApplication.UnicodeUTF8))

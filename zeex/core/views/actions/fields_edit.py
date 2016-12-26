@@ -30,7 +30,7 @@ from core.models.fieldnames import FieldModel
 from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
 from qtpandas import DataFrameModel
 import core.utility.pandatools as pandatools
-
+from core.utility.collection import DictConfig, SettingsINI
 CASE_MAP = {'lower': str.lower,
             'upper': str.upper,
             'proper': str.title,
@@ -70,6 +70,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.btnParseDates.clicked.connect(self.parse_dates)
         self.btnUp.clicked.connect(self.push_field_up)
         self.btnDown.clicked.connect(self.push_field_down)
+        self.btnSort.clicked.connect(self.sort_fields)
         self.setWindowTitle("Edit Fields - {}".format(os.path.basename(self.dfmodel.filePath)))
 
         # TODO: Make this work.
@@ -124,6 +125,12 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
             self.fmodel.takeRow(row+1)
             self.tableView.setCurrentIndex(self.fmodel.item(row - 1, 0).index())
 
+    def sort_fields(self):
+        asc = self.checkBoxSortAscending.isChecked()
+        df = self.export_template(to_frame=True)
+        df.sort_values('new', ascending=asc, inplace=True)
+        self.import_template(df=df)
+
     def apply_template(self, df, columns=['old', 'new', 'dtype']):
         df.columns = columns  # Make or break this frame.
         for i in range(df.index.size):
@@ -131,13 +138,14 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
             matches = self.fmodel.findItems(entry['old'])
             if matches:
                 [self.fmodel.takeRow(r.row()) for r in matches]
-                self.fmodel.set_field(entry['old'], entry['new'], entry['dtype'])
+            self.fmodel.set_field(entry['old'], entry['new'], entry['dtype'])
 
-    def import_template(self, filename=None, columns=None):
+    def import_template(self, filename=None,df=None, columns=None):
         def_cols = ['old', 'new', 'dtype']
-        if filename is None:
-            filename = QtGui.QFileDialog.getOpenFileName()[0]
-        df = superReadFile(filename)
+        if df is None:
+            if filename is None:
+                filename = QtGui.QFileDialog.getOpenFileName()[0]
+            df = superReadFile(filename)
         if columns is None:
             df = df.loc[:, def_cols]
             columns = def_cols
@@ -158,21 +166,28 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
             for n in new_cols:
                 self.fmodel.set_field(n, dtype=new_df[n].dtype)
 
-    def export_template(self, filename=None, **kwargs):
-        if filename is None:
-            filename = QtGui.QFileDialog.getSaveFileName()[0]
-        filebase, ext = os.path.splitext(filename)
-        if not ext.lower() in ['.txt','.csv']:
-            ext = '.csv'
-        filename = filebase + ext
+    def export_template(self, filename=None, to_frame=False, **kwargs):
         columns = ['old', 'new', 'dtype']
         fm = self.fmodel
         data = [[fm.item(i, x).text() for x in range(3)]
                 for i in range(fm.rowCount())]
 
         df = pd.DataFrame(data, columns=columns, index=list(range(len(data))))
-        kwargs['index'] = kwargs.get('index', False)
-        df.to_csv(filename, **kwargs)
+        if filename is None and not to_frame:
+            filename = QtGui.QFileDialog.getSaveFileName()[0]
+            filebase, ext = os.path.splitext(filename)
+            if not ext.lower() in ['.txt','.csv']:
+                ext = '.csv'
+            filename = filebase + ext
+            kwargs['index'] = kwargs.get('index', False)
+            df.to_csv(filename, **kwargs)
+            return filename
+        elif to_frame:
+            return df
+        else:
+            raise Exception("filename and to to_frame cannot be a False value!")
+
+
 
     def apply_changes(self, rename=True, dtype=True):
         renames = {}

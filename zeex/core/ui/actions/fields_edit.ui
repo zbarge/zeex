@@ -107,6 +107,20 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="checkBoxSortAscending">
+         <property name="text">
+          <string>Ascending</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="btnSort">
+         <property name="text">
+          <string>Sort</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item row="2" column="0">
