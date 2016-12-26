@@ -188,7 +188,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings.rootDirectoryLineEdit.setReadOnly(True)
         self.dialog_settings.btnSetDefault.setVisible(False)
 
-
     def connect_cloud_dialog(self):
         self.dialog_cloud.set_source_view(self.treeView)
 

@@ -26,7 +26,7 @@ from core.compat import QtGui, QtCore
 from core.ui.actions.export_ui import Ui_ExportFileDialog
 from core.utility.widgets import configureComboBox, get_ok_msg_box
 from core.ctrls.dataframe import DataFrameModelManager
-
+from core.utility.ostools import path_incremented
 SEPARATORS = {'Comma':',',
               'Semi Colon': ';',
               'Tab':r'\t',
@@ -42,10 +42,11 @@ ENCODINGS = {'UTF-8':'UTF_8',
 class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
     signalExported = QtCore.Signal(str, str) # original_path, new_path
 
-    def __init__(self, df_manager: DataFrameModelManager, filename: str=None, **kwargs):
+    def __init__(self, df_manager: DataFrameModelManager, filename: str=None, allow_multi_source=True, **kwargs):
         self._parent = kwargs.pop('parent', None)
         self.df_manager = df_manager
-        self.df_manager.signalNewModelRead.connect(self.append_source_filename)
+        if allow_multi_source:
+            self.df_manager.signalNewModelRead.connect(self.append_source_filename)
 
         if filename is None:
 
@@ -62,6 +63,7 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         QtGui.QDialog.__init__(self, **kwargs)
         self.setupUi(self)
         self.configure()
+
     @property
     def parent(self):
         if self._parent is not None:
@@ -71,6 +73,7 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
     def configure(self):
         self.btnBrowseDestination.clicked.connect(self.browse_destination)
         self.btnBrowseSource.clicked.connect(self.browse_source)
+        self.btnOverwrite.clicked.connect(self.set_destination_path_from_source)
         configureComboBox(self.comboBoxSource, self.df_manager.file_paths, self._default_path)
         configureComboBox(self.comboBoxSeparator, list(SEPARATORS.keys()), 'Comma')
         configureComboBox(self.comboBoxEncoding, list(ENCODINGS.keys()), 'ISO-8859-1')
@@ -79,11 +82,15 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         if self._default_path is not None:
             base, ext = os.path.splitext(self._default_path)
             destination_path = "{}_updated{}".format(base, ext)
-            self.lineEditDestination.setText(destination_path)
+            self.lineEditDestination.setText(path_incremented(self._default_path, overwrite=False))
 
     def browse_destination(self):
         filename = QtGui.QFileDialog.getSaveFileName(self)[0]
-        self.lineEditDestination.setText(filename)
+        if os.path.isfile(filename):
+            self.lineEditDestination.setText(filename)
+
+    def set_destination_path_from_source(self):
+        self.lineEditDestination.setText(self.comboBoxSource.currentText())
 
     def browse_source(self):
         filename = QtGui.QFileDialog.getOpenFileName(self)[0]
@@ -115,6 +122,7 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         self.hide()
         #box = get_ok_msg_box(self.parent, "Exported {}!".format(file_path))
         #box.show()
+        print("Exported {} to {}".format(source_path, file_path))
 
 
 

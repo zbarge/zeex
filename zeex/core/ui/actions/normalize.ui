@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>326</width>
-    <height>485</height>
+    <width>355</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,7 +58,14 @@
           <widget class="QCheckBox" name="checkBoxMergeOrSplit"/>
          </item>
          <item row="0" column="2">
-          <widget class="QLineEdit" name="lineEditMergeOrSplitSep"/>
+          <widget class="QLineEdit" name="lineEditMergeOrSplitSep">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -75,7 +82,14 @@
           <widget class="QCheckBox" name="checkBoxReplaceSpaces"/>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEditReplaceSpaces"/>
+          <widget class="QLineEdit" name="lineEditReplaceSpaces">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -92,7 +106,14 @@
           <widget class="QCheckBox" name="checkBoxSetCase"/>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="comboBoxSetCase"/>
+          <widget class="QComboBox" name="comboBoxSetCase">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -102,10 +123,23 @@
           <widget class="QCheckBox" name="checkBoxDropFillNA"/>
          </item>
          <item row="0" column="2">
-          <widget class="QLineEdit" name="lineEditDropFillNA"/>
+          <widget class="QLineEdit" name="lineEditDropFillNA">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="1" column="2">
           <widget class="QComboBox" name="comboBoxDropFillNAHow">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <item>
             <property name="text">
              <string>any</string>
@@ -206,7 +240,14 @@
           <widget class="QCheckBox" name="checkBoxRemoveSpecialChars"/>
          </item>
          <item row="0" column="2">
-          <widget class="QLineEdit" name="lineEditRemoveSpecialCharsKeeps"/>
+          <widget class="QLineEdit" name="lineEditRemoveSpecialCharsKeeps">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="0" column="1">
           <widget class="QLabel" name="label_2">
@@ -243,8 +284,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>verticalLayoutWidget</zorder>
-  <zorder>btnLoadSettings</zorder>
  </widget>
  <customwidgets>
   <customwidget>

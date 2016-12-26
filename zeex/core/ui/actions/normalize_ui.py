@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'normalize.ui'
 #
-# Created: Sat Dec 24 00:13:46 2016
+# Created: Sun Dec 25 23:23:04 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_ColumnNormalizerDialog(object):
     def setupUi(self, ColumnNormalizerDialog):
         ColumnNormalizerDialog.setObjectName("ColumnNormalizerDialog")
-        ColumnNormalizerDialog.resize(326, 485)
+        ColumnNormalizerDialog.resize(355, 506)
         self.verticalLayout_2 = QtGui.QVBoxLayout(ColumnNormalizerDialog)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -43,6 +43,11 @@ class Ui_ColumnNormalizerDialog(object):
         self.checkBoxMergeOrSplit.setObjectName("checkBoxMergeOrSplit")
         self.gridLayout.addWidget(self.checkBoxMergeOrSplit, 0, 0, 1, 1)
         self.lineEditMergeOrSplitSep = QtGui.QLineEdit(ColumnNormalizerDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEditMergeOrSplitSep.sizePolicy().hasHeightForWidth())
+        self.lineEditMergeOrSplitSep.setSizePolicy(sizePolicy)
         self.lineEditMergeOrSplitSep.setObjectName("lineEditMergeOrSplitSep")
         self.gridLayout.addWidget(self.lineEditMergeOrSplitSep, 0, 2, 1, 1)
         self.formLayout_2.setLayout(3, QtGui.QFormLayout.FieldRole, self.gridLayout)
@@ -55,6 +60,11 @@ class Ui_ColumnNormalizerDialog(object):
         self.checkBoxReplaceSpaces.setObjectName("checkBoxReplaceSpaces")
         self.gridLayout_3.addWidget(self.checkBoxReplaceSpaces, 0, 0, 1, 1)
         self.lineEditReplaceSpaces = QtGui.QLineEdit(ColumnNormalizerDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEditReplaceSpaces.sizePolicy().hasHeightForWidth())
+        self.lineEditReplaceSpaces.setSizePolicy(sizePolicy)
         self.lineEditReplaceSpaces.setObjectName("lineEditReplaceSpaces")
         self.gridLayout_3.addWidget(self.lineEditReplaceSpaces, 0, 1, 1, 1)
         self.formLayout_2.setLayout(4, QtGui.QFormLayout.FieldRole, self.gridLayout_3)
@@ -67,6 +77,11 @@ class Ui_ColumnNormalizerDialog(object):
         self.checkBoxSetCase.setObjectName("checkBoxSetCase")
         self.gridLayout_2.addWidget(self.checkBoxSetCase, 0, 0, 1, 1)
         self.comboBoxSetCase = QtGui.QComboBox(ColumnNormalizerDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxSetCase.sizePolicy().hasHeightForWidth())
+        self.comboBoxSetCase.setSizePolicy(sizePolicy)
         self.comboBoxSetCase.setObjectName("comboBoxSetCase")
         self.gridLayout_2.addWidget(self.comboBoxSetCase, 0, 1, 1, 1)
         self.formLayout_2.setLayout(5, QtGui.QFormLayout.FieldRole, self.gridLayout_2)
@@ -76,9 +91,19 @@ class Ui_ColumnNormalizerDialog(object):
         self.checkBoxDropFillNA.setObjectName("checkBoxDropFillNA")
         self.gridLayout_4.addWidget(self.checkBoxDropFillNA, 0, 1, 1, 1)
         self.lineEditDropFillNA = QtGui.QLineEdit(ColumnNormalizerDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEditDropFillNA.sizePolicy().hasHeightForWidth())
+        self.lineEditDropFillNA.setSizePolicy(sizePolicy)
         self.lineEditDropFillNA.setObjectName("lineEditDropFillNA")
         self.gridLayout_4.addWidget(self.lineEditDropFillNA, 0, 2, 1, 1)
         self.comboBoxDropFillNAHow = QtGui.QComboBox(ColumnNormalizerDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxDropFillNAHow.sizePolicy().hasHeightForWidth())
+        self.comboBoxDropFillNAHow.setSizePolicy(sizePolicy)
         self.comboBoxDropFillNAHow.setObjectName("comboBoxDropFillNAHow")
         self.comboBoxDropFillNAHow.addItem("")
         self.comboBoxDropFillNAHow.addItem("")
@@ -125,6 +150,11 @@ class Ui_ColumnNormalizerDialog(object):
         self.checkBoxRemoveSpecialChars.setObjectName("checkBoxRemoveSpecialChars")
         self.gridLayout_8.addWidget(self.checkBoxRemoveSpecialChars, 0, 0, 1, 1)
         self.lineEditRemoveSpecialCharsKeeps = QtGui.QLineEdit(ColumnNormalizerDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEditRemoveSpecialCharsKeeps.sizePolicy().hasHeightForWidth())
+        self.lineEditRemoveSpecialCharsKeeps.setSizePolicy(sizePolicy)
         self.lineEditRemoveSpecialCharsKeeps.setObjectName("lineEditRemoveSpecialCharsKeeps")
         self.gridLayout_8.addWidget(self.lineEditRemoveSpecialCharsKeeps, 0, 2, 1, 1)
         self.label_2 = QtGui.QLabel(ColumnNormalizerDialog)

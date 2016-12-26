@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'export.ui'
 #
-# Created: Sun Dec 11 03:34:26 2016
+# Created: Mon Dec 26 00:20:07 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,6 +25,11 @@ class Ui_ExportFileDialog(object):
         self.gridLayout_4 = QtGui.QGridLayout()
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.comboBoxSource = QtGui.QComboBox(ExportFileDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxSource.sizePolicy().hasHeightForWidth())
+        self.comboBoxSource.setSizePolicy(sizePolicy)
         self.comboBoxSource.setObjectName("comboBoxSource")
         self.gridLayout_4.addWidget(self.comboBoxSource, 0, 1, 1, 1)
         self.btnBrowseSource = QtGui.QPushButton(ExportFileDialog)
@@ -48,12 +53,20 @@ class Ui_ExportFileDialog(object):
         self.labelDestination = QtGui.QLabel(ExportFileDialog)
         self.labelDestination.setObjectName("labelDestination")
         self.gridLayout_5.addWidget(self.labelDestination, 0, 0, 1, 1)
-        self.lineEditDestination = QtGui.QLineEdit(ExportFileDialog)
-        self.lineEditDestination.setObjectName("lineEditDestination")
-        self.gridLayout_5.addWidget(self.lineEditDestination, 0, 1, 1, 1)
         self.btnBrowseDestination = QtGui.QPushButton(ExportFileDialog)
         self.btnBrowseDestination.setObjectName("btnBrowseDestination")
-        self.gridLayout_5.addWidget(self.btnBrowseDestination, 0, 2, 1, 1)
+        self.gridLayout_5.addWidget(self.btnBrowseDestination, 0, 3, 1, 1)
+        self.lineEditDestination = QtGui.QLineEdit(ExportFileDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEditDestination.sizePolicy().hasHeightForWidth())
+        self.lineEditDestination.setSizePolicy(sizePolicy)
+        self.lineEditDestination.setObjectName("lineEditDestination")
+        self.gridLayout_5.addWidget(self.lineEditDestination, 0, 1, 1, 1)
+        self.btnOverwrite = QtGui.QPushButton(ExportFileDialog)
+        self.btnOverwrite.setObjectName("btnOverwrite")
+        self.gridLayout_5.addWidget(self.btnOverwrite, 0, 2, 1, 1)
         self.gridLayout.addLayout(self.gridLayout_5, 2, 0, 1, 1)
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -105,6 +118,7 @@ class Ui_ExportFileDialog(object):
         self.labelEncoding.setText(QtGui.QApplication.translate("ExportFileDialog", "Encoding:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelDestination.setText(QtGui.QApplication.translate("ExportFileDialog", "Destination Path:", None, QtGui.QApplication.UnicodeUTF8))
         self.btnBrowseDestination.setText(QtGui.QApplication.translate("ExportFileDialog", "Browse", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnOverwrite.setText(QtGui.QApplication.translate("ExportFileDialog", "Overwrite", None, QtGui.QApplication.UnicodeUTF8))
         self.radioBtnOtherSeparator.setText(QtGui.QApplication.translate("ExportFileDialog", "Other", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSeparator.setText(QtGui.QApplication.translate("ExportFileDialog", "Separator:", None, QtGui.QApplication.UnicodeUTF8))
 

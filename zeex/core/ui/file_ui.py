@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'file.ui'
 #
-# Created: Wed Dec 21 04:37:19 2016
+# Created: Mon Dec 26 00:49:07 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,7 +57,10 @@ class Ui_FileWindow(object):
         self.actionAnalyze.setObjectName("actionAnalyze")
         self.actionNormalize = QtGui.QAction(FileWindow)
         self.actionNormalize.setObjectName("actionNormalize")
+        self.actionSaveAs = QtGui.QAction(FileWindow)
+        self.actionSaveAs.setObjectName("actionSaveAs")
         self.menuFile.addAction(self.actionSave)
+        self.menuFile.addAction(self.actionSaveAs)
         self.menuFile.addAction(self.actionDelete)
         self.menuAction.addAction(self.actionAnalyze)
         self.menuAction.addAction(self.actionEditFields)
@@ -86,4 +89,5 @@ class Ui_FileWindow(object):
         self.actionSplit.setText(QtGui.QApplication.translate("FileWindow", "Split", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAnalyze.setText(QtGui.QApplication.translate("FileWindow", "Analyze", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNormalize.setText(QtGui.QApplication.translate("FileWindow", "Normalize", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSaveAs.setText(QtGui.QApplication.translate("FileWindow", "Save As", None, QtGui.QApplication.UnicodeUTF8))
 
