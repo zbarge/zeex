@@ -132,13 +132,21 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.import_template(df=df)
 
     def apply_template(self, df, columns=['old', 'new', 'dtype']):
+        current_frame_cols = self.dfmodel.dataFrame().columns.tolist()
         df.columns = columns  # Make or break this frame.
+        
         for i in range(df.index.size):
             entry = df.iloc[i]
             matches = self.fmodel.findItems(entry['old'])
             if matches:
                 [self.fmodel.takeRow(r.row()) for r in matches]
             self.fmodel.set_field(entry['old'], entry['new'], entry['dtype'])
+
+        # Clear entries that dont exist in the dataframe columns.
+        for i in range(self.fmodel.rowCount()):
+            name = self.fmodel.item(i, 0).text()
+            if name not in current_frame_cols:
+                self.fmodel.takeRow(i)
 
     def import_template(self, filename=None,df=None, columns=None):
         def_cols = ['old', 'new', 'dtype']
