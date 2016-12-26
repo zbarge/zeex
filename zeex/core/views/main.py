@@ -64,6 +64,10 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionEdit.setVisible(False)
         self.key_enter.activated.connect(self.open_project)
 
+        # TODO: Show these actions when they do something.
+        self.actionSave.setVisible(False)
+        self.actionZip.setVisible(False)
+
     def connect_icons(self):
         self.setWindowIcon(self.icons['home'])
         self.dialog_new_project.setWindowIcon(self.icons['spreadsheet'])

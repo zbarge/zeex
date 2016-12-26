@@ -185,6 +185,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings.logDirectoryLineEdit.setReadOnly(True)
         self.dialog_settings.rootDirectoryLineEdit.setText(self.project_directory)
         self.dialog_settings.rootDirectoryLineEdit.setReadOnly(True)
+        self.dialog_settings.btnSetDefault.setVisible(False)
+
 
     def connect_cloud_dialog(self):
         self.dialog_cloud.set_source_view(self.treeView)
@@ -302,9 +304,13 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
 
     @QtCore.Slot('DataFrameModel', str)
     def import_file(self, filepath):
-        name = os.path.basename(filepath)
+        if isinstance(filepath, DataFrameModel):
+            model = filepath
+            filepath = model.filePath
+            self.df_manager.set_model(model, filepath)
 
         model = self.df_manager.get_model(filepath)
+        name = os.path.basename(model.filePath)
         self.add_recent_file_menu_entry(name, model)
         dirname = self.SettingsDialog.rootDirectoryLineEdit.text()
         if os.path.dirname(filepath) != dirname:

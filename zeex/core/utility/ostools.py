@@ -110,9 +110,8 @@ def zipfile_make_archive(dirname, to=None, **kwargs):
         The :param to file path.
     """
     if to is None:
-        to = dirname + ".zip"
-    shutil.make_archive(to, "zip", root_dir=dirname, **kwargs)
-    return to
+        to = dirname
+    return shutil.make_archive(to, "zip", root_dir=dirname, **kwargs)
 
 
 def zipfile_compress(from_path, to=None, **kwargs):
@@ -131,15 +130,17 @@ def zipfile_compress(from_path, to=None, **kwargs):
     :return: (str)
         The :param to path.
     """
-    kwargs['mode'] = kwargs.pop('mode', 'a')
-    kwargs['compression'] = kwargs.pop('compression', DEFAULT_COMPRESSION)
+
     if os.path.isfile(from_path):
-        print("Compressing file {}".format(from_path))
+        kwargs['mode'] = kwargs.pop('mode', 'a')
+        kwargs['compression'] = kwargs.pop('compression', DEFAULT_COMPRESSION)
         return_path =  zipfile_write(from_path, to=to, **kwargs)
     elif os.path.isdir(from_path):
-        print("Compressing directory {}".format(from_path))
+        kwargs.pop('mode', None)
+        kwargs.pop('compression', None)
         return_path = zipfile_make_archive(from_path, to=to, **kwargs)
     else:
         raise NotImplementedError(":param from_path is not a file or directory name: {}".format(from_path))
+    print("Compressed {} to {}".format(from_path, return_path))
     return return_path
 

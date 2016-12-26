@@ -50,6 +50,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
     """
     signalMergeFileOpened = QtCore.Signal(str) # file path
     signalSFileOpened = QtCore.Signal(str) # file path
+    signalSourcePathSet = QtCore.Signal(str) #file path
     signalExecuted = QtCore.Signal(str, str, str) # source_path, dest_path, report_path
 
     def __init__(self, df_manager: DataFrameModelManager, parent=None, source_model=None):
@@ -95,7 +96,11 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.set_line_edit_paths(source_path, dest_path=dest_path)
         if self.sortAscHandler is None:
             self.set_handler_sort_asc()
+        source_func = partial(self.open_file, model_signal=self.signalSourcePathSet)
 
+        self.signalSourcePathSet.connect(self.set_source_model_from_browse)
+        self.btnBrowseSourcePath.clicked.connect(source_func)
+        self.btnBrowseDestPath.clicked.connect(self.set_dest_path_from_browse)
         self.signalMergeFileOpened.connect(self.add_merge_file)
         merge_file_func = partial(self.open_file, model_signal=self.signalMergeFileOpened)
         self.btnAddMergeFile.clicked.connect(merge_file_func)
@@ -117,6 +122,15 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.btnExportTemplate.clicked.connect(self.export_settings)
         self.btnImportTemplate.clicked.connect(self.import_settings)
         self.btnReset.clicked.connect(self.reset)
+
+    def set_source_model_from_browse(self, filepath):
+        self.set_line_edit_paths(filepath, dest_path=False)
+        self.set_source_model(configure=True)
+
+    def set_dest_path_from_browse(self, filepath=None):
+        if filepath is None:
+            filepath = QtGui.QFileDialog.getOpenFileName()[0]
+        self.destPathLineEdit.setText(filepath)
 
     def set_source_model(self, model=None, configure=False):
         """
@@ -141,22 +155,30 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             self.set_push_grid_handlers()
             self.set_primary_key_combo_box(default=self.primaryKeyComboBox.currentText())
 
-    def set_line_edit_paths(self, source_path, dest_path=None):
+    def set_line_edit_paths(self, source_path=None, dest_path=None):
         """
         Sets the source/destination line edits in the Dialog.
-        :param source_path: (str)
-            A valid filepath for the source DataFrameModel
+        :param source_path: (str, default None)
+            An optional valid filepath for the source DataFrameModel.
+            If None, :param dest_path cannot be None.
         :param dest_path: (str, default None)
             An optional destination path. One will be created automatically
             if None is given.
+            False will prevent the destination path from being set at all.
         :return: None
         """
+        assert any([dest_path, source_path]), "source_path or dest_path must be set."
+
         if dest_path is None:
             dirname = os.path.dirname(source_path)
             base, ext = os.path.splitext(os.path.basename(source_path))
             dest_path = os.path.join(dirname, base + "_merged" + ext)
-        self.sourcePathLineEdit.setText(source_path)
-        self.destPathLineEdit.setText(dest_path)
+
+        if source_path:
+            self.sourcePathLineEdit.setText(source_path)
+
+        if dest_path:
+            self.destPathLineEdit.setText(dest_path)
 
     def set_push_grid_handlers(self, column_model=None, sorton_model=None, sortasc_model=None,
                                dedupe_model=None, gather_model=None, unique_model=None):
@@ -245,7 +267,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
 
         return create_standard_item_model(columns)
 
-    def open_file(self, file_names: list=None, model_signal=None):
+    def open_file(self, file_names: list=None, model_signal=None, allow_multi=True):
         """
         Opens a Merge or Purge file (or really any file) and calls the
         given model signal after registering the DataFrameModel with the DataFrameModelManager.
@@ -254,22 +276,27 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             The user must select filenames otherwise.
         :param model_signal: (QtCore.Signal)
             A signal to be called after successfully reading the DataFrameModel.
+        :param allow_multi: (bool, default True)
+            True allows multiple files to be read (and the signal called each time).
+            False allows only the first file to be read.
         :return: None
             You can call MergePurgeDialog.df_manager.get_frame(filename) to
             retrieve a DataFrameModel.
         """
         if file_names is None:
             file_names = QtGui.QFileDialog.getOpenFileNames(parent=self)
-            #file_names = list(file_names[0])
 
         if isinstance(file_names, str):
             file_names = list(file_names)
 
-        assert hasattr(file_names, "__iter__"), "file_names is not iterable"
+        assert not isinstance(file_names, str) and hasattr(file_names, "__iter__"), "file_names is not list-like!"
+
+        if allow_multi is False:
+            file_names = list(file_names[0])
 
         for f in file_names:
             try:
-                if isinstance(f, list):
+                if not isinstance(f, str) and hasattr(f, '__iter__'):
                     f = f[0]
                 if os.path.exists(f):
                     self.df_manager.read_file(f)
@@ -613,7 +640,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.set_push_grid_handlers()
         self.set_handler_sort_asc(overwrite=True)
         self.set_primary_key_combo_box()
-        self.gatherFieldsOverWriteCheckBox.setchecked(False)
+        self.gatherFieldsOverWriteCheckBox.setChecked(False)
 
     def set_primary_key_combo_box(self, default=None):
         """

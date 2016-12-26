@@ -69,6 +69,9 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.btnParseDates.clicked.connect(self.parse_dates)
         self.setWindowTitle("Edit Fields - {}".format(os.path.basename(self.dfmodel.filePath)))
 
+        # TODO: Make this work.
+        self.radioBtnSyncDatabase.setVisible(False)
+
     def apply_case(self):
         value = self.setCaseComboBox.currentText()
         self.fmodel.apply_new_name(CASE_MAP[value.lower()])
