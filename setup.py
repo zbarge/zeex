@@ -54,7 +54,7 @@ class PyTest(TestCommand):
         sys.exit(errcode)
 
 tests_require = ['easygui', 'pandas >= 0.17.1', 'PySide', 'pytest',
-                            'pytest-cov', 'pytest-qt', 'python-magic==0.4.6']
+                            'pytest-cov', 'pytest-qt', 'python-magic==0.4.6', 'dropbox']
 setup(
     name='zeex',
     version=__version__,
@@ -65,7 +65,7 @@ setup(
     tests_require=tests_require,
     install_requires=['PySide','easygui', 'pandas>=0.17.1', 'pytest',
                       'pytest-qt>=1.2.2', 'pytest-cov', 'python-magic>=0.4.6',
-                      'openpyxl','xlrd','sqlalchemy'],
+                      'openpyxl','xlrd','sqlalchemy', 'dropbox'],
                       
     cmdclass={'test': PyTest},
     author_email='zekebarge@gmail.com',
