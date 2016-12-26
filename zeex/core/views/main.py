@@ -34,6 +34,7 @@ from core.views.project.main import ProjectMainWindow
 from core.views.project.new import NewProjectDialog
 from core.views.settings import SettingsDialog
 from core.utility.ostools import zipfile_compress
+from core.views.directory import DropBoxViewDialog
 
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
@@ -47,26 +48,30 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.icons = Icons()
         self.dialog_settings = SettingsDialog(parent=self)
         self.dialog_new_project = NewProjectDialog(parent=self)
+        self.dialog_cloud = DropBoxViewDialog(self.treeView, parent=self)
         self.key_enter = QtGui.QShortcut(self)
-        
+        self.key_delete = QtGui.QShortcut(self)
+
         self.connect_actions()
         self.connect_filetree()
         self.connect_icons()
         self._project_cache = {}
         
     def connect_actions(self):
+        self.key_delete.setKey('del')
         self.key_enter.setKey('return')
         self.dialog_new_project.signalProjectNew.connect(self.open_project)
         self.dialog_settings.signalSettingsSaved.connect(self.connect_filetree)
         self.actionSettings.triggered.connect(self.open_settings)
         self.actionOpen.triggered.connect(self.open_project)
         self.actionNew.triggered.connect(self.create_new_project)
+        self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
+        self.actionZipFolder.triggered.connect(self.zip_path)
         self.actionEdit.setVisible(False)
         self.key_enter.activated.connect(self.open_project)
-
+        self.key_delete.activated.connect(self.remove_tree_selected_path)
         # TODO: Show these actions when they do something.
         self.actionSave.setVisible(False)
-        self.actionZip.setVisible(False)
 
     def connect_icons(self):
         self.setWindowIcon(self.icons['home'])
@@ -78,7 +83,8 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionOpen.setIcon(self.icons['folder'])
         self.actionEdit.setIcon(self.icons['edit'])
         self.actionSave.setIcon(self.icons['save'])
-        self.actionZip.setIcon(self.icons['archive'])
+        self.actionZipFolder.setIcon(self.icons['archive'])
+        self.actionViewCloud.setIcon(self.icons['cloud'])
 
     @QtCore.Slot()
     def connect_filetree(self, rootdir=None):
@@ -173,3 +179,22 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
 
     def _cache_project(self, dirname, window):
         self._project_cache.update({dirname: window})
+
+    def zip_path(self, fpath=None, **kwargs):
+        if fpath is None:
+            fpath = self.get_tree_selected_path()
+        assert fpath is not None, "No selected path!"
+        return zipfile_compress(fpath, **kwargs)
+
+    def get_tree_selected_path(self):
+        selected = self.treeView.selectedIndexes()
+        if selected:
+            idx = selected[0]
+            return self.treeView.model().filePath(idx)
+        return None
+
+    def remove_tree_selected_path(self):
+        # TODO: need to emit a signal here.
+        filename = self.get_tree_selected_path()
+        if filename is not None:
+            os.remove(filename)

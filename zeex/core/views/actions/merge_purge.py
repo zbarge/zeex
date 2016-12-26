@@ -294,6 +294,9 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         if allow_multi is False:
             file_names = list(file_names[0])
 
+        if allow_multi is False:
+            file_names = list(file_names[0])
+
         for f in file_names:
             try:
                 if not isinstance(f, str) and hasattr(f, '__iter__'):

@@ -40,6 +40,7 @@ from core.utility.collection import SettingsINI
 from core.utility.ostools import zipfile_compress
 from core.views.directory import DropBoxViewDialog
 
+
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
     """
     The ProjectMainWindow displays a project that the user wants to work on.

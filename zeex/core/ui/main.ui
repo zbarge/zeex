@@ -43,9 +43,16 @@
     <addaction name="actionSave"/>
     <addaction name="actionEdit"/>
     <addaction name="actionSettings"/>
-    <addaction name="actionZip"/>
+   </widget>
+   <widget class="QMenu" name="menuActions">
+    <property name="title">
+     <string>Actions</string>
+    </property>
+    <addaction name="actionZipFolder"/>
+    <addaction name="actionViewCloud"/>
    </widget>
    <addaction name="menuProjects"/>
+   <addaction name="menuActions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
@@ -76,6 +83,16 @@
   <action name="actionZip">
    <property name="text">
     <string>Zip</string>
+   </property>
+  </action>
+  <action name="actionZipFolder">
+   <property name="text">
+    <string>Zip Folder</string>
+   </property>
+  </action>
+  <action name="actionViewCloud">
+   <property name="text">
+    <string>View Cloud</string>
    </property>
   </action>
  </widget>
