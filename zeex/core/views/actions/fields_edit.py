@@ -29,6 +29,7 @@ from core.compat import QtGui, QtCore
 from core.models.fieldnames import FieldModel
 from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
 from qtpandas import DataFrameModel
+import core.utility.pandatools as pandatools
 
 CASE_MAP = {'lower': str.lower,
             'upper': str.upper,
@@ -67,6 +68,8 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.btnLoadTemplate.clicked.connect(self.import_template)
         self.btnExportTemplate.clicked.connect(self.export_template)
         self.btnParseDates.clicked.connect(self.parse_dates)
+        self.btnUp.clicked.connect(self.push_field_up)
+        self.btnDown.clicked.connect(self.push_field_down)
         self.setWindowTitle("Edit Fields - {}".format(os.path.basename(self.dfmodel.filePath)))
 
         # TODO: Make this work.
@@ -100,6 +103,26 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         for col in df.columns:
             col = str(col)
             self.fmodel.set_field(col, dtype=df[col].dtype)
+
+    def push_field_down(self):
+        idx = self.tableView.selectedIndexes()[0]
+        row = idx.row()
+        if row < self.fmodel.rowCount()-1:
+            self.fmodel.insertRow(row+2)
+            for i in range(self.fmodel.columnCount()):
+               self.fmodel.setItem(row+2,i,self.fmodel.takeItem(row,i))
+            self.fmodel.takeRow(row)
+            self.tableView.setCurrentIndex(self.fmodel.item(row + 1, 0).index())
+
+    def push_field_up(self):
+        idx = self.tableView.selectedIndexes()[0]
+        row = idx.row()
+        if row > 0:
+            self.fmodel.insertRow(row-1)
+            for i in range(self.fmodel.columnCount()):
+                self.fmodel.setItem(row - 1, i, self.fmodel.takeItem(row + 1, i))
+            self.fmodel.takeRow(row+1)
+            self.tableView.setCurrentIndex(self.fmodel.item(row - 1, 0).index())
 
     def apply_template(self, df, columns=['old', 'new', 'dtype']):
         df.columns = columns  # Make or break this frame.
@@ -156,6 +179,13 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         dtypes = {}
         df = self.dfmodel.dataFrame()
         df_dtypes = self.dfmodel._columnDtypeModel
+        orig_cols = [str(x) for x in df.columns]
+        new_cols = [self.fmodel.item(i, 0).text() for i in range(self.fmodel.rowCount())]
+        order_match = [x for i, x in enumerate(new_cols) if orig_cols[i] == x]
+        change_order = len(order_match) != len(new_cols)
+
+        if change_order:
+            df = df.loc[:, new_cols]
 
         # Gather rename/dtype info from FieldsModel
         for i in range(self.fmodel.rowCount()):
@@ -170,16 +200,22 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
             for i in range(df_dtypes.rowCount()):
                 idx = df_dtypes.index(i, 0)
                 name = idx.data()
-                dt = dtypes[name]
+                dt = str(dtypes[name])
 
-                if str(dt) != str(df[name].dtype):
-
+                if dt != str(df[name].dtype):
+                    if 'int' in dt:
+                        df.loc[:, name] = pandatools.series_to_numeric(df.loc[:, name],astype=int)
+                    elif 'float' in dt:
+                        df.loc[:, name] = pandatools.series_to_numeric(df.loc[:, name], astype=float)
                     print("Changing dtype {}".format(name))
                     df_dtypes.setData(idx, dt)
 
         # Use the DataFrameModel's rename method.
         if rename is True:
-            self.dfmodel.rename(columns=renames)
+            df.rename(columns=renames, inplace=True)
+
+        if any([change_order, rename, dtype]):
+            self.dfmodel.setDataFrame(df, copyDataFrame=False, filePath=self.dfmodel.filePath)
 
 
 

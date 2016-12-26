@@ -793,6 +793,31 @@ def series_set_case(series, how=str.upper):
     return series.astype(str).apply(how)
 
 
+DIGIT_ALLOWS = ['.']
+
+
+def int_force(x):
+    try:
+        return int(''.join(e for e in str(x) if e.isdigit() or e in DIGIT_ALLOWS))
+    except:
+        return 0
+
+
+def float_force(x):
+    try:
+        return float(''.join(e for e in str(x) if e.isdigit() or e in DIGIT_ALLOWS))
+    except:
+        return float(0)
+
+
+DIGIT_FORCE_MAP = {int:int_force,float:float_force}
+
+
+def series_to_numeric(series, errors='coerce', astype=int):
+    if errors is 'coerce':
+        method = DIGIT_FORCE_MAP.get(astype, int_force)
+        series = series.apply(method)
+    return pd.to_numeric(series, errors=errors).astype(astype)
 
 
 

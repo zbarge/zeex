@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fields_edit.ui'
 #
-# Created: Sat Dec 24 04:19:39 2016
+# Created: Mon Dec 26 03:22:40 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -24,7 +24,21 @@ class Ui_FieldsEditDialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.tableView = QtGui.QTableView(FieldsEditDialog)
         self.tableView.setObjectName("tableView")
-        self.gridLayout.addWidget(self.tableView, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.tableView, 0, 1, 1, 1)
+        self.gridLayout_4 = QtGui.QGridLayout()
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.btnUp = QtGui.QPushButton(FieldsEditDialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btnUp.sizePolicy().hasHeightForWidth())
+        self.btnUp.setSizePolicy(sizePolicy)
+        self.btnUp.setObjectName("btnUp")
+        self.gridLayout_4.addWidget(self.btnUp, 0, 0, 1, 1)
+        self.btnDown = QtGui.QPushButton(FieldsEditDialog)
+        self.btnDown.setObjectName("btnDown")
+        self.gridLayout_4.addWidget(self.btnDown, 1, 0, 1, 1)
+        self.gridLayout.addLayout(self.gridLayout_4, 0, 0, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout)
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -69,6 +83,8 @@ class Ui_FieldsEditDialog(object):
 
     def retranslateUi(self, FieldsEditDialog):
         FieldsEditDialog.setWindowTitle(QtGui.QApplication.translate("FieldsEditDialog", "Edit Fields", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnUp.setText(QtGui.QApplication.translate("FieldsEditDialog", "Up", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnDown.setText(QtGui.QApplication.translate("FieldsEditDialog", "Down", None, QtGui.QApplication.UnicodeUTF8))
         self.btnExportTemplate.setText(QtGui.QApplication.translate("FieldsEditDialog", "Save Template", None, QtGui.QApplication.UnicodeUTF8))
         self.btnLoadTemplate.setText(QtGui.QApplication.translate("FieldsEditDialog", "Load Template", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSaveFile.setText(QtGui.QApplication.translate("FieldsEditDialog", "Save", None, QtGui.QApplication.UnicodeUTF8))

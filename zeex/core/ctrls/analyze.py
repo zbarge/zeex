@@ -121,10 +121,10 @@ class DataFrameAnalyzer(object):
         col_names = ['Data Type', 'Field'] + [n.title() for n in method_names]
         dtype_model.setHorizontalHeaderLabels(col_names)
 
-        for dtype, info in self.results.items():
+        for dtype, info in sorted(self.results.items()):
             dtype = QtGui.QStandardItem(str(dtype))
 
-            for field_name, totals in info.items():
+            for field_name, totals in sorted(info.items()):
                 field_name = QtGui.QStandardItem(str(field_name))
                 dtype_model.setItem(field_row, 0, dtype.clone())
                 dtype_model.setItem(field_row, 1, field_name)
