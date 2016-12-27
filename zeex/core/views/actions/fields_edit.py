@@ -144,8 +144,8 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
 
         # Clear entries that dont exist in the dataframe columns.
         for i in range(self.fmodel.rowCount()):
-            name = self.fmodel.item(i, 0).text()
-            if name not in current_frame_cols:
+            name = self.fmodel.item(i, 0)
+            if name and name.text() not in current_frame_cols:
                 self.fmodel.takeRow(i)
 
     def import_template(self, filename=None,df=None, columns=None):
@@ -195,8 +195,6 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         else:
             raise Exception("filename and to to_frame cannot be a False value!")
 
-
-
     def apply_changes(self, rename=True, dtype=True):
         renames = {}
         dtypes = {}
@@ -204,11 +202,18 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         df_dtypes = self.dfmodel._columnDtypeModel
         orig_cols = [str(x) for x in df.columns]
         new_cols = [self.fmodel.item(i, 0).text() for i in range(self.fmodel.rowCount())]
+        extra_cols = [x for x in new_cols if x not in orig_cols]
+        new_cols = [x for x in new_cols if x in orig_cols]
         order_match = [x for i, x in enumerate(new_cols) if orig_cols[i] == x]
         change_order = len(order_match) != len(new_cols)
 
         if change_order:
             df = df.loc[:, new_cols]
+        if extra_cols:
+            for e in extra_cols:
+                idx = self.fmodel.findItems(e)
+                if idx:
+                    self.fmodel.takeRow(idx[0].row())
 
         # Gather rename/dtype info from FieldsModel
         for i in range(self.fmodel.rowCount()):
@@ -230,8 +235,10 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
                         df.loc[:, name] = pandatools.series_to_numeric(df.loc[:, name],astype=int)
                     elif 'float' in dt:
                         df.loc[:, name] = pandatools.series_to_numeric(df.loc[:, name], astype=float)
-                    print("Changing dtype {}".format(name))
-                    df_dtypes.setData(idx, dt)
+                    elif 'date' in dt:
+                        df.loc[:, name] = pd.to_datetime(df.loc[:, name], errors='coerce')
+                    elif 'str' in dt or 'obj' in dt:
+                        df.loc[:, name] = df.loc[:, name].astype(str)
 
         # Use the DataFrameModel's rename method.
         if rename is True:

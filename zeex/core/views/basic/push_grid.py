@@ -72,6 +72,13 @@ class PushGridHandler(object):
     def set_model(self, model, left=True):
         if left:
             self.listViewLeft.setModel(model)
+            right_model = self.listViewRight.model()
+            if right_model and right_model.rowCount() > 0:
+                for i in range(right_model.rowCount()):
+                    check_item = right_model.item(i, 0)
+                    if check_item and not model.findItems(check_item.text()):
+                        right_model.takeRow(i)
+
         else:
             self.listViewRight.setModel(model)
 
@@ -102,10 +109,8 @@ class PushGridHandler(object):
             model = self._left_model
         else:
             model = self._right_model
-
-        for i in items:
-            it = QtGui.QStandardItem(i)
-            model.appendRow(it)
+        model.clear()
+        [model.appendRow(QtGui.QStandardItem(str(i))) for i in items]
         self.set_model(model, left=left)
 
     def set_deletes(self, left: bool = True, right: bool = True):
@@ -127,7 +132,6 @@ class PushGridHandler(object):
         else:
             keep_model = self.listViewRight.model()
             drop_model = self.listViewLeft.model()
-
 
         keep_text = [keep_model.item(i).text() for i in range(keep_model.rowCount())]
         for i in range(drop_model.rowCount()):
