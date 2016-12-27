@@ -1,22 +1,36 @@
 # zeex
 
-A Python GUI studio for data analysis. Utilizes Qt/PySide and Pandas libraries to provide a flexible toolbox for reading, writing, and manipulating rows and columns.
+A Python GUI studio with a goal to make common data analysis and standardization tasks simple.
+Utilizes Qt/PySide and Pandas libraries to provide a flexible toolbox for reading, writing, and manipulating rows and columns.
 
 
 # Features:
 - A template-maker for common tasks like
-    - renaming headers
-    - sorting
-    - merging
-    - purging
-    - removing duplicates
+    - Renaming & organizing headers
+    - Sorting rows
+    - Merging/purging other data sets based on common fields
+    - Removing duplicate records
+    - Splitting to multiple files
+    - Text-to-columns
+    - Concatenate columns
 
 - 1-click data normalizations
     - Drop/fill missing values
     - Merge or split columns
     - Set case (upper/lower/proper)
     - Parse dates into YYYY-MM-DD format
-    - Remove special characters
+    - Remove special characters/trim extra spaces
+
+- File analyzer displaying a summary of your data instantly:
+    - Minimum/Maximum, Sum, & Median values (of number & date columns)
+    - Count of non-NA records (on string columns)
+
+- Manage project files & folders in-app:
+    - Renaming
+    - Compression
+    - DropBox upload/download
+
+-
 
 - A file reader that guesses the encoding and delimiter of most file formats
     - .csv
@@ -27,12 +41,7 @@ A Python GUI studio for data analysis. Utilizes Qt/PySide and Pandas libraries t
 - Lightning fast read, process, and write speed.
 
 
-# To-do:
-- FTP I/O interface
-- Pandas/Matplotlib Charts & Graphs
-- SQLAlchemy I/O interface
-
-
+- Issues are managed on Github using ZenHub - see upcoming features and feel free to contribute feedback, suggestions, or code.
 
 
 # Screenshots:

@@ -26,7 +26,7 @@ import pandas as pd
 from core.ui.actions.normalize_ui import Ui_ColumnNormalizerDialog
 from core.compat import QtGui, QtCore
 import core.utility.pandatools as pandatools
-from qtpandas import DataFrameModel
+from core.ctrls.dataframe import DataFrameModel
 from core.utility.widgets import configureComboBox
 from core.utility.collection import DictConfig, SettingsINI
 

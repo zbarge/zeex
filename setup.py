@@ -54,7 +54,7 @@ class PyTest(TestCommand):
         sys.exit(errcode)
 
 tests_require = ['easygui', 'pandas >= 0.17.1', 'PySide', 'pytest',
-                            'pytest-cov', 'pytest-qt', 'python-magic==0.4.6', 'dropbox']
+                 'pytest-cov', 'pytest-qt', 'python-magic==0.4.6', 'dropbox']
 setup(
     name='zeex',
     version=__version__,
@@ -63,9 +63,10 @@ setup(
     namespace_packages=['zeex'],
     author='Zeke Barge',
     tests_require=tests_require,
-    install_requires=['PySide','easygui', 'pandas>=0.17.1', 'pytest',
+    install_requires=['PySide', 'easygui', 'pandas>=0.17.1', 'pytest',
                       'pytest-qt>=1.2.2', 'pytest-cov', 'python-magic>=0.4.6',
-                      'openpyxl','xlrd','sqlalchemy', 'dropbox'],
+                      'openpyxl', 'xlrd', 'sqlalchemy', 'dropbox', 'request', 'six', 'urllib3',
+                      'typing', 'pandas', 'qtpandas'],
                       
     cmdclass={'test': PyTest},
     author_email='zekebarge@gmail.com',
@@ -89,5 +90,6 @@ setup(
         ],
     extras_require={
         'testing': tests_require,
-    }
+    },
+    dependency_links = ['http://github.com/draperjames/qtpandas/tarball/master#egg=qtpandas']
 )

@@ -48,13 +48,14 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.icons = Icons()
         self.dialog_settings = SettingsDialog(parent=self)
         self.dialog_new_project = NewProjectDialog(parent=self)
-        self.dialog_cloud = DropBoxViewDialog(self.treeView, parent=self)
+        self.dialog_cloud = None
         self.key_enter = QtGui.QShortcut(self)
         self.key_delete = QtGui.QShortcut(self)
 
         self.connect_actions()
         self.connect_filetree()
         self.connect_icons()
+        self.connect_cloud_dialog()
         self._project_cache = {}
         
     def connect_actions(self):
@@ -65,7 +66,6 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionSettings.triggered.connect(self.open_settings)
         self.actionOpen.triggered.connect(self.open_project)
         self.actionNew.triggered.connect(self.create_new_project)
-        self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
         self.actionZipFolder.triggered.connect(self.zip_path)
         self.actionEdit.setVisible(False)
         self.key_enter.activated.connect(self.open_project)
@@ -77,14 +77,12 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.setWindowIcon(self.icons['home'])
         self.dialog_new_project.setWindowIcon(self.icons['spreadsheet'])
         self.dialog_settings.setWindowIcon(self.icons['settings'])
-
         self.actionSettings.setIcon(self.icons['settings'])
         self.actionNew.setIcon(self.icons['add'])
         self.actionOpen.setIcon(self.icons['folder'])
         self.actionEdit.setIcon(self.icons['edit'])
         self.actionSave.setIcon(self.icons['save'])
         self.actionZipFolder.setIcon(self.icons['archive'])
-        self.actionViewCloud.setIcon(self.icons['cloud'])
 
     @QtCore.Slot()
     def connect_filetree(self, rootdir=None):
@@ -166,6 +164,15 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             self._cache_project(dirname, window)
             self.signalProjectOpened.emit([dirname, ini])
             window.show()
+
+    def connect_cloud_dialog(self):
+        try:
+            self.dialog_cloud = DropBoxViewDialog(self.treeView, self)
+            self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
+            self.actionViewCloud.setIcon(self.icons['cloud'])
+        except Exception as e:
+            print("Error connecting to cloud: {}".format(e))
+            self.actionViewCloud.setVisible(False)
 
     def display_ok_msg(self, msg):
         box = QtGui.QMessageBox(self)

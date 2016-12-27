@@ -72,7 +72,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
         self.dialog_export = DataFrameModelExportDialog(self.df_manager, parent=self)
         self.dialog_import = DataFrameModelImportDialog(self.df_manager, parent=self)
-        self.dialog_cloud = DropBoxViewDialog(None, self)
+        self.dialog_cloud = None
         self.key_delete = QtGui.QShortcut(self)
         self.key_enter = QtGui.QShortcut(self)
         self.key_zip = QtGui.QShortcut(self)
@@ -133,7 +133,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionRemove.triggered.connect(self.remove_tree_selected_path)
         self.actionRename.triggered.connect(self.open_rename_path_dialog)
         self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
-        self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
+
         self.actionZip.triggered.connect(self.zip_path)
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         self.key_enter.activated.connect(self.open_tableview_window)
@@ -156,7 +156,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionRename.setIcon(self.icons['rename'])
         self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
         self.actionZip.setIcon(self.icons['archive'])
-        self.actionViewCloud.setIcon(self.icons['cloud'])
+
 
     def connect_filetree(self):
         """
@@ -195,7 +195,13 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings.btnSetDefault.setVisible(False)
 
     def connect_cloud_dialog(self):
-        self.dialog_cloud.set_source_view(self.treeView)
+        try:
+            self.dialog_cloud = DropBoxViewDialog(self.treeView, self)
+            self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
+            self.actionViewCloud.setIcon(self.icons['cloud'])
+        except Exception as e:
+            print("Error connecting to cloud: {}".format(e))
+            self.actionViewCloud.setVisible(False)
 
     def open_export_dialog(self):
         """

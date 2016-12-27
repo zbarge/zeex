@@ -30,8 +30,7 @@ import qtpandas
 from collections import defaultdict
 import datetime
 from core.compat import QtCore
-from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM
-from qtpandas import DataFrameModel
+from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM, DataFrameModel
 
 SEPARATORS = {'Comma': ',',
               'Semicolon': ';',
