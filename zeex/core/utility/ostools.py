@@ -47,18 +47,22 @@ def path_incremented(p, overwrite=False):
         The file path incremented by 1 until it doesn't exist.
     """
     dirname = os.path.dirname(p)
+    error = 2
     while os.path.exists(p):
         name = os.path.basename(p)
         name, ext = os.path.splitext(name)
 
         try:
-            val = ''.join(e for e in name if e.isdigit())
+            val = ''.join(e for e in str(name)[-3:] if e.isdigit())
             count = int(val) + 1
             name = name.replace(val, str(count))
+            if str(count) not in name:
+                name = "{}{}".format(name, count)
         except ValueError:
-            name = "{}{}".format(name, 2)
+            name = "{}{}".format(name, error)
+            error += 1
         p = os.path.join(dirname, name + ext)
-        if overwrite is True:
+        if overwrite is True or error > 2500:
             break
     return p
 

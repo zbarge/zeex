@@ -134,7 +134,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
     def apply_template(self, df, columns=['old', 'new', 'dtype']):
         current_frame_cols = self.dfmodel.dataFrame().columns.tolist()
         df.columns = columns  # Make or break this frame.
-        
+
         for i in range(df.index.size):
             entry = df.iloc[i]
             matches = self.fmodel.findItems(entry['old'])

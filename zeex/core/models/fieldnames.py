@@ -185,15 +185,6 @@ class FieldModel(QtGui.QStandardItemModel):
     def get_row_list(self, row):
         return [self.item(row, i) for i in range(self.columnCount())]
 
-    def push_field_position(self, up=True):
-        old_idx = self.tableView.selectedIndexes()[0]
-        old_row = old_idx.row()
-        if up is True:
-            new_row = old_row + 1
-        else:
-            new_row = old_row - 1
-        old_list = [i.clone() for i in self.get_row_list(old_row)]
-        new_list = self.get_row_list(new_row)
     def set_field(self, field_name, new_name=None, dtype=None):
         """
         Use this method to add fields to the model.

@@ -61,6 +61,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.connect_actions()
         self.connect_icons()
 
+
     @property
     def widget(self):
         # Overrides the Ui_FileWindow.widget

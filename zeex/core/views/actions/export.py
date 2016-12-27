@@ -25,25 +25,14 @@ import os
 from core.compat import QtGui, QtCore
 from core.ui.actions.export_ui import Ui_ExportFileDialog
 from core.utility.widgets import configureComboBox, get_ok_msg_box
-from core.ctrls.dataframe import DataFrameModelManager
+from core.ctrls.dataframe import DataFrameModelManager, ENCODINGS, SEPARATORS
 from core.utility.ostools import path_incremented
-SEPARATORS = {'Comma':',',
-              'Semi Colon': ';',
-              'Tab':r'\t',
-              'Pipe':'|'}
-
-ENCODINGS = {'UTF-8':'UTF_8',
-             'ASCII':'ASCII',
-             'UTF-16':'UTF_16',
-             'UTF-32':'UTF_32',
-             'ISO-8859-1':'ISO-8859-1'}
 
 
 class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
     signalExported = QtCore.Signal(str, str) # original_path, new_path
 
     def __init__(self, df_manager: DataFrameModelManager, filename: str=None, allow_multi_source=True, **kwargs):
-        self._parent = kwargs.pop('parent', None)
         self.df_manager = df_manager
         if allow_multi_source:
             self.df_manager.signalNewModelRead.connect(self.append_source_filename)
@@ -63,12 +52,6 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         QtGui.QDialog.__init__(self, **kwargs)
         self.setupUi(self)
         self.configure()
-
-    @property
-    def parent(self):
-        if self._parent is not None:
-            return self._parent
-        return self
 
     def configure(self):
         self.btnBrowseDestination.clicked.connect(self.browse_destination)

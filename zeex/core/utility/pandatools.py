@@ -31,6 +31,19 @@ import pandas as pd
 import numpy as np
 from core.utility.ostools import path_incremented
 
+
+NA_VALUES = ['nan', 'na', 'none', 'null']
+
+
+def string_blank_na(x, value=''):
+    return (value if pd.isnull(x) or str(x).lower() in NA_VALUES
+                                   else x)
+
+
+def series_blank_na(series, value=''):
+    return series.apply(string_blank_na, args=[[value]])
+
+
 def force_int(integer):
     integer = ''.join(e for e in str(integer) if e.isdigit() or e is '.')
     try:
@@ -105,20 +118,19 @@ def dataframe_export_chunks(df, filepath, max_size=None, overwrite=True, **kwarg
     return paths
 
 
-def superReadCSV(filepath, first_codec='utf8', usecols=None, 
-                 low_memory=False, dtype=None, parse_dates=True, 
-                 sep=',', chunksize=None, verbose=False, **kwargs):
+def superReadCSV(filepath, first_codec='utf8', verbose=False, **kwargs):
         """ A wrap to pandas read_csv with mods to accept a dataframe or filepath. returns dataframe untouched, reads filepath and returns dataframe based on arguments."""
-        if isinstance(filepath, pd.DataFrame): return filepath
+        if isinstance(filepath, pd.DataFrame):
+            return filepath
         assert isinstance(first_codec, str), "first_codec parameter must be a string"
-        
-        codecs = list(set([first_codec] + ['utf8','iso-8859-1','ascii','utf-16','utf-32']))
+        kwargs['sep'] = kwargs.get('sep', ',')
+        kwargs['low_memory'] = kwargs.get('low_memory', False)
+        codecs = list(set([first_codec] + ['utf8', 'iso-8859-1', 'ascii', 'utf-16', 'utf-32']))
         
         for c in codecs:
             try:
-                
-                return pd.read_csv(filepath,usecols=usecols,low_memory=low_memory,encoding=c,dtype=dtype,parse_dates=parse_dates,sep=sep,chunksize=chunksize,**kwargs)
-            
+                kwargs['encoding'] = c
+                return pd.read_csv(filepath, **kwargs)
             except (UnicodeDecodeError, UnboundLocalError) as e:
                 if verbose: 
                     print(e)
@@ -129,12 +141,14 @@ def superReadCSV(filepath, first_codec='utf8', usecols=None,
                     raise
         raise Exception("Tried {} codecs and failed on all: \n CODECS: {} \n FILENAME: {}".format(
                         len(codecs), codecs, os.path.basename(filepath)) )
-        
+
+
 def _count(item,string):
     if len(item) == 1:
         return len(''.join(x for x in string if x == item))
     return len(str(string.split(item)))
-    
+
+
 def identify_sep(filepath):
     """Identifies the separator of data in a filepath.
     It reads the first line of the file and counts supported separators.
@@ -205,7 +219,13 @@ def superReadFile(filepath,**kwargs):
         return pd.read_excel(filepath,**kwargs)
 
     elif ext in ['.txt','.tsv','.csv']:
-        return superReadText(filepath,**kwargs)
+        return superReadText(filepath, **kwargs)
+
+    elif ext in ['.gz', '.bz2', '.zip', 'xz']:
+        return superReadCSV(filepath, **kwargs)
+
+    elif ext in ['.h5']:
+        return pd.read_hdf(filepath)
 
     else:
         raise NotImplementedError("Unable to read '{}' files".format(ext))
@@ -666,15 +686,15 @@ def dataframe_split_to_files(df: pd.DataFrame, source_path: str, split_on: list,
 
 
 def string_strip(x):
-    return str(x).strip()
+    return string_blank_na(str(x).strip())
 
 
 def series_strip(series: pd.Series):
-    return series.str.strip()
+    return series.apply(string_strip)
 
 
 def string_remove_special_chars(x, excludes=[' ']):
-    return ''.join(e for e in x if not e.isalnum() or e in excludes)
+    return string_blank_na(''.join(e for e in x if not e.isalnum() or e in excludes))
 
 
 def series_remove_special_chars(series: pd.Series):
@@ -822,5 +842,23 @@ def series_to_numeric(series, errors='coerce', astype=int):
 
 
 
+LINE_BREAKS_LIST = [r'\n', r'\t', r'\r']
+LINE_BREAKS_LIST_RX = [re.compile(x) for x in LINE_BREAKS_LIST]
 
 
+def remove_line_breaks(x):
+    x = (str(x) if pd.notnull(x) else '')
+    for b in LINE_BREAKS_LIST_RX:
+        x = b.sub(" ", x)
+    return string_blank_na(x.lstrip().rstrip())
+
+
+def dataframe_remove_linebreaks(df, columns=None, copy=False):
+    if copy is True:
+        df = df.copy()
+    if columns is None:
+        columns = df.columns.tolist()
+    for col in columns:
+        if str(df[col].dtype) == 'object':
+            df.loc[:, col] = df.loc[:, col].apply(remove_line_breaks)
+    return df

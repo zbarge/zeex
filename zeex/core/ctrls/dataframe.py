@@ -31,6 +31,19 @@ from collections import defaultdict
 import datetime
 from core.compat import QtCore
 from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM
+from qtpandas import DataFrameModel
+
+SEPARATORS = {'Comma': ',',
+              'Semicolon': ';',
+              'Tab': "\t",
+              'Pipe': '|'}
+
+ENCODINGS = {'UTF-8':'UTF_8',
+             'ASCII':'ASCII',
+             'UTF-16':'UTF_16',
+             'UTF-32':'UTF_32',
+             'ISO-8859-1':'ISO-8859-1'}
+
 
 class DataFrameModelManager(DFM):
     """

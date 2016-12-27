@@ -40,6 +40,7 @@ from icons import Icons
 from qtpandas.models.DataFrameModel import DataFrameModel
 from qtpandas.views.MultiFileDialogs import CSVImportDialog
 from core.views.basic.line_edit import FilePathRenameDialog
+from core.views.actions.import_file import DataFrameModelImportDialog
 
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
@@ -70,7 +71,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings = SettingsDialog(settings=settings_ini)
         self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
         self.dialog_export = DataFrameModelExportDialog(self.df_manager, parent=self)
-        self.dialog_import = CSVImportDialog(self)
+        self.dialog_import = DataFrameModelImportDialog(self.df_manager, parent=self)
         self.dialog_cloud = DropBoxViewDialog(None, self)
         self.key_delete = QtGui.QShortcut(self)
         self.key_enter = QtGui.QShortcut(self)
@@ -217,7 +218,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         :return: None
         """
         dialog = self.dialog_import
-        dialog.load.connect(self.import_file)
+        dialog.signalImported.connect(self.import_file)
         dialog.setWindowIcon(self.icons['add'])
         dialog.show()
 
@@ -241,11 +242,11 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         name = os.path.basename(model.filePath)
 
         try:
-            return self.df_windows[name].show()
+            self.df_windows[name].show()
         except KeyError:
             self.df_windows[name] = FileTableWindow(model, self.df_manager)
             self.add_recent_file_menu_entry(name, model)
-            return self.df_windows[name].show()
+            self.df_windows[name].show()
 
     def open_merge_purge_dialog(self, model: DataFrameModel=None):
         if model is None:
@@ -308,7 +309,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.current_model = self.df_manager.get_model(model._filePath)
 
     @QtCore.Slot('DataFrameModel', str)
-    def import_file(self, filepath):
+    def import_file(self, filepath, open=True):
         if isinstance(filepath, DataFrameModel):
             model = filepath
             filepath = model.filePath
@@ -316,15 +317,17 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
 
         model = self.df_manager.get_model(filepath)
         name = os.path.basename(model.filePath)
-        self.add_recent_file_menu_entry(name, model)
-        dirname = self.SettingsDialog.rootDirectoryLineEdit.text()
+        dirname = self.dialog_settings.rootDirectoryLineEdit.text()
+        assert os.path.isdir(dirname), "Root Directory is not a directory: {}".format(dirname)
+
         if os.path.dirname(filepath) != dirname:
             newpath = os.path.join(dirname, name)
-            model._filePath = newpath
-            self.maybe_save_copy(model.dataFrame(),
-                                 newpath,
-                                 index=False
-                                 )
+            self.df_manager.save_file(filepath, save_as=newpath, keep_orig=False)
+            filepath = newpath
+
+        if open is True:
+            model = self.df_manager.get_model(filepath)
+            self.open_tableview_window(model)
 
     def add_recent_file_menu_entry(self, name, model):
         action = QtGui.QAction(name, self.menuRecent_Files)
