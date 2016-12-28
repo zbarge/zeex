@@ -33,6 +33,7 @@ from core.compat import QtCore
 from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM, DataFrameModel
 from core.models.dataframe import DataFrameDescriptionModel
 
+
 SEPARATORS = {'Comma': ',',
               'Semicolon': ';',
               'Tab': "\t",
@@ -52,6 +53,7 @@ class DataFrameModelManager(DFM):
     """
     def __init__(self):
         DFM.__init__(self)
+        self._file_table_windows = {}
 
     def get_df_describe_model(self, filepath):
         describe_path = DataFrameDescriptionModel.get_describe_path(filepath)
@@ -62,3 +64,13 @@ class DataFrameModelManager(DFM):
             dfm2 = DataFrameDescriptionModel(source_model=dfm, filePath=describe_path)
             self.set_model(dfm2, describe_path)
             return self.get_model(describe_path)
+
+    def get_fileview_window(self, file_path, **kwargs):
+        from core.views.file import FileTableWindow
+        model = self.read_file(file_path)
+        try:
+            self._file_table_windows[file_path].show()
+        except KeyError:
+            self._file_table_windows[file_path] = FileTableWindow(model, self, **kwargs)
+            return self._file_table_windows[file_path]
+

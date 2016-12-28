@@ -23,21 +23,18 @@ SOFTWARE.
 """
 
 import os
-from functools import partial
-
 import pandas as pd
-
+from functools import partial
 from core.compat import QtGui, QtCore
-from core.ctrls.dataframe import DataFrameModelManager
 from core.models.actions import FileViewModel
+from core.ctrls.dataframe import DataFrameModelManager
 from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
 from core.utility.collection import DictConfig, SettingsINI
 from core.utility.pandatools import gather_frame_fields
 from core.utility.widgets import create_standard_item_model
 from core.views.basic.map_grid import MapGridDialog
 from core.views.basic.push_grid import PushGridHandler
-from core.views.file import FileTableWindow
-from qtpandas.models.DataFrameModel import DataFrameModel
+from core.ctrls.dataframe import DataFrameModel
 
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
@@ -73,7 +70,6 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self._suppress_view_model = FileViewModel()
         self._purge_files = {}
         self._merge_files = {}
-        self._file_table_windows = {}
         self._field_map_grids = {}
         self._field_map_data = {}
         self.sortAscHandler = None
@@ -81,6 +77,8 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.dedupeOnHandler = None
         self.uniqueFieldsHandler = None
         self.gatherFieldsHandler = None
+        if self.source_model is not None:
+            self.set_source_model(source_model, configure=True)
 
     def configure(self, source_path=None, dest_path=None):
         """
@@ -156,7 +154,10 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             else:
                 raise Exception("model parameter must be a filepath or a qtpandas.models.DataFrameModel")
         if self.source_model is not None:
-            self.source_model.dataFrameChanged.disconnect(self.sync)
+            try:
+                self.source_model.dataFrameChanged.disconnect(self.sync)
+            except RuntimeError:
+                pass
         self.source_model = model
         self.source_model.dataFrameChanged.connect(self.sync)
         if configure:
@@ -341,6 +342,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self._merge_files.update({file_path:model})
         self._merge_view_model.append_df_model(model)
         self.mergeFileTable.setColumnWidth(0, 500)
+        self._merge_view_model.setHorizontalHeaderLabels(['filepath', 'count'])
 
     @QtCore.Slot(str)
     def add_purge_file(self, file_path):
@@ -356,6 +358,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self._purge_files.update({file_path:model})
         self._suppress_view_model.append_df_model(model)
         self.sFileTable.setColumnWidth(0, 500)
+        self._suppress_view_model.setHorizontalHeaderLabels(['filepath', 'count'])
 
     def remove_file(self, view, indexes=None):
         """
@@ -436,17 +439,23 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             to supply the FileTableWindow
         :return: None
         """
-        idx = view.selectedIndexes()[0]
+        try:
+            idx = view.selectedIndexes()[0]
+        except IndexError:
+            raise IndexError("No file selected to open.")
         vmodel = view.model()
         vitem = vmodel.item(idx.row())
         model = models.get(vitem.text())
 
         fp = model.filePath
-        try:
-            self._file_table_windows[fp].show()
-        except KeyError:
-            self._file_table_windows[fp] = FileTableWindow(model)
-            self._file_table_windows[fp].show()
+        wdw = self.df_manager.get_fileview_window(fp)
+        # Prevent wierdos from doing an endless loop of MergePurge windows.
+        # That would be pretty funny, though..
+        wdw.actionMergePurge.setVisible(False)
+
+        wdw.show()
+
+
 
     def execute(self):
         """

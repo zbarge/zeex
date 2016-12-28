@@ -31,7 +31,6 @@ from core.models.filetree import FileTreeModel
 from core.ui.project.main_ui import Ui_ProjectWindow
 from core.utility.collection import SettingsINI
 from core.utility.ostools import zipfile_compress
-from core.views.file import FileTableWindow
 from core.views.settings import SettingsDialog
 from core.views.actions.export import DataFrameModelExportDialog
 from core.views.actions.merge_purge import MergePurgeDialog
@@ -83,7 +82,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.connect_export_dialog()
         self.connect_cloud_dialog()
         self.current_model = None
-        self.df_windows = {}   # Temp cache
 
     @property
     def project_directory(self):
@@ -253,14 +251,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
                 #box.show()
                 pass
 
-        name = os.path.basename(model.filePath)
-
-        try:
-            self.df_windows[name].show()
-        except KeyError:
-            self.df_windows[name] = FileTableWindow(model, self.df_manager)
-            self.add_recent_file_menu_entry(name, model)
-            self.df_windows[name].show()
+        self.df_manager.get_fileview_window(model.filePath).show()
+        self.add_recent_file_menu_entry(model.filePath, model)
 
     def open_merge_purge_dialog(self, model: DataFrameModel=None):
         if model is None:

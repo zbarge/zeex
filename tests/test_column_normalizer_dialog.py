@@ -139,8 +139,7 @@ class TestColumnNormalizerDialog(MainTestClass):
     def test_scrub_linebreaks(self, dialog:ColumnNormalizerDialog):
         col_model = dialog.listViewColumns.model()
         df = dialog.df_model.dataFrame()
-        col = 'SAMPLE_COL_REMOVE_SPEC_CHARS'
-        keeps = [' ']
+        col = 'SAMPLE_COL_SCRUB_LINEBREAKS'
         bad_text = "Dear John,\n How's life?"
         good_text = pandatools.remove_line_breaks(bad_text)
         df.loc[:, col] = bad_text

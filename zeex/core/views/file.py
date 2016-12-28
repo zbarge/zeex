@@ -28,13 +28,12 @@ from qtpandas.models.DataFrameModel import DataFrameModel
 from qtpandas.views.DataTableView import DataTableWidget
 from core.ui.file_ui import Ui_FileWindow
 from core.views.actions.fields_edit import FieldsEditDialog
-from core.ctrls.dataframe import DataFrameModelManager
 from core.views.actions.split import SplitFileDialog
 from core.views.actions.analyze import FileAnalyzerDialog
 from core.views.actions.normalize import ColumnNormalizerDialog
 from core.views.actions.export import DataFrameModelExportDialog
 from core.utility.widgets import create_standard_item_model
-
+from core.views.actions.merge_purge import MergePurgeDialog
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     """
@@ -42,7 +41,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     of the source DataFrame. Menu actions in this window allow the user to make
     updates to the DataFrame and see the changes update in the view.
     """
-    def __init__(self, model: DataFrameModel, df_manager: DataFrameModelManager, **kwargs):
+    def __init__(self, model: DataFrameModel, df_manager, **kwargs):
         QtGui.QMainWindow.__init__(self, parent=kwargs.pop('parent', None))
         self.df_manager = df_manager
         self._widget = DataTableWidget()
@@ -56,6 +55,10 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.dialog_split = SplitFileDialog(model, parent=self)
         self.dialog_analyze = FileAnalyzerDialog(model, parent=self)
         self.dialog_normalize = ColumnNormalizerDialog(model, parent=self)
+        self.dialog_merge_purge = kwargs.pop('merge_purge_dialog', MergePurgeDialog(df_manager,
+                                                                                    source_model=model,
+                                                                                    ))
+
         self.connect_actions()
         self.connect_icons()
 
@@ -79,25 +82,27 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         return self.df_model.dataFrame()
 
     def connect_actions(self):
-        self.actionEditFields.triggered.connect(self.dialog_fields_edit.show)
-        self.actionSplit.triggered.connect(self.dialog_split.show)
         self.actionAnalyze.triggered.connect(self.dialog_analyze.show)
+        self.actionEditFields.triggered.connect(self.dialog_fields_edit.show)
+        self.actionMergePurge.triggered.connect(self.dialog_merge_purge.show)
         self.actionNormalize.triggered.connect(self.dialog_normalize.show)
         self.actionSave.triggered.connect(self.save)
         self.actionSaveAs.triggered.connect(self.dialog_export.show)
+        self.actionSplit.triggered.connect(self.dialog_split.show)
         self.dialog_export.btnBrowseSource.setVisible(False)
         # TODO: Make these actions do something then activate.
         self.actionExecuteScript.setVisible(False)
         self.actionSuppress.setVisible(False)
         self.actionDelete.setVisible(False)
         self.df_model.dataChanged.connect(self.sync)
+
         self.sync()
 
     def connect_icons(self):
         self.setWindowIcon(self.icons['spreadsheet'])
         self.actionExecuteScript.setIcon(self.icons['edit'])
         self.actionDelete.setIcon(self.icons['delete'])
-        self.actionMergePurge.setVisible(False)
+        self.actionMergePurge.setIcon(self.icons['merge'])
         self.actionSave.setIcon(self.icons['save'])
         self.actionSaveAs.setIcon(self.icons['saveas'])
         self.actionSplit.setIcon(self.icons['split'])
