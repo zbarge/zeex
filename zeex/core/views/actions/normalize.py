@@ -88,12 +88,8 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         :return: None
         """
         if checkboxes:
-            self.checkBoxDropFillNA.setChecked(False)
-            self.checkBoxTrimSpaces.setChecked(False)
-            self.checkBoxMergeOrSplit.setChecked(False)
-            self.checkBoxRemoveSpecialChars.setChecked(False)
-            self.checkBoxReplaceSpaces.setChecked(False)
-            self.checkBoxSetCase.setChecked(False)
+            [box.setChecked(False) for box in self.findChildren(QtGui.QCheckBox)]
+
         if columns:
             [c.setCheckState(QtCore.Qt.Unchecked) for c in self.listViewColumns.model().get_items_checked()]
 
@@ -108,7 +104,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
                         trim_spaces_active = self.checkBoxTrimSpaces.isChecked(),
                         drop_or_fill_active = self.checkBoxDropFillNA.isChecked(),
                         remove_special_chars_active=self.checkBoxRemoveSpecialChars.isChecked(),
-
+                        scrub_linebreaks_active=self.checkBoxScrubLineBreaks.isChecked(),
                         case = self.comboBoxSetCase.currentText(),
                         drop_or_fill = self.comboBoxDropFillNA.currentText(),
                         drop_or_fill_how = self.comboBoxDropFillNAHow.currentText(),
@@ -139,6 +135,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         columns = [c.lower() for c in s.get_safe(section, 'columns', fallback=[])]
 
         self.checkBoxRemoveSpecialChars.setChecked(s.getboolean(section, 'remove_special_chars_active', fallback=False))
+        self.checkBoxScrubLineBreaks.setChecked(s.getboolean(section, 'scrub_linebreaks_active', fallback=False))
         self.checkBoxSetCase.setChecked(s.getboolean(section, 'case_active', fallback=False))
         self.checkBoxMergeOrSplit.setChecked(s.getboolean(section, 'merge_or_split_active', fallback=False))
         self.checkBoxReplaceSpaces.setChecked(s.getboolean(section, 'replace_spaces_active', fallback=False))
@@ -219,10 +216,10 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         mos_active = self.checkBoxMergeOrSplit.isChecked()
         replace_spaces_active = self.checkBoxReplaceSpaces.isChecked()
         remove_special_chars_active = self.checkBoxRemoveSpecialChars.isChecked()
+        scrub_linebreaks_active = self.checkBoxScrubLineBreaks.isChecked()
         trim_spaces_active = self.checkBoxTrimSpaces.isChecked()
         drop_fill_active = self.checkBoxDropFillNA.isChecked()
-        activation_options = [replace_spaces_active, trim_spaces_active,
-                              mos_active, case_active, drop_fill_active]
+        activation_options = [box.isChecked() for box in self.findChildren(QtGui.QCheckBox)]
         case = self.comboBoxSetCase.currentText()
         drop_fill = self.comboBoxDropFillNA.currentText().lower()
         dof_how = self.comboBoxDropFillNAHow.currentText()
@@ -233,6 +230,9 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         trim_spaces = self.checkBoxTrimSpaces.isChecked()
         remove_special_chars_keeps = [e for e in self.lineEditRemoveSpecialCharsKeeps.text()
                                       if not e.isalnum() and e is not '']
+
+        if any(activation_options):
+            self.df_model.layoutAboutToBeChanged.emit()
 
         if drop_fill_active:
             if 'drop' in drop_fill:
@@ -249,6 +249,9 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
                     except ValueError:
                         pass
                 [df.loc[:, c].fillna(value=dof_with) for c in columns]
+
+        if scrub_linebreaks_active:
+            df = pandatools.dataframe_remove_linebreaks(df, columns=columns, copy=False)
 
         if trim_spaces and trim_spaces_active:
             for c in columns:

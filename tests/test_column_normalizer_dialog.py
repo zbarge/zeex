@@ -136,6 +136,32 @@ class TestColumnNormalizerDialog(MainTestClass):
         for i in df_check.index:
             assert df_check.iloc[i][col] == good_text
 
+    def test_scrub_linebreaks(self, dialog:ColumnNormalizerDialog):
+        col_model = dialog.listViewColumns.model()
+        df = dialog.df_model.dataFrame()
+        col = 'SAMPLE_COL_REMOVE_SPEC_CHARS'
+        keeps = [' ']
+        bad_text = "Dear John,\n How's life?"
+        good_text = pandatools.remove_line_breaks(bad_text)
+        df.loc[:, col] = bad_text
+        dialog.df_model.dataChanged.emit()
+
+        dialog.uncheck_all()
+        dialog.checkBoxScrubLineBreaks.setChecked(True)
+        [c.setCheckState(QtCore.Qt.Checked)
+         for c in col_model.get_items()
+         if c.text() == col]
+
+        assert dialog.checkBoxScrubLineBreaks.isVisible()
+
+        dialog.execute()
+        df_check = dialog.df_model.dataFrame()
+        assert '\n' in bad_text
+        assert '\n' not in good_text
+        for i in df_check.index:
+            assert df_check.iloc[i][col] == good_text
+
+
     def test_replace_spaces(self, dialog:ColumnNormalizerDialog):
         col_model = dialog.listViewColumns.model()
         df = dialog.df_model.dataFrame()

@@ -56,7 +56,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
           <widget class="QLabel" name="label">
@@ -87,14 +87,14 @@
          </item>
         </layout>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="replaceSpacesLabel">
          <property name="text">
           <string>Replace Spaces</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxReplaceSpaces">
@@ -118,14 +118,14 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="setCaseLabel">
          <property name="text">
           <string>Set Case</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="1">
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxSetCase">
@@ -149,7 +149,7 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="1">
+       <item row="7" column="1">
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="1">
           <widget class="QCheckBox" name="checkBoxDropFillNA">
@@ -203,7 +203,7 @@
          </item>
         </layout>
        </item>
-       <item row="7" column="0">
+       <item row="8" column="0">
         <widget class="QPushButton" name="btnUncheckAll">
          <property name="whatsThis">
           <string>Uncheck all activation options &amp; selected columns.</string>
@@ -213,7 +213,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
+       <item row="8" column="1">
         <widget class="QDialogButtonBox" name="buttonBox">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -223,7 +223,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <layout class="QGridLayout" name="gridLayout_6">
          <property name="verticalSpacing">
           <number>6</number>
@@ -254,7 +254,7 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="0">
         <layout class="QGridLayout" name="gridLayout_7">
          <property name="verticalSpacing">
           <number>6</number>
@@ -315,6 +315,23 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="labelScrubLineBreaks">
+         <property name="text">
+          <string>Scrub Line Breaks</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="checkBoxScrubLineBreaks">
+         <property name="whatsThis">
+          <string>Activate - strip new line characters (line breaks) from columns</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
