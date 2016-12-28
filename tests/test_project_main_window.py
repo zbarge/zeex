@@ -109,7 +109,7 @@ class TestProjectMainWindow(MainTestClass):
         # Confirm we have no exported file.
         assert not os.path.exists(example_export_path)
 
-        window.open_export_dialog()
+        window.dialog_export.show()
         dialog = window.dialog_export
         #qtbot.addWidget(dialog)
         current_idx = dialog.comboBoxSource.findText(example_file_path)
@@ -146,7 +146,7 @@ class TestProjectMainWindow(MainTestClass):
         """
         assert os.path.exists(example_file_path)
         assert example_file_path not in window.df_manager.file_paths
-        window.open_import_dialog()
+        window.dialog_import.show()
         assert window.dialog_import.isVisible()
         window.dialog_import.close()
 

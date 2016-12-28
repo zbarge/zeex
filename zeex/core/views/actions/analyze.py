@@ -28,13 +28,12 @@ from core.compat import QtGui, QtCore
 import pandas as pd
 from qtpandas.models.DataFrameModel import DataFrameModel
 from core.ui.actions.analyze_ui import Ui_FileAnalyzerDialog
-from core.ctrls.analyze import DataFrameAnalyzer
 from core.models.dataframe import DataFrameDescriptionModel
 
 
 class FileAnalyzerDialog(QtGui.QDialog, Ui_FileAnalyzerDialog):
 
-    def __init__(self, source_model, parent=None):
+    def __init__(self, source_model: DataFrameModel, parent=None):
         self.df_model = source_model
         self.analyze_model = DataFrameDescriptionModel(source_model=source_model)
         QtGui.QDialog.__init__(self, parent)

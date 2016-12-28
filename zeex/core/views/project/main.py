@@ -23,22 +23,19 @@ SOFTWARE.
 """
 
 import os
+from icons import Icons
 from functools import partial
-
 from core.compat import QtGui, QtCore
-from core.ctrls.dataframe import DataFrameModelManager
+from core.ctrls.dataframe import DataFrameModelManager, DataFrameModel
 from core.models.filetree import FileTreeModel
 from core.ui.project.main_ui import Ui_ProjectWindow
 from core.utility.collection import SettingsINI
 from core.utility.ostools import zipfile_compress
+from core.views.file import FileTableWindow
+from core.views.settings import SettingsDialog
 from core.views.actions.export import DataFrameModelExportDialog
 from core.views.actions.merge_purge import MergePurgeDialog
 from core.views.basic.directory import DropBoxViewDialog
-from core.views.file import FileTableWindow
-from core.views.settings import SettingsDialog
-from icons import Icons
-from qtpandas.models.DataFrameModel import DataFrameModel
-from qtpandas.views.MultiFileDialogs import CSVImportDialog
 from core.views.basic.line_edit import FilePathRenameDialog
 from core.views.actions.import_file import DataFrameModelImportDialog
 
@@ -82,11 +79,11 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.connect_filetree()
         self.connect_icons()
         self.connect_settings_dialog()
+        self.connect_import_dialog()
+        self.connect_export_dialog()
         self.connect_cloud_dialog()
         self.current_model = None
-
-        # Temp cache
-        self.df_windows = {}
+        self.df_windows = {}   # Temp cache
 
     @property
     def project_directory(self):
@@ -107,6 +104,18 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         """
         return os.path.join(self.project_directory, 'log')
 
+    @QtCore.Slot(SettingsINI, str)
+    def sync_settings(self, config:SettingsINI=None, file_path=None):
+        """
+        Anytime settings are saved this method gets triggered.
+        Sets defaults for various views.
+        :param config:
+        :param file_path:
+        :return:
+        """
+        self.connect_export_dialog()
+        self.connect_import_dialog()
+
     def connect_window_title(self):
         """
         Sets the ProjectMainWindow.windowTitle to "Project - dirname - dirpath"
@@ -122,19 +131,19 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         Connects all project actions.
         :return: None
         """
+
+        self.actionPreferences.triggered.connect(self.dialog_settings.show)
+        self.actionNew.triggered.connect(self.dialog_import.show)
+        self.actionOpen.triggered.connect(self.open_tableview_window)
+        self.actionSave.triggered.connect(self.dialog_export.show)
+        self.actionRemove.triggered.connect(self.remove_tree_selected_path)
+        self.actionRename.triggered.connect(self.open_rename_path_dialog)
+        self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
+        self.actionZip.triggered.connect(self.zip_path)
         self.key_delete.setKey('del')
         self.key_enter.setKey('return')
         self.key_zip.setKey(QtGui.QKeySequence(self.tr('Ctrl+Z')))
         self.key_rename.setKey(QtGui.QKeySequence(self.tr('Ctrl+R')))
-        self.actionPreferences.triggered.connect(self.open_settings_dialog)
-        self.actionNew.triggered.connect(self.open_import_dialog)
-        self.actionOpen.triggered.connect(self.open_tableview_window)
-        self.actionSave.triggered.connect(self.open_export_dialog)
-        self.actionRemove.triggered.connect(self.remove_tree_selected_path)
-        self.actionRename.triggered.connect(self.open_rename_path_dialog)
-        self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
-
-        self.actionZip.triggered.connect(self.zip_path)
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         self.key_enter.activated.connect(self.open_tableview_window)
         self.key_zip.activated.connect(self.zip_path)
@@ -157,7 +166,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
         self.actionZip.setIcon(self.icons['archive'])
 
-
     def connect_filetree(self):
         """
         Uses the ProjectMainWindow.dialog_settings.rootDirectoryLineEdit
@@ -167,7 +175,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         """
         rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
         model = FileTreeModel(root_dir=rootdir)
-
         self.treeView.setModel(model)
         self.treeView.setRootIndex(model.index(rootdir))
         self.treeView.setColumnWidth(0, 400)
@@ -194,6 +201,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings.rootDirectoryLineEdit.setReadOnly(True)
         self.dialog_settings.btnSetDefault.setVisible(False)
 
+        self.dialog_settings.signalSettingsSaved.connect(self.sync_settings)
+
     def connect_cloud_dialog(self):
         try:
             self.dialog_cloud = DropBoxViewDialog(self.treeView, self)
@@ -203,30 +212,29 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             print("Error connecting to cloud: {}".format(e))
             self.actionViewCloud.setVisible(False)
 
-    def open_export_dialog(self):
+    def connect_export_dialog(self):
         """
-        Opens a ProjectDataFrameExportDialog object
-        and supplies the current df_models making them
-        available in the dropdown for the user to export
-        to a file.
+        Sets defaults of the DataFrameModelExport Dialog.
         :return: None
         """
-        dialog = self.dialog_export
-        dialog.signalExported.connect(self._flush_export)
-        dialog.setWindowIcon(self.icons['export_generic'])
-        dialog.show()
+        self.dialog_export.signalExported.connect(self._flush_export)
+        self.dialog_export.setWindowIcon(self.icons['export_generic'])
+        sep = self.dialog_settings.separatorComboBox.currentText()
+        enc = self.dialog_settings.encodingComboBox.currentText()
+        self.dialog_export.set_encoding(enc)
+        self.dialog_export.set_separator(sep)
 
-    def open_import_dialog(self):
+    def connect_import_dialog(self):
         """
-        Opens a CSVImportDialog object
-        allowing the user to select a model to
-        import (kind of pointless? - use open_tableview_window).
+        Sets defaults of the DataFrameModelImport Dialog.
         :return: None
         """
-        dialog = self.dialog_import
-        dialog.signalImported.connect(self.import_file)
-        dialog.setWindowIcon(self.icons['add'])
-        dialog.show()
+        self.dialog_import.signalImported.connect(self.import_file)
+        self.dialog_import.setWindowIcon(self.icons['add'])
+        sep = self.dialog_settings.separatorComboBox.currentText()
+        enc = self.dialog_settings.encodingComboBox.currentText()
+        self.dialog_import.set_encoding(enc)
+        self.dialog_import.set_separator(sep)
 
     def open_tableview_window(self, model: DataFrameModel = None):
         """
@@ -360,9 +368,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             kwargs['index'] = kwargs.get('index', False)
             df.to_csv(filepath, **kwargs)
 
-    def open_settings_dialog(self):
-        self.dialog_settings.show()
-
     def _flush_export(self, orig_path, new_path):
         if orig_path != new_path:
             self.add_recent_file_menu_entry(new_path, self.df_manager.get_model(new_path))
@@ -377,3 +382,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         current_path = self.get_tree_selected_path()
         dialog = FilePathRenameDialog(current_path, parent=self)
         dialog.show()
+
+
+
+

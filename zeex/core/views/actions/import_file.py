@@ -73,6 +73,30 @@ class DataFrameModelImportDialog(QtGui.QDialog, Ui_ImportFileDialog):
             df = pandatools.dataframe_to_datetime(df)
         return df
 
+    def set_separator(self, sep):
+        try:
+            SEPARATORS[sep]
+        except KeyError:
+            mapper = {v: k for k, v in SEPARATORS.items()}
+            try:
+                sep = mapper[sep]
+            except KeyError:
+                self.radioBtnOtherSeparator.setChecked(True)
+                return self.lineEditOtherSeparator.setText(sep)
+
+        self.comboBoxSeparator.setCurrentIndex(self.comboBoxSeparator.findText(sep))
+
+    def set_encoding(self, en):
+        try:
+            ENCODINGS[en]
+        except KeyError as e:
+            mapper = {v: k for k, v in ENCODINGS.items()}
+            try:
+                en = mapper[en]
+            except KeyError as e:
+                raise KeyError("Invalid Encoding {}".format(e))
+        self.comboBoxEncoding.setCurrentIndex(self.comboBoxEncoding.findText(en))
+
     def execute(self):
         file_path = self.lineEditFilePath.text()
         file_megabytes = os.path.getsize(file_path) / 1000 / 1000

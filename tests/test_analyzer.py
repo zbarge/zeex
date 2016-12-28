@@ -22,18 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from core.ctrls.analyze import DataFrameAnalyzer
 from core.utility.pandatools import superReadFile
 from tests.main import MainTestClass
 
 
 class TestAnalyzer(MainTestClass):
 
-    def test_model(self, example_file_path):
+    def test_dataframe_shape(self, example_file_path):
         df = superReadFile(example_file_path)
+        df = df.describe()
+        df.index.name = "CATEGORY"
+        df.reset_index(drop=False, inplace=True)
+        df = df.pivot(columns="CATEGORY")
 
-        model = DataFrameAnalyzer(df)
-        model.process_all_methods()
-        assert model.results
-        assert 'policyid' in model.results[model.NUMBERS].keys()
-        assert 'statecode' in model.results[model.STRINGS].keys()

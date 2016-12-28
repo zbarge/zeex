@@ -70,6 +70,30 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         if os.path.isfile(filename):
             self.lineEditDestination.setText(filename)
 
+    def set_separator(self, sep):
+        try:
+            SEPARATORS[sep]
+        except KeyError:
+            mapper = {v:k for k,v in SEPARATORS.items()}
+            try:
+                sep = mapper[sep]
+            except KeyError:
+                self.radioBtnOtherSeparator.setChecked(True)
+                return self.lineEditOtherSeparator.setText(sep)
+
+        self.comboBoxSeparator.setCurrentIndex(self.comboBoxSeparator.findText(sep))
+
+    def set_encoding(self, en):
+        try:
+            ENCODINGS[en]
+        except KeyError as e:
+            mapper = {v:k for k,v in ENCODINGS.items()}
+            try:
+                en = mapper[en]
+            except KeyError as e:
+                raise KeyError("Invalid Encoding {}".format(e))
+        self.comboBoxEncoding.setCurrentIndex(self.comboBoxEncoding.findText(en))
+
     def set_destination_path_from_source(self):
         self.lineEditDestination.setText(self.comboBoxSource.currentText())
 

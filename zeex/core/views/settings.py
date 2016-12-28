@@ -31,7 +31,7 @@ from core.models.main import FieldsListModel
 from core.ui.settings_ui import Ui_settingsDialog
 from core.utility.collection import SettingsINI, DictConfig
 from core.utility.widgets import configureComboBox
-
+from core.ctrls.dataframe import ENCODINGS, SEPARATORS
 
 def normpath(dirname, filename=None):
     if filename is not None:
@@ -50,7 +50,7 @@ THEME_NAME2 = 'theme2.qss'
 THEME_NAME3 = 'theme3.qss'
 DEFAULT_THEME = THEME_NAME3
 DEFAULT_THEME_OPTIONS = ['', THEME_NAME1, THEME_NAME2, THEME_NAME3]
-DEFAULT_CODECS = ['UTF_8', 'ASCII', 'ISO-8895-1']
+DEFAULT_CODECS = ['UTF_8', 'ASCII', 'ISO-8859-1']
 DEFAULT_SEPARATORS = [',','|',r'\t',';']
 DEFAULT_FLAVORS = ['SQLite', 'PostgreSQL', 'MySQL']
 DEFAULT_FILE_FORMATS = ['.xlsx', '.csv', '.txt']

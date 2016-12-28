@@ -22,30 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from PySide import QtGui
-
-
-class Model(object):
-    def __init__(self):
-        self._update_funcs = []
-
-        # variable placeholders
-        self.running = False
-
-    # subscribe a view method for updating
-    def subscribe_update_func(self, func):
-        if func not in self._update_funcs:
-            self._update_funcs.append(func)
-
-    # unsubscribe a view method for updating
-    def unsubscribe_update_func(self, func):
-        if func in self._update_funcs:
-            self._update_funcs.remove(func)
-
-    # update registered view methods
-    def announce_update(self):
-        for func in self._update_funcs:
-            func()
+from core.compat import QtGui
 
             
 class FieldsListModel(QtGui.QStandardItemModel):
