@@ -77,6 +77,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         self.dedupeOnHandler = None
         self.uniqueFieldsHandler = None
         self.gatherFieldsHandler = None
+        self.configure()
         if self.source_model is not None:
             self.set_source_model(source_model, configure=True)
 
@@ -92,8 +93,8 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         """
         if source_path is None:
             source_path = self.sourcePathLineEdit.text()
-            assert os.path.exists(source_path), "source_path cannot be None, set ".format(source_path)
-        self.set_line_edit_paths(source_path, dest_path=dest_path)
+        if os.path.isfile(source_path):
+            self.set_line_edit_paths(source_path, dest_path=dest_path)
         if self.sortAscHandler is None:
             self.set_handler_sort_asc()
         source_func = partial(self.open_file, model_signal=self.signalSourcePathSet)
@@ -136,7 +137,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             filepath = QtGui.QFileDialog.getOpenFileName(self, dir=dirname)[0]
         self.destPathLineEdit.setText(filepath)
 
-    def set_source_model(self, model=None, configure=False):
+    def set_source_model(self, model=None, configure=True):
         """
         Sets the source DataFrameModel for the Dialog.
 
@@ -153,25 +154,35 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
                 model = self.df_manager.read_file(model)
             else:
                 raise Exception("model parameter must be a filepath or a qtpandas.models.DataFrameModel")
+
         if self.source_model is not None:
-            try:
-                self.source_model.dataFrameChanged.disconnect(self.sync)
-            except RuntimeError:
-                pass
-        self.source_model = model
-        self.source_model.dataFrameChanged.connect(self.sync)
+            models_different = model.filePath != self.source_model.filePath
+            if models_different:
+                try:
+                    self.source_model.dataFrameChanged.disconnect(self.sync)
+                except RuntimeError:
+                    pass
+        else:
+            models_different = True
+
+        if models_different:
+            self.source_model = model
+            self.source_model.dataFrameChanged.connect(self.sync)
+
         if configure:
-            self.configure(source_path=self.source_model.filePath)
-            self.set_push_grid_handlers()
-            self.set_primary_key_combo_box(default=self.primaryKeyComboBox.currentText())
+            self.sync()
 
     def sync(self):
         df = self.source_model.dataFrame()
         cols = df.columns.tolist()
-        self.dedupeOnHandler.set_model_from_list(cols)
-        self.gatherFieldsHandler.set_model_from_list(cols)
-        self.sortOnHandler.set_model_from_list(cols)
-        self.uniqueFieldsHandler.set_model_from_list(cols)
+        if self.dedupeOnHandler is None or self.uniqueFieldsHandler is None:
+            self.set_push_grid_handlers()
+        else:
+            self.dedupeOnHandler.set_model_from_list(cols)
+            self.gatherFieldsHandler.set_model_from_list(cols)
+            self.sortOnHandler.set_model_from_list(cols)
+            self.uniqueFieldsHandler.set_model_from_list(cols)
+
         self.set_primary_key_combo_box()
         self.set_line_edit_paths(source_path=self.source_model.filePath)
 

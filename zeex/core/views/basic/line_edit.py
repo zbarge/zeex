@@ -43,6 +43,8 @@ class FilePathRenameDialog(LineEditDialog):
 
 
 class DirectoryPathCreateDialog(LineEditDialog):
+    signalDirectoryCreated = QtCore.Signal(str)
+
     def __init__(self, treeview:QtGui.QTreeView=None, base_dirname=None, parent=None):
         LineEditDialog.__init__(self, parent=parent)
         self.treeview = treeview
@@ -71,3 +73,4 @@ class DirectoryPathCreateDialog(LineEditDialog):
             b = os.path.dirname(b)
         dirname = os.path.join(b, self.lineEdit.text())
         os.mkdir(dirname)
+        self.signalDirectoryCreated.emit(dirname)

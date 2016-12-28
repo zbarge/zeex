@@ -94,8 +94,11 @@ class DropBoxFileSystemModel(QtGui.QStandardItemModel):
 
     def filePath(self, idx):
         filename = self.itemFromIndex(idx).text()
-        directory = self.itemFromIndex(idx.parent()).text()
-        return directory + "/" + filename
+        try:
+            filename = self.itemFromIndex(idx.parent()).text() + "/" + filename
+        except AttributeError:
+            pass
+        return filename
 
     def directory(self, idx):
         return self.itemFromIndex(idx).text()
