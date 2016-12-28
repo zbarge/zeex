@@ -27,7 +27,7 @@ from core.ui.actions.normalize_ui import Ui_ColumnNormalizerDialog
 from core.compat import QtGui, QtCore
 import core.utility.pandatools as pandatools
 from core.ctrls.dataframe import DataFrameModel
-from core.utility.widgets import configureComboBox
+from core.utility.widgets import configure_combo_box
 from core.utility.collection import DictConfig, SettingsINI
 
 
@@ -73,7 +73,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         :return: None
         """
         cases = ['', 'lower', 'upper', 'proper']
-        configureComboBox(self.comboBoxSetCase, cases, 'lower')
+        configure_combo_box(self.comboBoxSetCase, cases, 'lower')
         if self.df_model is not None:
             title = "Normalize - {}".format(os.path.basename(self.df_model.filePath))
             self.setWindowTitle(title)

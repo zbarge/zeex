@@ -3,10 +3,18 @@ from core.compat import QtGui, QtCore
 import os
 from core.utility.ostools import path_incremented
 
+
 class LineEditDialog(QtGui.QDialog, Ui_LineEditDialog):
     def __init__(self, *args, **kwargs):
         QtGui.QDialog.__init__(self, *args, **kwargs)
         self.setupUi(self)
+        self.buttonBox.accepted.connect(self.execute)
+
+    def configure(self):
+        raise NotImplementedError("Child classes must implement this method.")
+
+    def execute(self):
+        raise NotImplementedError("Child classes must implement this method.")
 
 
 class FilePathRenameDialog(LineEditDialog):
@@ -25,7 +33,6 @@ class FilePathRenameDialog(LineEditDialog):
         self.setWindowTitle("Rename {}".format(orig_base))
         self.label.setText("New Name:")
         self.lineEdit.setText(new_base)
-        self.buttonBox.accepted.connect(self.execute)
 
     def execute(self):
         new_name = self.lineEdit.text()
@@ -35,3 +42,32 @@ class FilePathRenameDialog(LineEditDialog):
         os.rename(self.original_path, new_path)
 
 
+class DirectoryPathCreateDialog(LineEditDialog):
+    def __init__(self, treeview:QtGui.QTreeView=None, base_dirname=None, parent=None):
+        LineEditDialog.__init__(self, parent=parent)
+        self.treeview = treeview
+        self.base_dirname = base_dirname
+        self.configure()
+
+    def configure(self):
+        self.setWindowTitle("Add Folder")
+        self.label.setText("Folder Name:")
+
+    def set_treeview(self, treeview):
+        self.treeview = treeview
+
+    def set_base_dirname(self, dirname):
+        self.base_dirname = dirname
+
+    def execute(self):
+        b = self.base_dirname
+        if self.treeview is not None:
+            selected = self.treeview.selectedIndexes()
+            if selected:
+                idx = selected[0]
+                b = self.treeview.model().filePath(idx)
+        assert b is not None, "No base directory or selected treeview path found."
+        if os.path.isfile(b):
+            b = os.path.dirname(b)
+        dirname = os.path.join(b, self.lineEdit.text())
+        os.mkdir(dirname)

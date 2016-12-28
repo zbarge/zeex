@@ -30,7 +30,7 @@ from core.compat import QtGui, QtCore
 from core.models.main import FieldsListModel
 from core.ui.settings_ui import Ui_settingsDialog
 from core.utility.collection import SettingsINI, DictConfig
-from core.utility.widgets import configureComboBox
+from core.utility.widgets import configure_combo_box
 from core.ctrls.dataframe import ENCODINGS, SEPARATORS
 
 def normpath(dirname, filename=None):
@@ -173,15 +173,15 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.portLineEdit.setText(               DB_PORT)
         
         #COMBO BOXES
-        configureComboBox(self.logLevelComboBox,      ['Low', 'Medium', 'High'],         LOG_LEVEL)
-        configureComboBox(self.cloudProviderComboBox, ['Google Drive', 'S3', 'DropBox'], CLOUD_PROVIDER)
-        configureComboBox(self.headerCaseComboBox,    ['lower', 'UPPER', 'Proper'],      HEADER_CASE)
-        configureComboBox(self.headerSpacesComboBox,  [' ', '_'],                        HEADER_SPACE)
-        configureComboBox(self.fileFormatComboBox,    DEFAULT_FILE_FORMATS,              OUTPUT_FORMAT)
-        configureComboBox(self.flavorComboBox,        DEFAULT_FLAVORS,                   DB_FLAVOR)
-        configureComboBox(self.separatorComboBox,     DEFAULT_SEPARATORS,                SEPARATOR)
-        configureComboBox(self.encodingComboBox,      DEFAULT_CODECS,                    ENCODING)
-        configureComboBox(self.themeComboBox,         DEFAULT_THEME_OPTIONS,             THEME_NAME)
+        configure_combo_box(self.logLevelComboBox, ['Low', 'Medium', 'High'], LOG_LEVEL)
+        configure_combo_box(self.cloudProviderComboBox, ['Google Drive', 'S3', 'DropBox'], CLOUD_PROVIDER)
+        configure_combo_box(self.headerCaseComboBox, ['lower', 'UPPER', 'Proper'], HEADER_CASE)
+        configure_combo_box(self.headerSpacesComboBox, [' ', '_'], HEADER_SPACE)
+        configure_combo_box(self.fileFormatComboBox, DEFAULT_FILE_FORMATS, OUTPUT_FORMAT)
+        configure_combo_box(self.flavorComboBox, DEFAULT_FLAVORS, DB_FLAVOR)
+        configure_combo_box(self.separatorComboBox, DEFAULT_SEPARATORS, SEPARATOR)
+        configure_combo_box(self.encodingComboBox, DEFAULT_CODECS, ENCODING)
+        configure_combo_box(self.themeComboBox, DEFAULT_THEME_OPTIONS, THEME_NAME)
         self.set_theme(THEME_NAME)
         
         #Field Models

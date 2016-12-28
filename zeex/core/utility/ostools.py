@@ -26,12 +26,12 @@ SOFTWARE.
 import os
 import zipfile
 import shutil
-
 try:
     import zlib
     DEFAULT_COMPRESSION = zipfile.ZIP_DEFLATED
 except ImportError:
     DEFAULT_COMPRESSION = zipfile.ZIP_STORED
+
 
 def path_incremented(p, overwrite=False):
     """

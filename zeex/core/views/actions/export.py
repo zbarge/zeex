@@ -24,7 +24,7 @@ SOFTWARE.
 import os
 from core.compat import QtGui, QtCore
 from core.ui.actions.export_ui import Ui_ExportFileDialog
-from core.utility.widgets import configureComboBox, get_ok_msg_box
+from core.utility.widgets import configure_combo_box, get_ok_msg_box
 from core.ctrls.dataframe import DataFrameModelManager, ENCODINGS, SEPARATORS
 from core.utility.ostools import path_incremented
 
@@ -57,9 +57,9 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         self.btnBrowseDestination.clicked.connect(self.browse_destination)
         self.btnBrowseSource.clicked.connect(self.browse_source)
         self.btnOverwrite.clicked.connect(self.set_destination_path_from_source)
-        configureComboBox(self.comboBoxSource, self.df_manager.file_paths, self._default_path)
-        configureComboBox(self.comboBoxSeparator, list(SEPARATORS.keys()), 'Comma')
-        configureComboBox(self.comboBoxEncoding, list(ENCODINGS.keys()), 'ISO-8859-1')
+        configure_combo_box(self.comboBoxSource, self.df_manager.file_paths, self._default_path)
+        configure_combo_box(self.comboBoxSeparator, list(SEPARATORS.keys()), 'Comma')
+        configure_combo_box(self.comboBoxEncoding, list(ENCODINGS.keys()), 'ISO-8859-1')
         self.buttonBox.accepted.connect(self.export)
 
         if self._default_path is not None:

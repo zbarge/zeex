@@ -35,6 +35,7 @@ from core.views.actions.export import DataFrameModelExportDialog
 from core.utility.widgets import create_standard_item_model
 from core.views.actions.merge_purge import MergePurgeDialog
 
+
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     """
     A spreadsheet-like window that displays rows and columns

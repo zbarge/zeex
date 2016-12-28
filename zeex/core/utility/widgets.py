@@ -24,16 +24,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from PySide import QtGui
+import os
+from core.compat import QtGui
 
 
-def configureComboBox(box, options, default):
+def configure_combo_box(box, options, default):
     box.addItems(options)
     idx = box.findText(default)
     if idx >= 0:
         box.setCurrentIndex(idx)
     return box
-
 
 def create_standard_item_model(columns: list = None, editable=False, checkable=False):
         if columns is None:

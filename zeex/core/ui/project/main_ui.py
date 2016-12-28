@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Dec 24 21:45:30 2016
+# Created: Wed Dec 28 14:04:10 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,23 +49,26 @@ class Ui_ProjectWindow(object):
         self.actionRemove.setObjectName("actionRemove")
         self.actionPreferences = QtGui.QAction(ProjectWindow)
         self.actionPreferences.setObjectName("actionPreferences")
-        self.actionMerge_Purge = QtGui.QAction(ProjectWindow)
-        self.actionMerge_Purge.setObjectName("actionMerge_Purge")
+        self.actionMergePurge = QtGui.QAction(ProjectWindow)
+        self.actionMergePurge.setObjectName("actionMergePurge")
         self.actionRename = QtGui.QAction(ProjectWindow)
         self.actionRename.setObjectName("actionRename")
         self.actionZip = QtGui.QAction(ProjectWindow)
         self.actionZip.setObjectName("actionZip")
         self.actionViewCloud = QtGui.QAction(ProjectWindow)
         self.actionViewCloud.setObjectName("actionViewCloud")
+        self.actionAddFolder = QtGui.QAction(ProjectWindow)
+        self.actionAddFolder.setObjectName("actionAddFolder")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionRemove)
         self.menuSettings.addAction(self.actionPreferences)
-        self.menuActions.addAction(self.actionMerge_Purge)
+        self.menuActions.addAction(self.actionMergePurge)
+        self.menuActions.addAction(self.actionAddFolder)
         self.menuActions.addAction(self.actionRename)
-        self.menuActions.addAction(self.actionZip)
         self.menuActions.addAction(self.actionViewCloud)
+        self.menuActions.addAction(self.actionZip)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuRecent_Files.menuAction())
         self.menubar.addAction(self.menuActions.menuAction())
@@ -87,9 +90,10 @@ class Ui_ProjectWindow(object):
         self.actionSave.setText(QtGui.QApplication.translate("ProjectWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRemove.setText(QtGui.QApplication.translate("ProjectWindow", "Remove", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPreferences.setText(QtGui.QApplication.translate("ProjectWindow", "Preferences", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionMerge_Purge.setText(QtGui.QApplication.translate("ProjectWindow", "Merge/Purge", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMergePurge.setText(QtGui.QApplication.translate("ProjectWindow", "Merge/Purge", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRename.setText(QtGui.QApplication.translate("ProjectWindow", "Rename", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZip.setText(QtGui.QApplication.translate("ProjectWindow", "Zip", None, QtGui.QApplication.UnicodeUTF8))
         self.actionViewCloud.setText(QtGui.QApplication.translate("ProjectWindow", "View Cloud", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAddFolder.setText(QtGui.QApplication.translate("ProjectWindow", "Add Folder", None, QtGui.QApplication.UnicodeUTF8))
 
 from core.views.basic.treeview import FileSystemTreeView

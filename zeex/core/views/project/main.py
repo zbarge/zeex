@@ -30,11 +30,12 @@ from core.ctrls.dataframe import DataFrameModelManager, DataFrameModel
 from core.models.filetree import FileTreeModel
 from core.ui.project.main_ui import Ui_ProjectWindow
 from core.utility.collection import SettingsINI
-from core.utility.ostools import zipfile_compress
+import core.utility.ostools as ostools
 from core.views.settings import SettingsDialog
 from core.views.actions.export import DataFrameModelExportDialog
 from core.views.actions.merge_purge import MergePurgeDialog
 from core.views.basic.directory import DropBoxViewDialog
+from core.views.basic.line_edit import DirectoryPathCreateDialog
 from core.views.basic.line_edit import FilePathRenameDialog
 from core.views.actions.import_file import DataFrameModelImportDialog
 
@@ -68,6 +69,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
         self.dialog_export = DataFrameModelExportDialog(self.df_manager, parent=self)
         self.dialog_import = DataFrameModelImportDialog(self.df_manager, parent=self)
+        self.dialog_new_folder = DirectoryPathCreateDialog(self.treeView,
+                                                           parent=self)
         self.dialog_cloud = None
         self.key_delete = QtGui.QShortcut(self)
         self.key_enter = QtGui.QShortcut(self)
@@ -75,7 +78,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.key_rename = QtGui.QShortcut(self)
         self.connect_window_title()
         self.connect_actions()
-        self.connect_filetree()
+        self.connect_treeview()
         self.connect_icons()
         self.connect_settings_dialog()
         self.connect_import_dialog()
@@ -131,12 +134,13 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         """
 
         self.actionPreferences.triggered.connect(self.dialog_settings.show)
+        self.actionAddFolder.triggered.connect(self.dialog_new_folder.show)
         self.actionNew.triggered.connect(self.dialog_import.show)
         self.actionOpen.triggered.connect(self.open_tableview_window)
         self.actionSave.triggered.connect(self.dialog_export.show)
         self.actionRemove.triggered.connect(self.remove_tree_selected_path)
         self.actionRename.triggered.connect(self.open_rename_path_dialog)
-        self.actionMerge_Purge.triggered.connect(self.open_merge_purge_dialog)
+        self.actionMergePurge.triggered.connect(self.open_merge_purge_dialog)
         self.actionZip.triggered.connect(self.zip_path)
         self.key_delete.setKey('del')
         self.key_enter.setKey('return')
@@ -154,17 +158,19 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         """
         self.setWindowIcon(self.icons['folder'])
         self.actionNew.setIcon(self.icons['add'])
+        self.actionAddFolder.setIcon(self.icons['folder'])
         self.actionOpen.setIcon(self.icons['spreadsheet'])
         self.actionPreferences.setIcon(self.icons['settings'])
         self.actionRemove.setIcon(self.icons['delete'])
         self.actionSave.setIcon(self.icons['save'])
         self.dialog_settings.setWindowIcon(self.icons['settings'])
-        self.actionMerge_Purge.setIcon(self.icons['merge'])
+        self.actionMergePurge.setIcon(self.icons['merge'])
         self.actionRename.setIcon(self.icons['rename'])
         self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
         self.actionZip.setIcon(self.icons['archive'])
+        self.dialog_new_folder.setWindowIcon(self.icons['folder'])
 
-    def connect_filetree(self):
+    def connect_treeview(self):
         """
         Uses the ProjectMainWindow.dialog_settings.rootDirectoryLineEdit
         to get the root directory name of the project. It then
@@ -176,6 +182,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.treeView.setModel(model)
         self.treeView.setRootIndex(model.index(rootdir))
         self.treeView.setColumnWidth(0, 400)
+        self.treeView.setSelectionMode(self.treeView.ExtendedSelection)
 
     def connect_settings_dialog(self):
         """
@@ -200,6 +207,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_settings.btnSetDefault.setVisible(False)
 
         self.dialog_settings.signalSettingsSaved.connect(self.sync_settings)
+        self.dialog_new_folder.base_dirname = self.dialog_settings.rootDirectoryLineEdit.text()
 
     def connect_cloud_dialog(self):
         try:
@@ -285,9 +293,14 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
 
     def remove_tree_selected_path(self):
         #TODO: need to emit a signal here.
-        filename = self.get_tree_selected_path()
-        if filename is not None:
-            os.remove(filename)
+        idxes = self.treeView.selectedIndexes()
+        if idxes:
+            file_model = self.treeView.model()
+            for idx in idxes:
+                if not file_model.isDir(idx):
+                    file_model.remove(idx)
+                else:
+                    file_model.rmdir(idx)
 
     def open_tableview_current(self, model: DataFrameModel=None):
         """
@@ -368,7 +381,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         if fpath is None:
             fpath = self.get_tree_selected_path()
         assert fpath is not None, "No selected path!"
-        return zipfile_compress(fpath, **kwargs)
+        return ostools.zipfile_compress(fpath, **kwargs)
 
     def open_rename_path_dialog(self):
         current_path = self.get_tree_selected_path()

@@ -53,10 +53,11 @@
     <property name="title">
      <string>Actions</string>
     </property>
-    <addaction name="actionMerge_Purge"/>
+    <addaction name="actionMergePurge"/>
+    <addaction name="actionAddFolder"/>
     <addaction name="actionRename"/>
-    <addaction name="actionZip"/>
     <addaction name="actionViewCloud"/>
+    <addaction name="actionZip"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRecent_Files"/>
@@ -101,7 +102,7 @@
     <string>Preferences</string>
    </property>
   </action>
-  <action name="actionMerge_Purge">
+  <action name="actionMergePurge">
    <property name="text">
     <string>Merge/Purge</string>
    </property>
@@ -121,12 +122,17 @@
     <string>View Cloud</string>
    </property>
   </action>
+  <action name="actionAddFolder">
+   <property name="text">
+    <string>Add Folder</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>FileSystemTreeView</class>
    <extends>QTreeView</extends>
-   <header>core/views/treeview.h</header>
+   <header>core/views/basic/treeview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -29,7 +29,7 @@ from core.ui.actions.import_ui import Ui_ImportFileDialog
 from core.compat import QtGui, QtCore
 import core.utility.pandatools as pandatools
 from core.ctrls.dataframe import DataFrameModelManager, DataFrameModel,SEPARATORS, ENCODINGS
-from core.utility.widgets import configureComboBox
+from core.utility.widgets import configure_combo_box
 
 
 class DataFrameModelImportDialog(QtGui.QDialog, Ui_ImportFileDialog):
@@ -48,8 +48,8 @@ class DataFrameModelImportDialog(QtGui.QDialog, Ui_ImportFileDialog):
             self.set_file_path(self.file_path)
         self.btnBrowseFilePath.clicked.connect(self.set_file_path)
         self.buttonBox.accepted.connect(self.execute)
-        configureComboBox(self.comboBoxSeparator, list(SEPARATORS.keys()), 'Comma')
-        configureComboBox(self.comboBoxEncoding, list(ENCODINGS.keys()), 'ISO-8859-1')
+        configure_combo_box(self.comboBoxSeparator, list(SEPARATORS.keys()), 'Comma')
+        configure_combo_box(self.comboBoxEncoding, list(ENCODINGS.keys()), 'ISO-8859-1')
 
     def set_file_path(self, file_path=None):
         if file_path is None:
