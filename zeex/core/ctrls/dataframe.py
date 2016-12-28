@@ -31,6 +31,7 @@ from collections import defaultdict
 import datetime
 from core.compat import QtCore
 from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM, DataFrameModel
+from core.models.dataframe import DataFrameDescriptionModel
 
 SEPARATORS = {'Comma': ',',
               'Semicolon': ';',
@@ -51,3 +52,13 @@ class DataFrameModelManager(DFM):
     """
     def __init__(self):
         DFM.__init__(self)
+
+    def get_df_describe_model(self, filepath):
+        describe_path = DataFrameDescriptionModel.get_describe_path(filepath)
+        try:
+            return self.models[describe_path]
+        except KeyError:
+            dfm = self.read_file(filepath)
+            dfm2 = DataFrameDescriptionModel(source_model=dfm, filePath=describe_path)
+            self.set_model(dfm2, describe_path)
+            return self.get_model(describe_path)

@@ -29,13 +29,14 @@ import pandas as pd
 from qtpandas.models.DataFrameModel import DataFrameModel
 from core.ui.actions.analyze_ui import Ui_FileAnalyzerDialog
 from core.ctrls.analyze import DataFrameAnalyzer
+from core.models.dataframe import DataFrameDescriptionModel
 
 
 class FileAnalyzerDialog(QtGui.QDialog, Ui_FileAnalyzerDialog):
 
     def __init__(self, source_model, parent=None):
         self.df_model = source_model
-        self.analyzer = DataFrameAnalyzer(self.df)
+        self.analyze_model = DataFrameDescriptionModel(source_model=source_model)
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
         self.configure()
@@ -45,15 +46,13 @@ class FileAnalyzerDialog(QtGui.QDialog, Ui_FileAnalyzerDialog):
         return self.df_model.dataFrame()
 
     def configure(self):
-        self.analyzer.process_all_methods()
-        self.tableView.setModel(self.analyzer.get_table_view_model())
+        self.tableView.setModel(self.analyze_model)
         self.btnRefresh.clicked.connect(self.refresh)
-
         # TODO: Make these buttons work and show them.
         self.btnExport.setVisible(False)
         self.btnPivot.setVisible(False)
 
     def refresh(self):
-        self.analyzer.process_all_methods(reprocess=True)
+        pass
 
 

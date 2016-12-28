@@ -153,4 +153,3 @@ class DataFrameAnalyzer(object):
                 self.columns['strings'].append(c)
             else:
                 raise NotImplementedError("Update DataFrameAnalyzer._scan_dtypes for '{} - {}'".format(c, d))
-
