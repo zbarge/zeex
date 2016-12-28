@@ -152,7 +152,11 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         def_cols = ['old', 'new', 'dtype']
         if df is None:
             if filename is None:
-                filename = QtGui.QFileDialog.getOpenFileName()[0]
+                try:
+                    dirname = os.path.dirname(self.dfmodel.filePath)
+                except:
+                    dirname = ''
+                filename = QtGui.QFileDialog.getOpenFileName(dir=dirname)[0]
             df = superReadFile(filename)
         if columns is None:
             df = df.loc[:, def_cols]
@@ -182,7 +186,11 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
 
         df = pd.DataFrame(data, columns=columns, index=list(range(len(data))))
         if filename is None and not to_frame:
-            filename = QtGui.QFileDialog.getSaveFileName()[0]
+            try:
+                dirname = os.path.dirname(self.dfmodel.filePath)
+            except:
+                dirname = ''
+            filename = QtGui.QFileDialog.getSaveFileName(dir=dirname)[0]
             filebase, ext = os.path.splitext(filename)
             if not ext.lower() in ['.txt','.csv']:
                 ext = '.csv'

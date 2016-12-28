@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'normalize.ui'
 #
-# Created: Sun Dec 25 23:23:04 2016
+# Created: Wed Dec 28 03:34:32 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,6 +23,7 @@ class Ui_ColumnNormalizerDialog(object):
         self.columnsLabel.setObjectName("columnsLabel")
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.columnsLabel)
         self.listViewColumns = ColumnsListView(ColumnNormalizerDialog)
+        self.listViewColumns.setInputMethodHints(QtCore.Qt.ImhNone)
         self.listViewColumns.setObjectName("listViewColumns")
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.listViewColumns)
         self.removeSpecialCharactersLabel = QtGui.QLabel(ColumnNormalizerDialog)
@@ -184,23 +185,41 @@ class Ui_ColumnNormalizerDialog(object):
     def retranslateUi(self, ColumnNormalizerDialog):
         ColumnNormalizerDialog.setWindowTitle(QtGui.QApplication.translate("ColumnNormalizerDialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.columnsLabel.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Columns", None, QtGui.QApplication.UnicodeUTF8))
+        self.listViewColumns.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Columns in the data to be normalized.", None, QtGui.QApplication.UnicodeUTF8))
         self.removeSpecialCharactersLabel.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Remove Special Characters", None, QtGui.QApplication.UnicodeUTF8))
         self.trimSpacesLabel.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Trim Spaces", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxTrimSpaces.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Activate - trim spaces from left/right", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Separator", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxMergeOrSplit.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Activate - split or merge column(s)", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditMergeOrSplitSep.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Separator(s) to split or mege on (e.g:    , (comma)    (space))", None, QtGui.QApplication.UnicodeUTF8))
         self.replaceSpacesLabel.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Replace Spaces", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxReplaceSpaces.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Activate - Replace spaces", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditReplaceSpaces.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "replace spaces with text (e.g:     _     )", None, QtGui.QApplication.UnicodeUTF8))
         self.setCaseLabel.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Set Case", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxSetCase.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Activate - set the case upper/lower/proper", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBoxSetCase.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Set Case option lower/upper/proper", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxDropFillNA.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Activate - Drop or Fill NA values", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditDropFillNA.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Value to use to fill NA values", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBoxDropFillNAHow.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "\'all\' drops/fill rows only if all columns are NA.", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxDropFillNAHow.setItemText(0, QtGui.QApplication.translate("ColumnNormalizerDialog", "any", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxDropFillNAHow.setItemText(1, QtGui.QApplication.translate("ColumnNormalizerDialog", "all", None, QtGui.QApplication.UnicodeUTF8))
         self.labelDropFillNAHow.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "how", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnUncheckAll.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Uncheck all activation options & selected columns.", None, QtGui.QApplication.UnicodeUTF8))
         self.btnUncheckAll.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Uncheck All", None, QtGui.QApplication.UnicodeUTF8))
         self.labelMergeOrSplit.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Merge/Split", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBoxMergeOrSplit.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Select Split or Merge", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxMergeOrSplit.setItemText(0, QtGui.QApplication.translate("ColumnNormalizerDialog", "Split", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxMergeOrSplit.setItemText(1, QtGui.QApplication.translate("ColumnNormalizerDialog", "Merge", None, QtGui.QApplication.UnicodeUTF8))
         self.labelDropFillNA.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Drop/Fill NA", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBoxDropFillNA.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Drop or fill NA values in selected columns", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxDropFillNA.setItemText(0, QtGui.QApplication.translate("ColumnNormalizerDialog", "Drop NA", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxDropFillNA.setItemText(1, QtGui.QApplication.translate("ColumnNormalizerDialog", "Fill NA", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxRemoveSpecialChars.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Activate - remove special characters from columns", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditRemoveSpecialCharsKeeps.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "special characters to not remove (e.g \' -%)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Keep", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnSaveSettings.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Save a template with all normalization settings", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSaveSettings.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Save Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnLoadSettings.setWhatsThis(QtGui.QApplication.translate("ColumnNormalizerDialog", "Load a pre-saved .ini template file", None, QtGui.QApplication.UnicodeUTF8))
         self.btnLoadSettings.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Load Settings", None, QtGui.QApplication.UnicodeUTF8))
 
 from core.views.dataframe import ColumnsListView

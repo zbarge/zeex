@@ -167,7 +167,11 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         :return: None
         """
         if to is None:
-            to = QtGui.QFileDialog.getSaveFileName(self)[0]
+            try:
+                dirname = os.path.dirname(self.df_model.filePath)
+            except:
+                dirname = ''
+            to = QtGui.QFileDialog.getSaveFileName(self, dir=dirname)[0]
         settings = self.get_settings()
         ini = DictConfig(dictionary=dict(NORMALIZE=settings), filename=to)
         ini.save()
@@ -186,7 +190,11 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
         """
         if filename is None:
             if dictconfig is None:
-                filename = QtGui.QFileDialog.getOpenFileName(self)[0]
+                try:
+                    dirname = os.path.dirname(self.df_model.filePath)
+                except:
+                    dirname = ''
+                filename = QtGui.QFileDialog.getOpenFileName(self, dir=dirname)[0]
                 dictconfig = SettingsINI(filename=filename)
 
         else:

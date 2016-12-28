@@ -27,7 +27,6 @@ from core.compat import QtGui, QtCore
 from qtpandas.models.DataFrameModel import DataFrameModel
 from qtpandas.views.DataTableView import DataTableWidget
 from core.ui.file_ui import Ui_FileWindow
-from core.views.actions.rename import RenameDialog
 from core.views.actions.fields_edit import FieldsEditDialog
 from core.ctrls.dataframe import DataFrameModelManager
 from core.views.actions.split import SplitFileDialog
@@ -51,8 +50,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         kwargs['parent'] = self
         self.icons = Icons()
         self.setupUi(self)
-        self.dialog_rename = None
-        self.dialog_fields_edit = None
+        self.dialog_fields_edit = FieldsEditDialog(model, parent=self)
         self.dialog_export = DataFrameModelExportDialog(df_manager, filename=model.filePath,
                                                         allow_multi_source=False, parent=self)
         self.dialog_split = SplitFileDialog(model, parent=self)
@@ -81,21 +79,21 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         return self.df_model.dataFrame()
 
     def connect_actions(self):
-        self.actionEditFields.triggered.connect(self.open_fields_edit_dialog)
+        self.actionEditFields.triggered.connect(self.dialog_fields_edit.show)
         self.actionSplit.triggered.connect(self.dialog_split.show)
         self.actionAnalyze.triggered.connect(self.dialog_analyze.show)
         self.actionNormalize.triggered.connect(self.dialog_normalize.show)
         self.actionSave.triggered.connect(self.save)
         self.actionSaveAs.triggered.connect(self.dialog_export.show)
-        self.dialog_export.comboBoxSource.setModel(create_standard_item_model([self.df_model.filePath]))
         self.dialog_export.btnBrowseSource.setVisible(False)
         # TODO: Make these actions do something then activate.
         self.actionExecuteScript.setVisible(False)
         self.actionSuppress.setVisible(False)
         self.actionDelete.setVisible(False)
+        self.df_model.dataChanged.connect(self.sync)
+        self.sync()
 
     def connect_icons(self):
-        self.setWindowTitle("{}".format(self.df_model.filePath))
         self.setWindowIcon(self.icons['spreadsheet'])
         self.actionExecuteScript.setIcon(self.icons['edit'])
         self.actionDelete.setIcon(self.icons['delete'])
@@ -111,19 +109,9 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.dialog_analyze.setWindowIcon(self.icons['count'])
         self.dialog_export.setWindowIcon(self.icons['export_generic'])
 
-    def open_rename_dialog(self):
-        if self.dialog_rename is None:
-            self.dialog_rename = RenameDialog(parent=self, model=self.df_model)
-        self.dialog_rename.show()
-
-    def open_fields_edit_dialog(self):
-        if self.dialog_fields_edit is None:
-            self.dialog_fields_edit = FieldsEditDialog(self.df_model, parent=self)
-        self.dialog_fields_edit.show()
-
-    def open_analyze_dialog(self):
-        self.dialog_analyze.setWindowTitle("Analyze {}".format(os.path.basename(self.df_model.filePath)))
-        self.dialog_analyze.show()
+    def sync(self):
+        self.setWindowTitle("{}".format(self.df_model.filePath))
+        self.dialog_export.comboBoxSource.setModel(create_standard_item_model([self.df_model.filePath]))
 
     def save(self):
         self.dialog_export.set_destination_path_from_source()

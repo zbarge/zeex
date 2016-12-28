@@ -66,7 +66,12 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
             self.lineEditDestination.setText(path_incremented(self._default_path, overwrite=False))
 
     def browse_destination(self):
-        filename = QtGui.QFileDialog.getSaveFileName(self)[0]
+        source = self.comboBoxSource.currentText()
+        if os.path.isfile(source):
+            kwargs = dict(dir=os.path.dirname(source))
+        else:
+            kwargs = dict()
+        filename = QtGui.QFileDialog.getSaveFileName(self, **kwargs)[0]
         if os.path.isfile(filename):
             self.lineEditDestination.setText(filename)
 
@@ -98,7 +103,12 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         self.lineEditDestination.setText(self.comboBoxSource.currentText())
 
     def browse_source(self):
-        filename = QtGui.QFileDialog.getOpenFileName(self)[0]
+        source = self.comboBoxSource.currentText()
+        if os.path.isfile(source):
+            kwargs = dict(dir=os.path.dirname(source))
+        else:
+            kwargs = dict()
+        filename = QtGui.QFileDialog.getOpenFileName(self, **kwargs)[0]
         if filename not in self.df_manager.file_paths:
             self.df_manager.read_file(filename)
         idx = self.comboBoxSource.findText(filename)

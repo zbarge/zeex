@@ -131,7 +131,11 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
 
     def set_dest_path_from_browse(self, filepath=None):
         if filepath is None:
-            filepath = QtGui.QFileDialog.getOpenFileName()[0]
+            try:
+                dirname = os.path.dirname(self.df_manager.last_path_read)
+            except:
+                dirname = ''
+            filepath = QtGui.QFileDialog.getOpenFileName(self, dir=dirname)[0]
         self.destPathLineEdit.setText(filepath)
 
     def set_source_model(self, model=None, configure=False):
@@ -151,11 +155,24 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
                 model = self.df_manager.read_file(model)
             else:
                 raise Exception("model parameter must be a filepath or a qtpandas.models.DataFrameModel")
+        if self.source_model is not None:
+            self.source_model.dataFrameChanged.disconnect(self.sync)
         self.source_model = model
+        self.source_model.dataFrameChanged.connect(self.sync)
         if configure:
             self.configure(source_path=self.source_model.filePath)
             self.set_push_grid_handlers()
             self.set_primary_key_combo_box(default=self.primaryKeyComboBox.currentText())
+
+    def sync(self):
+        df = self.source_model.dataFrame()
+        cols = df.columns.tolist()
+        self.dedupeOnHandler.set_model_from_list(cols)
+        self.gatherFieldsHandler.set_model_from_list(cols)
+        self.sortOnHandler.set_model_from_list(cols)
+        self.uniqueFieldsHandler.set_model_from_list(cols)
+        self.set_primary_key_combo_box()
+        self.set_line_edit_paths(source_path=self.source_model.filePath)
 
     def set_line_edit_paths(self, source_path=None, dest_path=None):
         """
@@ -286,15 +303,14 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             retrieve a DataFrameModel.
         """
         if file_names is None:
-            file_names = QtGui.QFileDialog.getOpenFileNames(parent=self)
+            dirname = os.path.dirname(self.sourcePathLineEdit.text())
+            file_names = QtGui.QFileDialog.getOpenFileNames(parent=self,
+                                                            dir=dirname)[0]
 
         if isinstance(file_names, str):
             file_names = list(file_names)
 
         assert not isinstance(file_names, str) and hasattr(file_names, "__iter__"), "file_names is not list-like!"
-
-        if allow_multi is False:
-            file_names = list(file_names[0])
 
         if allow_multi is False:
             file_names = list(file_names[0])
@@ -644,16 +660,21 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         """
         self.set_push_grid_handlers()
         self.set_handler_sort_asc(overwrite=True)
-        self.set_primary_key_combo_box()
+        self.set_primary_key_combo_box(reset=True)
         self.gatherFieldsOverWriteCheckBox.setChecked(False)
 
-    def set_primary_key_combo_box(self, default=None):
+    def set_primary_key_combo_box(self, default=None, reset=False):
         """
         Sets the primary key combo box.
         :param default: (str, default None)
             An optional default field name to select.
         :return:
         """
+        if default is None and reset is False:
+            current_model = self.primaryKeyComboBox.model()
+            if current_model:
+                default = self.primaryKeyComboBox.currentText()
+
         combo_model = create_standard_item_model([''] + self.source_model.dataFrame().columns.tolist(),
                                                  editable=False, checkable=True)
         self.primaryKeyComboBox.setModel(combo_model)
@@ -668,7 +689,11 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         :return:
         """
         if from_path is None:
-            from_path = QtGui.QFileDialog.getOpenFileName(self)[0]
+            try:
+                dirname = os.path.dirname(self.sourcePathLineEdit.text())
+            except:
+                dirname = ''
+            from_path = QtGui.QFileDialog.getOpenFileName(self, dir=dirname)[0]
         config = SettingsINI(filename=from_path)
         self.set_settings(config)
 
@@ -680,7 +705,11 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         :return: None
         """
         if to is None:
-            to = QtGui.QFileDialog.getSaveFileName(self)[0]
+            try:
+                dirname = os.path.dirname(self.sourcePathLineEdit.text())
+            except:
+                dirname = ''
+            to = QtGui.QFileDialog.getSaveFileName(self, dir=dirname)[0]
         config = self.get_settings()
         config.save_as(to, set_self=True)
 

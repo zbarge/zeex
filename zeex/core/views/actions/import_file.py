@@ -57,8 +57,13 @@ class DataFrameModelImportDialog(QtGui.QDialog, Ui_ImportFileDialog):
                 file_path = self.lineEditFilePath.text()
             else:
                 file_path = self.file_path
-        if not os.path.exists(file_path):
-            file_path = QtGui.QFileDialog.getOpenFileName()[0]
+        if not os.path.isfile(file_path):
+            last = self.df_manager.last_path_updated
+            if last is not None:
+                kwargs = dict(dir=os.path.dirname(last))
+            else:
+                kwargs = dict()
+            file_path = QtGui.QFileDialog.getOpenFileName(**kwargs)[0]
         self.lineEditFilePath.setText(str(file_path))
 
     def process_dataframe(self, df, trim_spaces=False, remove_linebreaks=False, parse_dates=False):

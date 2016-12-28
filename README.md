@@ -39,7 +39,7 @@ Utilizes Qt/PySide and Pandas libraries to provide a flexible toolbox for readin
     - .pickle
 
 - Lightning fast read, process, and write speed.
-
+    - 250MB CSV open time: 7sec (v.s. Excel: 74sec)
 
 - Issues are managed on Github using ZenHub - see upcoming features and feel free to contribute feedback, suggestions, or code.
 

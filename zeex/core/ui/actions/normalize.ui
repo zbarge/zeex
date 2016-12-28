@@ -26,7 +26,14 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="ColumnsListView" name="listViewColumns"/>
+        <widget class="ColumnsListView" name="listViewColumns">
+         <property name="whatsThis">
+          <string>Columns in the data to be normalized.</string>
+         </property>
+         <property name="inputMethodHints">
+          <set>Qt::ImhNone</set>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="removeSpecialCharactersLabel">
@@ -43,7 +50,11 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QCheckBox" name="checkBoxTrimSpaces"/>
+        <widget class="QCheckBox" name="checkBoxTrimSpaces">
+         <property name="whatsThis">
+          <string>Activate - trim spaces from left/right</string>
+         </property>
+        </widget>
        </item>
        <item row="3" column="1">
         <layout class="QGridLayout" name="gridLayout">
@@ -55,7 +66,11 @@
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxMergeOrSplit"/>
+          <widget class="QCheckBox" name="checkBoxMergeOrSplit">
+           <property name="whatsThis">
+            <string>Activate - split or merge column(s)</string>
+           </property>
+          </widget>
          </item>
          <item row="0" column="2">
           <widget class="QLineEdit" name="lineEditMergeOrSplitSep">
@@ -64,6 +79,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="whatsThis">
+            <string>Separator(s) to split or mege on (e.g:    , (comma)    (space))</string>
            </property>
           </widget>
          </item>
@@ -79,7 +97,11 @@
        <item row="4" column="1">
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxReplaceSpaces"/>
+          <widget class="QCheckBox" name="checkBoxReplaceSpaces">
+           <property name="whatsThis">
+            <string>Activate - Replace spaces</string>
+           </property>
+          </widget>
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="lineEditReplaceSpaces">
@@ -88,6 +110,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="whatsThis">
+            <string>replace spaces with text (e.g:     _     )</string>
            </property>
           </widget>
          </item>
@@ -103,7 +128,11 @@
        <item row="5" column="1">
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxSetCase"/>
+          <widget class="QCheckBox" name="checkBoxSetCase">
+           <property name="whatsThis">
+            <string>Activate - set the case upper/lower/proper</string>
+           </property>
+          </widget>
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="comboBoxSetCase">
@@ -113,6 +142,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="whatsThis">
+            <string>Set Case option lower/upper/proper</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -120,7 +152,11 @@
        <item row="6" column="1">
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="1">
-          <widget class="QCheckBox" name="checkBoxDropFillNA"/>
+          <widget class="QCheckBox" name="checkBoxDropFillNA">
+           <property name="whatsThis">
+            <string>Activate - Drop or Fill NA values</string>
+           </property>
+          </widget>
          </item>
          <item row="0" column="2">
           <widget class="QLineEdit" name="lineEditDropFillNA">
@@ -129,6 +165,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="whatsThis">
+            <string>Value to use to fill NA values</string>
            </property>
           </widget>
          </item>
@@ -139,6 +178,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="whatsThis">
+            <string>'all' drops/fill rows only if all columns are NA.</string>
            </property>
            <item>
             <property name="text">
@@ -163,6 +205,9 @@
        </item>
        <item row="7" column="0">
         <widget class="QPushButton" name="btnUncheckAll">
+         <property name="whatsThis">
+          <string>Uncheck all activation options &amp; selected columns.</string>
+         </property>
          <property name="text">
           <string>Uncheck All</string>
          </property>
@@ -192,6 +237,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="comboBoxMergeOrSplit">
+           <property name="whatsThis">
+            <string>Select Split or Merge</string>
+           </property>
            <item>
             <property name="text">
              <string>Split</string>
@@ -220,6 +268,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="comboBoxDropFillNA">
+           <property name="whatsThis">
+            <string>Drop or fill NA values in selected columns</string>
+           </property>
            <item>
             <property name="text">
              <string>Drop NA</string>
@@ -237,7 +288,11 @@
        <item row="1" column="1">
         <layout class="QGridLayout" name="gridLayout_8">
          <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxRemoveSpecialChars"/>
+          <widget class="QCheckBox" name="checkBoxRemoveSpecialChars">
+           <property name="whatsThis">
+            <string>Activate - remove special characters from columns</string>
+           </property>
+          </widget>
          </item>
          <item row="0" column="2">
           <widget class="QLineEdit" name="lineEditRemoveSpecialCharsKeeps">
@@ -246,6 +301,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="whatsThis">
+            <string>special characters to not remove (e.g ' -%)</string>
            </property>
           </widget>
          </item>
@@ -264,6 +322,9 @@
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
         <widget class="QPushButton" name="btnSaveSettings">
+         <property name="whatsThis">
+          <string>Save a template with all normalization settings</string>
+         </property>
          <property name="text">
           <string>Save Settings</string>
          </property>
@@ -274,6 +335,9 @@
        </item>
        <item row="0" column="1">
         <widget class="QPushButton" name="btnLoadSettings">
+         <property name="whatsThis">
+          <string>Load a pre-saved .ini template file</string>
+         </property>
          <property name="text">
           <string>Load Settings</string>
          </property>

@@ -46,12 +46,14 @@ class FileAnalyzerDialog(QtGui.QDialog, Ui_FileAnalyzerDialog):
 
     def configure(self):
         self.tableView.setModel(self.analyze_model)
-        self.btnRefresh.clicked.connect(self.refresh)
+        self.btnRefresh.clicked.connect(self.sync)
         # TODO: Make these buttons work and show them.
         self.btnExport.setVisible(False)
         self.btnPivot.setVisible(False)
+        self.df_model.dataChanged.connect(self.sync)
+        self.sync()
 
-    def refresh(self):
-        pass
+    def sync(self):
+        self.setWindowTitle("Analyze {}".format(os.path.basename(self.df_model.filePath)))
 
 
