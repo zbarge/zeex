@@ -26,12 +26,13 @@ SOFTWARE.
 import os
 import zipfile
 import shutil
+import sys
 try:
     import zlib
     DEFAULT_COMPRESSION = zipfile.ZIP_DEFLATED
 except ImportError:
     DEFAULT_COMPRESSION = zipfile.ZIP_STORED
-
+from core.compat import QtGui
 
 def path_incremented(p, overwrite=False):
     """
@@ -94,7 +95,7 @@ def zipfile_write(filepath, to=None, **kwargs):
     kwargs['mode'] = mode
 
     with zipfile.ZipFile(to, **kwargs) as fh:
-        fh.write(filepath, compress_type=kwargs.get('compression', DEFAULT_COMPRESSION))
+        fh.write(filepath, os.path.basename(filepath), compress_type=kwargs.get('compression', DEFAULT_COMPRESSION))
 
     return to
 
@@ -148,3 +149,9 @@ def zipfile_compress(from_path, to=None, **kwargs):
     print("Compressed {} to {}".format(from_path, return_path))
     return return_path
 
+def zipfile_unzip(file_path=None, extract_dir=None, **filedialog_kwargs):
+    if file_path is None:
+        file_path = QtGui.QFileDialog.getOpenFileName(**filedialog_kwargs)[0]
+    if extract_dir is None:
+        extract_dir = os.path.dirname(file_path)
+    shutil.unpack_archive(file_path, extract_dir=extract_dir)

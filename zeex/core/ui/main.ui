@@ -50,6 +50,7 @@
     </property>
     <addaction name="actionZipFolder"/>
     <addaction name="actionViewCloud"/>
+    <addaction name="actionUnzip"/>
    </widget>
    <addaction name="menuProjects"/>
    <addaction name="menuActions"/>
@@ -95,12 +96,17 @@
     <string>View Cloud</string>
    </property>
   </action>
+  <action name="actionUnzip">
+   <property name="text">
+    <string>Unzip</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>FileSystemTreeView</class>
    <extends>QTreeView</extends>
-   <header>core/views/treeview.h</header>
+   <header>core/views/basic/treeview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -57,6 +57,7 @@
     <addaction name="actionAddFolder"/>
     <addaction name="actionRename"/>
     <addaction name="actionViewCloud"/>
+    <addaction name="actionUnzip"/>
     <addaction name="actionZip"/>
    </widget>
    <addaction name="menuFile"/>
@@ -125,6 +126,11 @@
   <action name="actionAddFolder">
    <property name="text">
     <string>Add Folder</string>
+   </property>
+  </action>
+  <action name="actionUnzip">
+   <property name="text">
+    <string>Unzip</string>
    </property>
   </action>
  </widget>

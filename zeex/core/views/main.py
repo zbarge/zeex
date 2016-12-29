@@ -29,7 +29,7 @@ from core.compat import QtGui, QtCore
 from core.models.filetree import FileTreeModel
 from core.ui.main_ui import Ui_HomeWindow
 from core.utility.collection import get_ini_file, SettingsINI
-from core.utility.ostools import zipfile_compress
+from core.utility.ostools import zipfile_compress, zipfile_unzip
 from core.views.basic.directory import DropBoxViewDialog
 from core.views.project.main import ProjectMainWindow
 from core.views.project.new import NewProjectDialog
@@ -66,7 +66,8 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionSettings.triggered.connect(self.open_settings)
         self.actionOpen.triggered.connect(self.open_project)
         self.actionNew.triggered.connect(self.create_new_project)
-        self.actionZipFolder.triggered.connect(self.zip_path)
+        self.actionZipFolder.triggered.connect(self.handle_compression)
+        self.actionUnzip.triggered.connect(self.handle_compression)
         self.actionEdit.setVisible(False)
         self.key_enter.activated.connect(self.open_project)
         self.key_delete.activated.connect(self.remove_tree_selected_path)
@@ -83,6 +84,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionEdit.setIcon(self.icons['edit'])
         self.actionSave.setIcon(self.icons['save'])
         self.actionZipFolder.setIcon(self.icons['archive'])
+        self.actionUnzip.setIcon(self.icons['unzip'])
 
     @QtCore.Slot()
     def connect_filetree(self, rootdir=None):
@@ -187,11 +189,14 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
     def _cache_project(self, dirname, window):
         self._project_cache.update({dirname: window})
 
-    def zip_path(self, fpath=None, **kwargs):
+    def handle_compression(self, fpath=None, **kwargs):
         if fpath is None:
             fpath = self.get_tree_selected_path()
         assert fpath is not None, "No selected path!"
-        return zipfile_compress(fpath, **kwargs)
+        if not fpath.lower().endswith('.zip'):
+            return zipfile_compress(fpath, **kwargs)
+        else:
+            return zipfile_unzip(file_path=fpath)
 
     def get_tree_selected_path(self):
         selected = self.treeView.selectedIndexes()

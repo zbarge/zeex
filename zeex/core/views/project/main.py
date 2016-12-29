@@ -141,14 +141,15 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.actionRemove.triggered.connect(self.remove_tree_selected_path)
         self.actionRename.triggered.connect(self.open_rename_path_dialog)
         self.actionMergePurge.triggered.connect(self.open_merge_purge_dialog)
-        self.actionZip.triggered.connect(self.zip_path)
+        self.actionUnzip.triggered.connect(self.handle_compression)
+        self.actionZip.triggered.connect(self.handle_compression)
         self.key_delete.setKey('del')
         self.key_enter.setKey('return')
         self.key_zip.setKey(QtGui.QKeySequence(self.tr('Ctrl+Z')))
         self.key_rename.setKey(QtGui.QKeySequence(self.tr('Ctrl+R')))
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         self.key_enter.activated.connect(self.open_tableview_window)
-        self.key_zip.activated.connect(self.zip_path)
+        self.key_zip.activated.connect(self.handle_compression)
         self.key_rename.activated.connect(self.open_rename_path_dialog)
 
     def connect_icons(self):
@@ -169,6 +170,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
         self.actionZip.setIcon(self.icons['archive'])
         self.dialog_new_folder.setWindowIcon(self.icons['folder'])
+        self.actionUnzip.setIcon(self.icons['unzip'])
 
     def connect_treeview(self):
         """
@@ -377,17 +379,19 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         if orig_path != new_path:
             self.add_recent_file_menu_entry(new_path, self.df_manager.get_model(new_path))
 
-    def zip_path(self, fpath=None, **kwargs):
-        if fpath is None:
-            fpath = self.get_tree_selected_path()
-        assert fpath is not None, "No selected path!"
-        return ostools.zipfile_compress(fpath, **kwargs)
-
     def open_rename_path_dialog(self):
         current_path = self.get_tree_selected_path()
         dialog = FilePathRenameDialog(current_path, parent=self)
         dialog.show()
 
-
+    def handle_compression(self, fpath=None, **kwargs):
+        if fpath is None:
+            fpath = self.get_tree_selected_path()
+        assert fpath is not None, "No selected path!"
+        if not fpath.lower().endswith('.zip'):
+            return ostools.zipfile_compress(fpath, **kwargs)
+        else:
+            return ostools.zipfile_unzip(file_path=fpath,
+                                 dir=self.dialog_settings.rootDirectoryLineEdit.text())
 
 

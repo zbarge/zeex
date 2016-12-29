@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Wed Dec 28 14:04:10 2016
+# Created: Wed Dec 28 21:42:27 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,6 +59,8 @@ class Ui_ProjectWindow(object):
         self.actionViewCloud.setObjectName("actionViewCloud")
         self.actionAddFolder = QtGui.QAction(ProjectWindow)
         self.actionAddFolder.setObjectName("actionAddFolder")
+        self.actionUnzip = QtGui.QAction(ProjectWindow)
+        self.actionUnzip.setObjectName("actionUnzip")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -68,6 +70,7 @@ class Ui_ProjectWindow(object):
         self.menuActions.addAction(self.actionAddFolder)
         self.menuActions.addAction(self.actionRename)
         self.menuActions.addAction(self.actionViewCloud)
+        self.menuActions.addAction(self.actionUnzip)
         self.menuActions.addAction(self.actionZip)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuRecent_Files.menuAction())
@@ -95,5 +98,6 @@ class Ui_ProjectWindow(object):
         self.actionZip.setText(QtGui.QApplication.translate("ProjectWindow", "Zip", None, QtGui.QApplication.UnicodeUTF8))
         self.actionViewCloud.setText(QtGui.QApplication.translate("ProjectWindow", "View Cloud", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddFolder.setText(QtGui.QApplication.translate("ProjectWindow", "Add Folder", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionUnzip.setText(QtGui.QApplication.translate("ProjectWindow", "Unzip", None, QtGui.QApplication.UnicodeUTF8))
 
 from core.views.basic.treeview import FileSystemTreeView

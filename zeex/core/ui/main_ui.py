@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Dec 25 22:34:09 2016
+# Created: Wed Dec 28 21:42:21 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,6 +46,8 @@ class Ui_HomeWindow(object):
         self.actionZipFolder.setObjectName("actionZipFolder")
         self.actionViewCloud = QtGui.QAction(HomeWindow)
         self.actionViewCloud.setObjectName("actionViewCloud")
+        self.actionUnzip = QtGui.QAction(HomeWindow)
+        self.actionUnzip.setObjectName("actionUnzip")
         self.menuProjects.addAction(self.actionOpen)
         self.menuProjects.addAction(self.actionNew)
         self.menuProjects.addAction(self.actionSave)
@@ -53,6 +55,7 @@ class Ui_HomeWindow(object):
         self.menuProjects.addAction(self.actionSettings)
         self.menuActions.addAction(self.actionZipFolder)
         self.menuActions.addAction(self.actionViewCloud)
+        self.menuActions.addAction(self.actionUnzip)
         self.homemenu.addAction(self.menuProjects.menuAction())
         self.homemenu.addAction(self.menuActions.menuAction())
 
@@ -71,5 +74,6 @@ class Ui_HomeWindow(object):
         self.actionZip.setText(QtGui.QApplication.translate("HomeWindow", "Zip", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZipFolder.setText(QtGui.QApplication.translate("HomeWindow", "Zip Folder", None, QtGui.QApplication.UnicodeUTF8))
         self.actionViewCloud.setText(QtGui.QApplication.translate("HomeWindow", "View Cloud", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionUnzip.setText(QtGui.QApplication.translate("HomeWindow", "Unzip", None, QtGui.QApplication.UnicodeUTF8))
 
 from core.views.basic.treeview import FileSystemTreeView
