@@ -66,7 +66,7 @@ setup(
     install_requires=['PySide', 'easygui', 'pandas>=0.17.1', 'pytest',
                       'pytest-qt>=1.2.2', 'pytest-cov', 'python-magic>=0.4.6',
                       'openpyxl', 'xlrd', 'sqlalchemy', 'dropbox', 'request', 'six', 'urllib3',
-                      'typing', 'pandas', 'qtpandas', 'ftputil'],
+                      'typing', 'pandas', 'qtpandas', 'ftputil', 'qtalchemy'],
                       
     cmdclass={'test': PyTest},
     author_email='zekebarge@gmail.com',

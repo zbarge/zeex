@@ -206,7 +206,12 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         return None
 
     def remove_tree_selected_path(self):
-        # TODO: need to emit a signal here.
-        filename = self.get_tree_selected_path()
-        if filename is not None:
-            os.remove(filename)
+        #TODO: need to emit a signal here.
+        idxes = self.treeView.selectedIndexes()
+        if idxes:
+            file_model = self.treeView.model()
+            for idx in idxes:
+                if not file_model.isDir(idx):
+                    file_model.remove(idx)
+                else:
+                    file_model.rmdir(idx)

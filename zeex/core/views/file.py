@@ -136,15 +136,13 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
             self.widget.setModel(self._df_transposed)
             self._view_transposed = True
 
-
-
-
-
     def sync(self):
         self.setWindowTitle("{}".format(self.df_model.filePath))
         self.dialog_export.comboBoxSource.setModel(create_standard_item_model([self.df_model.filePath]))
         self._df_transposed = None
-        self._df_model = None
+        if self._df_model is not None:
+            self.widget.setModel(self._df_model)
+
 
     def save(self):
         self.dialog_export.set_destination_path_from_source()
