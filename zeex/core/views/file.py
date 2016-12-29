@@ -34,7 +34,7 @@ from core.views.actions.normalize import ColumnNormalizerDialog
 from core.views.actions.export import DataFrameModelExportDialog
 from core.utility.widgets import create_standard_item_model
 from core.views.actions.merge_purge import MergePurgeDialog
-
+import core.utility.pandatools as pandatools
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     """
@@ -62,6 +62,9 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
 
         self.connect_actions()
         self.connect_icons()
+        self._df_model = None
+        self._df_model_transposed = None
+        self._view_transposed = False
 
 
     @property
@@ -90,13 +93,13 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionSave.triggered.connect(self.save)
         self.actionSaveAs.triggered.connect(self.dialog_export.show)
         self.actionSplit.triggered.connect(self.dialog_split.show)
+        self.actionTranspose.triggered.connect(self.transpose)
         self.dialog_export.btnBrowseSource.setVisible(False)
         # TODO: Make these actions do something then activate.
         self.actionExecuteScript.setVisible(False)
         self.actionSuppress.setVisible(False)
         self.actionDelete.setVisible(False)
         self.df_model.dataChanged.connect(self.sync)
-
         self.sync()
 
     def connect_icons(self):
@@ -108,6 +111,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.actionSaveAs.setIcon(self.icons['saveas'])
         self.actionSplit.setIcon(self.icons['split'])
         self.actionSuppress.setIcon(self.icons['suppress'])
+        self.actionTranspose.setIcon(self.icons['transpose'])
         self.actionEditFields.setIcon(self.icons['add_column'])
         self.actionAnalyze.setIcon(self.icons['count'])
         self.actionNormalize.setIcon(self.icons['normalize'])
@@ -115,9 +119,32 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.dialog_analyze.setWindowIcon(self.icons['count'])
         self.dialog_export.setWindowIcon(self.icons['export_generic'])
 
+    def transpose(self):
+        rows = self.df_model.dataFrame().index.size
+        if rows > 150:
+            raise Exception("Max size to transpose is 150 rows to columns.")
+
+        if self._df_transposed is None:
+            df = pandatools.dataframe_transpose(self.df_model.dataFrame())
+            self._df_transposed = DataFrameModel(dataFrame=df)
+            self._df_model = self.df_model
+
+        if self._view_transposed is True:
+            self.widget.setModel(self._df_model)
+            self._view_transposed = False
+        else:
+            self.widget.setModel(self._df_transposed)
+            self._view_transposed = True
+
+
+
+
+
     def sync(self):
         self.setWindowTitle("{}".format(self.df_model.filePath))
         self.dialog_export.comboBoxSource.setModel(create_standard_item_model([self.df_model.filePath]))
+        self._df_transposed = None
+        self._df_model = None
 
     def save(self):
         self.dialog_export.set_destination_path_from_source()

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'file.ui'
 #
-# Created: Mon Dec 26 00:49:07 2016
+# Created: Wed Dec 28 22:55:00 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,6 +59,8 @@ class Ui_FileWindow(object):
         self.actionNormalize.setObjectName("actionNormalize")
         self.actionSaveAs = QtGui.QAction(FileWindow)
         self.actionSaveAs.setObjectName("actionSaveAs")
+        self.actionTranspose = QtGui.QAction(FileWindow)
+        self.actionTranspose.setObjectName("actionTranspose")
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionSaveAs)
         self.menuFile.addAction(self.actionDelete)
@@ -69,6 +71,7 @@ class Ui_FileWindow(object):
         self.menuAction.addAction(self.actionNormalize)
         self.menuAction.addAction(self.actionSplit)
         self.menuAction.addAction(self.actionSuppress)
+        self.menuAction.addAction(self.actionTranspose)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAction.menuAction())
 
@@ -90,4 +93,5 @@ class Ui_FileWindow(object):
         self.actionAnalyze.setText(QtGui.QApplication.translate("FileWindow", "Analyze", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNormalize.setText(QtGui.QApplication.translate("FileWindow", "Normalize", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveAs.setText(QtGui.QApplication.translate("FileWindow", "Save As", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionTranspose.setText(QtGui.QApplication.translate("FileWindow", "Transpose", None, QtGui.QApplication.UnicodeUTF8))
 

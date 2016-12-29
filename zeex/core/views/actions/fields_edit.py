@@ -58,6 +58,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.fmodel = FieldModel()
         self.configure()
 
+
     def configure(self):
         self.update_fields_model()
         self.tableView.setModel(self.fmodel)
@@ -90,6 +91,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         """
         cur_ct = self.fmodel.rowCount()
         df = self.dfmodel.dataFrame()
+        df.columns = [str(x) for x in df.columns]
         orig_cols = df.columns.tolist()
 
         if len(list(set(orig_cols))) < len(orig_cols):
@@ -102,7 +104,6 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
                 if item and item.text() not in df.columns:
                     self.fmodel.takeRow(i)
         for col in df.columns:
-            col = str(col)
             self.fmodel.set_field(col, dtype=df[col].dtype)
 
     def push_field_down(self):

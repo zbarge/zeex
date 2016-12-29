@@ -55,6 +55,7 @@
     <addaction name="actionNormalize"/>
     <addaction name="actionSplit"/>
     <addaction name="actionSuppress"/>
+    <addaction name="actionTranspose"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAction"/>
@@ -113,6 +114,11 @@
   <action name="actionSaveAs">
    <property name="text">
     <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionTranspose">
+   <property name="text">
+    <string>Transpose</string>
    </property>
   </action>
  </widget>

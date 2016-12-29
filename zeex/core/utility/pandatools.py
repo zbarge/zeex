@@ -862,3 +862,6 @@ def dataframe_remove_linebreaks(df, columns=None, copy=False):
         if str(df[col].dtype) == 'object':
             df.loc[:, col] = df.loc[:, col].apply(remove_line_breaks)
     return df
+
+def dataframe_transpose(df:pd.DataFrame):
+    return df.transpose().reset_index()
