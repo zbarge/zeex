@@ -125,10 +125,9 @@ class DropBoxDirectoryPathCreateDialog(DirectoryPathCreateDialog):
                 b = model.directory(idx.parent())
         except (IndexError, Exception) as e:
             assert b is not None, "Unable to verify base directory, error: {}".format(e)
-        if not b.endswith("/"):
-            b += "/"
+        if b.endswith("/"):
+            b = b[:-1]
         directory = b + self.lineEdit.text()
-        print(directory)
         self.dropbox.con.files_create_folder(directory, autorename=self.autorename)
         self.signalDirectoryCreated.emit(directory)
 
