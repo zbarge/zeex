@@ -24,8 +24,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from PySide import QtGui, QtCore, QtTest
-
+from PySide import QtGui, QtCore, QtTest, QtNetwork, QtWebKit
+from xml.sax.saxutils import escape as escape
+QtCore.Qt.escape = escape
+QtCore.QVariant = str
 
 def if_we_need_multi_version_support():
     try:
