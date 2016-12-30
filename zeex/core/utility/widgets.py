@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from core.compat import QtGui
+from core.compat import QtGui, QtCore
 
 
 def configure_combo_box(box, options, default):
@@ -35,6 +35,7 @@ def configure_combo_box(box, options, default):
         box.setCurrentIndex(idx)
     return box
 
+
 def create_standard_item_model(columns: list = None, editable=False, checkable=False):
         if columns is None:
             columns = []
@@ -42,11 +43,16 @@ def create_standard_item_model(columns: list = None, editable=False, checkable=F
             columns = list(columns)
         model = QtGui.QStandardItemModel()
         for idx, col in enumerate(columns):
-            item = QtGui.QStandardItem(col)
-            item.setEditable(editable)
-            item.setCheckable(checkable)
+            item = create_standard_item(col, editable, checkable)
             model.appendRow(item)
         return model
+
+
+def create_standard_item(name, editable=False, checkable=False):
+    item = QtGui.QStandardItem(name)
+    item.setEditable(editable)
+    item.setCheckable(checkable)
+    return item
 
 
 def ensure_modeled(item: (str, list, QtGui.QStandardItemModel)):

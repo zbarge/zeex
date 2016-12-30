@@ -51,6 +51,7 @@
     <addaction name="actionZipFolder"/>
     <addaction name="actionViewCloud"/>
     <addaction name="actionUnzip"/>
+    <addaction name="actionSQL"/>
    </widget>
    <addaction name="menuProjects"/>
    <addaction name="menuActions"/>
@@ -99,6 +100,11 @@
   <action name="actionUnzip">
    <property name="text">
     <string>Unzip</string>
+   </property>
+  </action>
+  <action name="actionSQL">
+   <property name="text">
+    <string>SQL</string>
    </property>
   </action>
  </widget>

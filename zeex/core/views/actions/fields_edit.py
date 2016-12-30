@@ -58,7 +58,6 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.fmodel = FieldModel()
         self.configure()
 
-
     def configure(self):
         self.update_fields_model()
         self.tableView.setModel(self.fmodel)

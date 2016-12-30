@@ -45,6 +45,9 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     def __init__(self, model: DataFrameModel, df_manager, **kwargs):
         QtGui.QMainWindow.__init__(self, parent=kwargs.pop('parent', None))
         self.df_manager = df_manager
+        self._df_model = None
+        self._df_model_transposed = None
+        self._view_transposed = False
         self._widget = DataTableWidget()
         self._widget.setModel(model)
         kwargs['parent'] = self
@@ -62,9 +65,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
 
         self.connect_actions()
         self.connect_icons()
-        self._df_model = None
-        self._df_model_transposed = None
-        self._view_transposed = False
+
 
 
     @property
@@ -126,23 +127,22 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
 
         if self._df_transposed is None:
             df = pandatools.dataframe_transpose(self.df_model.dataFrame())
-            self._df_transposed = DataFrameModel(dataFrame=df)
+            self._df_model_transposed = DataFrameModel(dataFrame=df)
             self._df_model = self.df_model
 
         if self._view_transposed is True:
             self.widget.setModel(self._df_model)
             self._view_transposed = False
         else:
-            self.widget.setModel(self._df_transposed)
+            self.widget.setModel(self._df_model_transposed)
             self._view_transposed = True
 
     def sync(self):
         self.setWindowTitle("{}".format(self.df_model.filePath))
         self.dialog_export.comboBoxSource.setModel(create_standard_item_model([self.df_model.filePath]))
-        self._df_transposed = None
+        self._df_model_transposed = None
         if self._df_model is not None:
             self.widget.setModel(self._df_model)
-
 
     def save(self):
         self.dialog_export.set_destination_path_from_source()

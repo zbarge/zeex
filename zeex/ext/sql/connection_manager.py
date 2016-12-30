@@ -21,9 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from sqlalchemy.inspection import inspect
+from sqlalchemy import types, create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
 
-import qtalchemy
-print(help(qtalchemy))
-print(help(qtalchemy.widgets))
 
+
+if __name__ == '__main__':
+    dc = DatabaseConnectionManager()
+    dc.register_credentials('sqlite', "sqlite:///C:/Users/Zeke/Google Drive/dev/python/zeex/data/test1.db")
+    session = dc.Session('sqlite')()
+    engine = dc.engine('sqlite')
+    res = engine.execute('SELECT * FROM SQLITE_MASTER;')
+    for f in res.fetchall():
+        print(f)
+    session.close()
 

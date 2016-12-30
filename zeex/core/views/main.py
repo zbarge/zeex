@@ -25,16 +25,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from core.compat import QtGui, QtCore
-from core.models.filetree import FileTreeModel
-from core.ui.main_ui import Ui_HomeWindow
-from core.utility.collection import get_ini_file, SettingsINI
-from core.utility.ostools import zipfile_compress, zipfile_unzip
-from core.views.basic.directory import DropBoxViewDialog
-from core.views.project.main import ProjectMainWindow
-from core.views.project.new import NewProjectDialog
-from core.views.settings import SettingsDialog
+from ..compat import QtGui, QtCore
+from ..models.filetree import FileTreeModel
+from ..ui.main_ui import Ui_HomeWindow
+from ..utility.collection import get_ini_file, SettingsINI
+from ..utility.ostools import zipfile_compress, zipfile_unzip
+from .basic.directory import DropBoxViewDialog
+from .project.main import ProjectMainWindow
+from .project.new import NewProjectDialog
+from .settings import SettingsDialog
 from icons import Icons
+from .sql.main import DatabasesMainWindow
 
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
@@ -49,6 +50,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.dialog_settings = SettingsDialog(parent=self)
         self.dialog_new_project = NewProjectDialog(parent=self)
         self.dialog_cloud = None
+        self.window_sql = DatabasesMainWindow(parent=self)
         self.key_enter = QtGui.QShortcut(self)
         self.key_delete = QtGui.QShortcut(self)
 
@@ -69,6 +71,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionZipFolder.triggered.connect(self.handle_compression)
         self.actionUnzip.triggered.connect(self.handle_compression)
         self.actionEdit.setVisible(False)
+        self.actionSQL.triggered.connect(self.window_sql.show)
         self.key_enter.activated.connect(self.open_project)
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         # TODO: Show these actions when they do something.

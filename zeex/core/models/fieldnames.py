@@ -36,7 +36,7 @@ Base = declarative_base()
 db_path = "sqlite:///" + os.path.join(config['DATA_DIR'], "fieldnames.db")
 engine = create_engine(db_path)
 Session = sessionmaker(bind=engine)
-
+connection_info = dict(session=Session, engine=engine, db_path=db_path)
 
 class Field(Base):
      """Storage for orig_name & new_name"""
