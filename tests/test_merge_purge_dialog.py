@@ -23,11 +23,12 @@ SOFTWARE.
 """
 
 import os
-import pytest
-from tests.main import MainTestClass
-from core.views.actions.merge_purge import MergePurgeDialog, DataFrameModelManager, DataFrameModel
-from core.compat import QtCore, QtTest, QtGui
 
+import pytest
+
+from core.compat import QtGui
+from core.views.actions.merge_purge import MergePurgeDialog, DataFrameModelManager, DataFrameModel
+from tests.main import MainTestClass
 
 
 class TestMergePurgeDialog(MainTestClass):

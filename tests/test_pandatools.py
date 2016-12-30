@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import pytest
 import shutil
+
+import pytest
+
 from core.utility.pandatools import *
 from tests.main import MainTestClass
 
