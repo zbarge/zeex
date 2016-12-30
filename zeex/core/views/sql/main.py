@@ -1,82 +1,92 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Nov 28 13:09:50 2016
+MIT License
+
+Copyright (c) 2016 Zeke Barge
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from ...ui.sql.main_ui import Ui_DatabasesMainWindow
 from ...compat import QtGui
 from ...models.fieldnames import connection_info as fieldnames_connection_info
-from sqlalchemy import inspect, MetaData
+from sqlalchemy import inspect, MetaData, create_engine, inspection
+from sqlalchemy.orm import sessionmaker
 from ...utility.widgets import create_standard_item_model, create_standard_item
-CONNECTIONS = {'field_names': fieldnames_connection_info}
+DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
+from ...ctrls.sql import AlchemyConnectionManager
 
 
 class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
-    def __init__(self, *args, **kwargs):
-        db_model = kwargs.pop('databases_model', None)
+    """
+    The general query/database maintenance MainWindow that is home
+    to the following main objects:
+        - A ToolBar with actions for simple database actions.
+        - A TreeView of all databases registered.
+        - A TextEdit for writing SQL queries
+        - A TableView for viewing results.
+    """
+    def __init__(self, *args, connection_manager: AlchemyConnectionManager = None, **kwargs):
         QtGui.QMainWindow.__init__(self, *args, **kwargs)
         self.setupUi(self)
-        self.connect_database_treeview(model=db_model)
+        if connection_manager is None:
+            self.con_manager = AlchemyConnectionManager()
+        else:
+            self.con_manager = connection_manager
+        self.connect_database_treeview()
+        self.connect_default_databases()
 
-    def connect_database_treeview(self, model=None):
-        if model is None:
-            model = self.treeView.model()
-            if not model:
-                model = QtGui.QStandardItemModel()
+    @property
+    def tree_model(self) -> QtGui.QStandardItemModel:
+        return self.treeView.model()
+
+    def connect_database_treeview(self):
+        model = self.treeView.model()
+        model = self.con_manager.get_standard_item_model(model=model)
         self.treeView.setModel(model)
-        for db_name in CONNECTIONS.keys():
-            self.load_engine(db_name, engine=CONNECTIONS[db_name]['engine'])
-        model.setHorizontalHeaderLabels(['databases'])
+
+    def connect_default_databases(self):
+        new = False
+        for name, ci in DEFAULT_CONNECTIONS.items():
+            try:
+                self.con_manager.connection(name)
+            except KeyError:
+                self.con_manager.add_connection(name=name, **ci)
+                new = True
+        if new:
+            self.connect_database_treeview()
 
     def connect_actions(self):
         pass
 
-    def load_engine(self, name, engine=None):
-        """
-        Inspects an engine via SQLAlchemy
-        and adds it to the "databases" treeview.
-        :param name: The name of the database.
-        :param engine: The engine to the database
-        :return: None
-        """
-        meta = MetaData()
-        if engine is None:
-            engine = CONNECTIONS[name]['engine']
-        # Load engine data into object
-        meta.reflect(bind=engine)
-        inspector = inspect(engine)
-
-        # Get the treeView's model
-        model = self.treeView.model()
-
-        # Try to find an existing database/table item
-        # in the model to replace
-        indexes = model.findItems(name)
-        if indexes:
-            idx = indexes[0]
-            db_name = model.itemFromIndex(idx).text()
-        else:
-            idx = None
-            db_name = name
-
-        # Create a new item
-        # to load table/column information into.
-        new_item = create_standard_item(db_name, editable=False, checkable=False)
-        for row, table in enumerate(meta.tables.keys()):
-            # Get a dict of all columns in the table.
-            columns = inspector.get_columns(table)
-            table = create_standard_item(table)
-
-            # Add all columns to the table's item.
-            cnames = [c['name'] for c in columns]
-            for crow, c in enumerate(cnames):
-                c = create_standard_item(c)
-                table.setChild(crow, c)
-
-            # Add the table to the database's item
-            new_item.setChild(row, table)
-
-        # Replace or append the table item
-        if idx:
-            model.setItem(idx.row(), new_item)
-        else:
-            model.appendRow(new_item)
-
+    def delete(self, idx):
+        item = self.tree_model.itemFromIndex(idx)
+        if item:
+            if not item.parent():
+                # Top level item...delete an entire database??
+                pass
+            elif not item.parent().parent():
+                # It's a table
+                pass
+            elif not item.hasChildren():
+                # It's a column
+                pass
 
 
 
