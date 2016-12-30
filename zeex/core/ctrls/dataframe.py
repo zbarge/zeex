@@ -24,15 +24,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import os
-import pandas as pd
-import qtpandas
-from collections import defaultdict
-import datetime
-from core.compat import QtCore
-from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM, DataFrameModel
+from qtpandas.models.DataFrameModel import DataFrameModel
 from core.models.dataframe import DataFrameDescriptionModel
-
+from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM
 
 SEPARATORS = {'Comma': ',',
               'Semicolon': ';',
@@ -55,7 +49,7 @@ class DataFrameModelManager(DFM):
         DFM.__init__(self)
         self._file_table_windows = {}
 
-    def get_df_describe_model(self, filepath):
+    def get_df_describe_model(self, filepath) -> DataFrameModel:
         describe_path = DataFrameDescriptionModel.get_describe_path(filepath)
         try:
             return self.models[describe_path]

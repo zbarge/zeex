@@ -26,9 +26,6 @@ SOFTWARE.
 from ...ui.sql.main_ui import Ui_DatabasesMainWindow
 from ...compat import QtGui
 from ...models.fieldnames import connection_info as fieldnames_connection_info
-from sqlalchemy import inspect, MetaData, create_engine, inspection
-from sqlalchemy.orm import sessionmaker
-from ...utility.widgets import create_standard_item_model, create_standard_item
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 from ...ctrls.sql import AlchemyConnectionManager
 

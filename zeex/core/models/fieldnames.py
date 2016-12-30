@@ -38,6 +38,7 @@ engine = create_engine(db_path)
 Session = sessionmaker(bind=engine)
 connection_info = dict(Session=Session, engine=engine)
 
+
 class Field(Base):
      """Storage for orig_name & new_name"""
      __tablename__ = 'users'

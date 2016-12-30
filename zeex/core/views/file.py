@@ -21,20 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import os
-from icons import Icons
-from core.compat import QtGui, QtCore
-from qtpandas.models.DataFrameModel import DataFrameModel
-from qtpandas.views.DataTableView import DataTableWidget
-from core.ui.file_ui import Ui_FileWindow
-from core.views.actions.fields_edit import FieldsEditDialog
-from core.views.actions.split import SplitFileDialog
-from core.views.actions.analyze import FileAnalyzerDialog
-from core.views.actions.normalize import ColumnNormalizerDialog
-from core.views.actions.export import DataFrameModelExportDialog
-from core.utility.widgets import create_standard_item_model
-from core.views.actions.merge_purge import MergePurgeDialog
 import core.utility.pandatools as pandatools
+from core.compat import QtGui
+from core.ui.file_ui import Ui_FileWindow
+from core.utility.widgets import create_standard_item_model
+from core.views.actions.analyze import FileAnalyzerDialog
+from core.views.actions.export import DataFrameModelExportDialog
+from core.views.actions.fields_edit import FieldsEditDialog
+from core.views.actions.merge_purge import MergePurgeDialog
+from core.views.actions.normalize import ColumnNormalizerDialog
+from core.views.actions.split import SplitFileDialog
+from icons import Icons
+from qtpandas.models.DataFrameModel import DataFrameModel
+from views.DataTableView import DataTableWidget
+
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     """

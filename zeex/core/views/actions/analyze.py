@@ -23,12 +23,11 @@ SOFTWARE.
 """
 
 import os
-from functools import partial
-from core.compat import QtGui, QtCore
-import pandas as pd
-from qtpandas.models.DataFrameModel import DataFrameModel
-from core.ui.actions.analyze_ui import Ui_FileAnalyzerDialog
+
+from core.compat import QtGui
 from core.models.dataframe import DataFrameDescriptionModel
+from core.ui.actions.analyze_ui import Ui_FileAnalyzerDialog
+from models import DataFrameModel
 
 
 class FileAnalyzerDialog(QtGui.QDialog, Ui_FileAnalyzerDialog):

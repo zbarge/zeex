@@ -22,15 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from qtpandas.utils import superReadFile
+
 import pandas as pd
-from core.ui.actions.fields_edit_ui import Ui_FieldsEditDialog
-from core.compat import QtGui, QtCore
-from core.models.fieldnames import FieldModel
-from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
-from core.ctrls.dataframe import DataFrameModel
+
 import core.utility.pandatools as pandatools
-from core.utility.collection import DictConfig, SettingsINI
+from core.compat import QtGui
+from core.ctrls.dataframe import DataFrameModel
+from core.models.fieldnames import FieldModel
+from core.ui.actions.fields_edit_ui import Ui_FieldsEditDialog
+from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
+from utils import superReadFile
+
 CASE_MAP = {'lower': str.lower,
             'upper': str.upper,
             'proper': str.title,
