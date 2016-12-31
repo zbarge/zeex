@@ -54,11 +54,68 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
+        <item row="2" column="0">
          <widget class="QTextEdit" name="textEdit"/>
         </item>
-        <item row="1" column="0">
+        <item row="3" column="0">
          <widget class="QTableView" name="tableView"/>
+        </item>
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="1">
+           <widget class="QComboBox" name="comboBoxCurrentDatabase">
+            <property name="toolTip">
+             <string>Current database</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelCurrentDatabase">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Database</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="comboBoxCurrentFile">
+            <property name="toolTip">
+             <string>Currently open file</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelCurrentFile">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>File</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -75,6 +132,12 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFiles">
+    <property name="title">
+     <string>Recent</string>
+    </property>
+   </widget>
+   <addaction name="menuFiles"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -88,15 +151,16 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAddDatabase"/>
-   <addaction name="actionRemoveDatabase"/>
+   <addaction name="actionAddTable"/>
+   <addaction name="actionRemove"/>
    <addaction name="actionConnectToDatabase"/>
    <addaction name="actionDisconnectFromDatabase"/>
-   <addaction name="actionAddTable"/>
    <addaction name="actionImportFile"/>
    <addaction name="actionExportFile"/>
-   <addaction name="RefreshSchemas"/>
+   <addaction name="actionRefreshSchemas"/>
    <addaction name="actionSaveText"/>
    <addaction name="actionSaveTextAs"/>
+   <addaction name="actionOpenFile"/>
   </widget>
   <action name="actionAddDatabase">
    <property name="icon">
@@ -111,16 +175,16 @@
     <string>Add a database to the list</string>
    </property>
   </action>
-  <action name="actionRemoveDatabase">
+  <action name="actionRemove">
    <property name="icon">
     <iconset resource="../../../icons/icons.qrc">
-     <normaloff>:/standard_icons/delete_database.png</normaloff>:/standard_icons/delete_database.png</iconset>
+     <normaloff>:/standard_icons/delete.png</normaloff>:/standard_icons/delete.png</iconset>
    </property>
    <property name="text">
-    <string>Remove Database</string>
+    <string>Remove </string>
    </property>
    <property name="toolTip">
-    <string>Remove database from list</string>
+    <string>Remove selected item from list, database, or table.</string>
    </property>
   </action>
   <action name="actionConnectToDatabase">
@@ -144,16 +208,16 @@
     <string>Disconnect From Database</string>
    </property>
   </action>
-  <action name="actionAddTable">
+  <action name="actionOpenFile">
    <property name="icon">
     <iconset resource="../../../icons/icons.qrc">
      <normaloff>:/standard_icons/add.png</normaloff>:/standard_icons/add.png</iconset>
    </property>
    <property name="text">
-    <string>Add Table</string>
+    <string>Open File</string>
    </property>
    <property name="toolTip">
-    <string>Add a table to the selected database</string>
+    <string>Open a .sql file</string>
    </property>
   </action>
   <action name="actionImportFile">
@@ -180,7 +244,7 @@
     <string>Export a table/database to file(s)</string>
    </property>
   </action>
-  <action name="RefreshSchemas">
+  <action name="actionRefreshSchemas">
    <property name="icon">
     <iconset resource="../../../icons/icons.qrc">
      <normaloff>:/standard_icons/refresh.png</normaloff>:/standard_icons/refresh.png</iconset>
@@ -214,6 +278,15 @@
    </property>
    <property name="toolTip">
     <string>Save text in the editor to a new file</string>
+   </property>
+  </action>
+  <action name="actionAddTable">
+   <property name="icon">
+    <iconset resource="../../../icons/icons.qrc">
+     <normaloff>:/standard_icons/insert_table.png</normaloff>:/standard_icons/insert_table.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Table</string>
    </property>
   </action>
  </widget>

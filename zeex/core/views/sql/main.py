@@ -23,11 +23,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
 from ...ui.sql.main_ui import Ui_DatabasesMainWindow
 from ...compat import QtGui
 from ...models.fieldnames import connection_info as fieldnames_connection_info
-DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 from ...ctrls.sql import AlchemyConnectionManager
+from core.utility.widgets import create_standard_item
+DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
 class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
@@ -41,6 +43,8 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
     """
     def __init__(self, *args, connection_manager: AlchemyConnectionManager = None, **kwargs):
         QtGui.QMainWindow.__init__(self, *args, **kwargs)
+        self._last_text_dir = ''
+        self._last_text_path = ''
         self.setupUi(self)
         if connection_manager is None:
             self.con_manager = AlchemyConnectionManager()
@@ -48,6 +52,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             self.con_manager = connection_manager
         self.connect_database_treeview()
         self.connect_default_databases()
+        self.connect_actions()
 
     @property
     def tree_model(self) -> QtGui.QStandardItemModel:
@@ -70,20 +75,80 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             self.connect_database_treeview()
 
     def connect_actions(self):
-        pass
+        self.actionRemove.triggered.connect(self.delete)
+        self.actionRefreshSchemas.triggered.connect(self.refresh_schemas)
+        self.actionSaveText.triggered.connect(self.save_last_sql_text)
+        self.actionSaveTextAs.triggered.connect(self.save_sql_text)
+        self.actionOpenFile.triggered.connect(self.open_sql_text)
 
-    def delete(self, idx):
+    def refresh_schemas(self):
+        self.treeView.setModel(self.con_manager.get_standard_item_model())
+
+    def delete(self, idx=None):
+        if idx is None:
+            idx = self.treeView.selectedIndexes()
+            if not idx:
+                raise Exception("Nothing selected to delete!")
+            idx = idx[0]
         item = self.tree_model.itemFromIndex(idx)
         if item:
             if not item.parent():
-                # Top level item...delete an entire database??
-                pass
+                # It's a database - just remove it off the list
+                self.con_manager.remove_connection(item.text())
+                self.tree_model.takeRow(item.row())
             elif not item.parent().parent():
                 # It's a table
-                pass
+                db_item = item.parent()
+                table_name = item.text()
+                db_name = db_item.text()
+                con = self.con_manager.connection(db_name)
+                table = con.meta.tables[table_name]
+                table.drop(checkfirst=True)
+                db_item.removeRow(item.row())
             elif not item.hasChildren():
                 # It's a column
-                pass
+                table_item = self.tree_model.itemFromIndex(item.parent().index())
+                db_name = self.tree_model.itemFromIndex(table_item.parent().index()).text()
+                con = self.con_manager.connection(db_name)
+                table_name = table_item.text()
+                try:
+                    sql = "ALTER TABLE '{}' DROP COLUMN '{}'".format(table_name, item.text())
+                    con.engine.execute(sql)
+                    table_item.removeRow(item.row())
+                except Exception:
+                    raise NotImplementedError("Unable to drop columns for SQL version: {}".format(
+                        con.engine.name))
+
+    def save_sql_text(self, file_path=''):
+        if file_path is '':
+            file_path = QtGui.QFileDialog.getSaveFileName(dir=self._last_text_dir)[0]
+
+        self._last_text_dir = os.path.dirname(file_path)
+        with open(file_path, "w") as fp:
+            fp.write(self.textEdit.document().toPlainText())
+        self.set_current_file(file_path)
+
+    def save_last_sql_text(self):
+        self.save_sql_text(file_path=self._last_text_path)
+
+    def open_sql_text(self, file_path=''):
+        if file_path is '':
+            file_path = QtGui.QFileDialog.getOpenFileName(dir=self._last_text_dir)[0]
+        self._last_text_dir = os.path.dirname(file_path)
+        self._last_text_path = file_path
+        with open(file_path, "r") as fp:
+            self.textEdit.setPlainText(fp.read())
+        self.set_current_file(file_path)
+
+    def set_current_file(self, file_path):
+        idx = self.comboBoxCurrentFile.findText(file_path)
+        if idx < 0:
+            self.comboBoxCurrentFile.addItem(file_path)
+            idx = self.comboBoxCurrentFile.findText(file_path)
+        self.comboBoxCurrentFile.setCurrentIndex(idx)
+
+
+
 
 
 

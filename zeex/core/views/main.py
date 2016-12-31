@@ -88,6 +88,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionSave.setIcon(self.icons['save'])
         self.actionZipFolder.setIcon(self.icons['archive'])
         self.actionUnzip.setIcon(self.icons['unzip'])
+        self.actionSQL.setIcon(self.icons['sql'])
 
     @QtCore.Slot()
     def connect_filetree(self, rootdir=None):

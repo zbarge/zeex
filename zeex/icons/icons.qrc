@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="standard_icons">
+    <file>insert_table.png</file>
     <file>refresh.png</file>
     <file>connected.png</file>
     <file>disconnected.png</file>
