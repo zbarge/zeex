@@ -28,7 +28,8 @@ from ...ui.sql.main_ui import Ui_DatabasesMainWindow
 from ...compat import QtGui
 from ...models.fieldnames import connection_info as fieldnames_connection_info
 from ...ctrls.sql import AlchemyConnectionManager
-from core.utility.widgets import create_standard_item, get_ok_msg_box
+from core.utility.widgets import get_ok_msg_box
+from core.ctrls.dataframe import DataFrameModelManager
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -41,29 +42,34 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         - A TextEdit for writing SQL queries
         - A TableView for viewing results.
     """
-    def __init__(self, *args, connection_manager: AlchemyConnectionManager = None, **kwargs):
+    def __init__(self, *args,
+                 df_manager:DataFrameModelManager = None,
+                 connection_manager: AlchemyConnectionManager = None, **kwargs):
         QtGui.QMainWindow.__init__(self, *args, **kwargs)
         self._last_text_dir = ''
         self._last_text_path = ''
         self.setupUi(self)
-        if connection_manager is None:
-            self.con_manager = AlchemyConnectionManager()
-        else:
-            self.con_manager = connection_manager
-        self.connect_database_treeview()
-        self.connect_default_databases()
-        self.connect_actions()
+        self.con_manager = connection_manager
+        self.df_manager = df_manager
+        self.configure()
+
 
     @property
     def tree_model(self) -> QtGui.QStandardItemModel:
+        """
+        Returns the QStandardItemModel containing
+        the databases, tables, and columns.
+        :return: (QtGui.QStandardItemModel)
+        """
         return self.treeView.model()
 
-    def connect_database_treeview(self):
-        model = self.treeView.model()
-        model = self.con_manager.get_standard_item_model(model=model)
-        self.treeView.setModel(model)
-
     def connect_default_databases(self):
+        """
+        Connects to system databases by default.
+        TODO: maybe repurpose this into adding a dictionary of
+        database configurations?
+        :return: (None)
+        """
         new = False
         for name, ci in DEFAULT_CONNECTIONS.items():
             try:
@@ -72,14 +78,29 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
                 self.con_manager.add_connection(name=name, **ci)
                 new = True
         if new:
-            self.connect_database_treeview()
+            self.treeView.setModel(self.con_manager.get_standard_item_model())
 
-    def connect_actions(self):
+    def configure(self):
+        """
+        called once on __init__
+        - Sets AlchemyConnectionManager and/or DataFrameModelManager if they
+          were not set in the __init__(**kwargs)
+        - Connects default actions
+        - sets treeView model.
+        :return: (None)
+        """
+        if self.con_manager is None:
+            self.con_manager = AlchemyConnectionManager()
+        if self.df_manager is None:
+            self.df_manager = DataFrameModelManager()
+
+        self.treeView.setModel(self.con_manager.get_standard_item_model())
         self.actionRemove.triggered.connect(self.delete)
         self.actionRefreshSchemas.triggered.connect(self.refresh_schemas)
         self.actionSaveText.triggered.connect(self.save_last_sql_text)
         self.actionSaveTextAs.triggered.connect(self.save_sql_text)
         self.actionOpenFile.triggered.connect(self.open_sql_text)
+        self.actionOpenQueryData.triggered.connect(self.open_query_fileview)
         self.actionConnectToDatabase.triggered.connect(self.connect_database)
         self.actionDisconnectFromDatabase.triggered.connect(self.disconnect_database)
         self.actionExportFile.triggered.connect(self.export_table)
@@ -88,11 +109,28 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.actionExecuteQuery.triggered.connect(self.execute_query)
         self.actionExecuteSelectedQuery.triggered.connect(self.execute_query_selected)
         self.treeView.expanded.connect(self.sync_current_database)
+        self.connect_default_databases()
 
     def refresh_schemas(self):
+        """
+        Refreshes the database schemas for each connection.
+        Then resets the treeView with the new info.
+        :return: (None)
+        """
+        for c in self.con_manager.connections.keys():
+            con = self.con_manager.connection(c)
+            con.refresh_schemas()
         self.treeView.setModel(self.con_manager.get_standard_item_model())
 
     def delete(self, idx=None):
+        """
+        Deletes a database, table, or column on a database.
+        If a database can't support dropping a column (like SQLite), an error
+        is raised. Otherwise, the item is removed from the database if it's a table/column,
+        the item is always removed from the treeView list if removed.
+        :param idx:
+        :return:
+        """
         if idx is None:
             idx = self.treeView.selectedIndexes()
             if not idx:
@@ -128,6 +166,13 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
                         con.engine.name))
 
     def save_sql_text(self, file_path=''):
+        """
+        Saves the current text in the textEdit to file_path.
+        :param file_path: (str, default None)
+            None will open a QFileDialog to ask for a save name.
+        :return: (str)
+            Of the saved file_path.
+        """
         if file_path is '':
             file_path = QtGui.QFileDialog.getSaveFileName(dir=self._last_text_dir)[0]
 
@@ -135,11 +180,25 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         with open(file_path, "w") as fp:
             fp.write(self.textEdit.document().toPlainText())
         self.set_current_file(file_path)
+        return file_path
 
     def save_last_sql_text(self):
-        self.save_sql_text(file_path=self._last_text_path)
+        """
+        Convenience function to save the last opened text file back
+        to disk.
+        :return: (str)
+            The saved file path
+        """
+        return self.save_sql_text(file_path=self._last_text_path)
 
     def open_sql_text(self, file_path=''):
+        """
+        Reads all text from file_path into the text edit widget
+        :param file_path: (str, default '')
+            The file_path to open.
+            Defaults to a getOpenFileName
+        :return: None
+        """
         if file_path is '':
             file_path = QtGui.QFileDialog.getOpenFileName(dir=self._last_text_dir)[0]
         self._last_text_dir = os.path.dirname(file_path)
@@ -149,6 +208,12 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.set_current_file(file_path)
 
     def set_current_file(self, file_path):
+        """
+        Sets the current file combo box based on the given
+        :param file_path. new items are inserted at the top.
+        :param file_path: (str)
+        :return: None
+        """
         idx = self.comboBoxCurrentFile.findText(file_path)
         if idx < 0:
             self.comboBoxCurrentFile.insertItem(0, file_path)
@@ -156,6 +221,12 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.comboBoxCurrentFile.setCurrentIndex(idx)
 
     def set_current_database(self, db_name):
+        """
+        Sets the current database combo box based on the
+        :param db_name. new items are inserted at the top.
+        :param db_name: (str)
+        :return: None
+        """
         idx = self.comboBoxCurrentDatabase.findText(db_name)
         if idx < 0:
             self.comboBoxCurrentDatabase.insertItem(0, db_name)
@@ -163,6 +234,13 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.comboBoxCurrentDatabase.setCurrentIndex(idx)
 
     def sync_current_database(self, idx):
+        """
+        Keeps the database combo box item up-to-date based on the
+        user's current treeview selection.
+        :param idx: (QModelIndex)
+            Accepted from TreeView (or anyone, really)
+        :return: None
+        """
         item = self.tree_model.itemFromIndex(idx)
         if not item.parent():
             # It's a database
@@ -174,7 +252,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             # It's a column
             self.set_current_database(item.parent().parent().text())
 
-    def connect_database(self, db_name):
+    def connect_database(self, db_name=None):
         """
         Sets the currently active database.
         This one is a 'tough' design call because the con_manager
@@ -185,7 +263,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         :return: None
         """
         if db_name is None:
-            db_name = self.tree_model.findItems(db_name)[0].text()
+            db_name = self.tree_model.itemFromIndex(self.treeView.selectedIndexes()[0]).text()
         self.set_current_database(db_name)
 
     def disconnect_database(self):
@@ -259,13 +337,16 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         """
         if db_name is None:
             db_name = self.comboBoxCurrentDatabase.currentText()
-        con = self.con_manager.connection(db_name)
-        statement = self.textEdit.textCursor().selectedText().lstrip().rstrip()
-        if selected_text_only is False or statement is '':
-            statement = self.textEdit.document().toPlainText().lstrip().rstrip()
+
         try:
+            con = self.con_manager.connection(db_name)
+            statement = self.textEdit.textCursor().selectedText().lstrip().rstrip()
+            if selected_text_only is False or statement is '':
+                statement = self.textEdit.document().toPlainText().lstrip().rstrip()
             self._last_df_model = dfm = con.execute_sql(statement)
         except Exception as e:
+            if isinstance(e, KeyError):
+                e = "Invalid database selection: {}".format(e)
             box = get_ok_msg_box(self, str(e), title="ERROR EXECUTING QUERY")
             box.show()
             raise
@@ -281,6 +362,18 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         :return: None
         """
         return self.execute_query(db_name=db_name, selected_text_only=True)
+
+    def open_query_fileview(self, save_path=None):
+        dfm = self.tableView.model()
+        assert dfm is not None, "No dataframe model available!"
+        if save_path is None:
+            if self._last_text_path is not '':
+                save_path = os.path.splitext(self._last_text_path)[0] + ".csv"
+            else:
+                save_path = QtGui.QFileDialog.getSaveFileName(dir=self._last_text_dir)[0]
+        self.df_manager.set_model(dfm, save_path)
+        self.df_manager.get_fileview_window(save_path).show()
+
 
 
 

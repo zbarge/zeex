@@ -214,7 +214,7 @@ class AlchemyConnection(object):
         :param kwargs: (pd.read_sql(**kwargs))
         :return: (pd.DataFrame)
         """
-        return pd.read_sql(sql, self.engine.connect(), **kwargs)
+        return pd.read_sql(sql, self.engine, **kwargs)
 
     def get_df_model(self, df, **kwargs) -> DataFrameModel:
         """
@@ -275,6 +275,13 @@ class AlchemyConnection(object):
                 raise NotImplementedError("Not sure how to handle statement: {}".format(sql))
         return dfm
 
+    def refresh_schemas(self):
+        self.meta.clear()
+        self._inspector = inspect(self.engine)
+        self.meta.reflect(bind=self.engine)
+
+
+
 
 class DuplicateConnectionError(Exception):
     pass
@@ -289,6 +296,10 @@ class AlchemyConnectionManager(object):
     """
     def __init__(self):
         self._connections = {}
+
+    @property
+    def connections(self):
+        return self._connections
 
     def add_connection(self, *args, name=None,
                        connection: AlchemyConnection=None,

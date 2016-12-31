@@ -141,6 +141,7 @@
     <addaction name="actionConnectToDatabase"/>
     <addaction name="actionDisconnectFromDatabase"/>
     <addaction name="actionOpenFile"/>
+    <addaction name="actionOpenQueryData"/>
     <addaction name="actionImportFile"/>
     <addaction name="actionExportFile"/>
     <addaction name="actionExecuteQuery"/>
@@ -176,6 +177,7 @@
    <addaction name="actionOpenFile"/>
    <addaction name="actionExecuteQuery"/>
    <addaction name="actionExecuteSelectedQuery"/>
+   <addaction name="actionOpenQueryData"/>
   </widget>
   <action name="actionAddDatabase">
    <property name="icon">
@@ -327,6 +329,19 @@
    </property>
    <property name="toolTip">
     <string>Excecute only the selected SQL</string>
+   </property>
+  </action>
+  <action name="actionOpenQueryData">
+   <property name="icon">
+    <iconset>
+     <activeon>:/standard_icons/spreadsheet.png</activeon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Open Query Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens the current result query to a file view</string>
    </property>
   </action>
  </widget>

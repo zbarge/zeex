@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Dec 31 02:20:08 2016
+# Created: Sat Dec 31 05:08:15 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -146,11 +146,17 @@ class Ui_DatabasesMainWindow(object):
         icon12.addPixmap(QtGui.QPixmap(":/standard_icons/lightning2.png"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.actionExecuteSelectedQuery.setIcon(icon12)
         self.actionExecuteSelectedQuery.setObjectName("actionExecuteSelectedQuery")
+        self.actionOpenQueryData = QtGui.QAction(DatabasesMainWindow)
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/standard_icons/spreadsheet.png"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        self.actionOpenQueryData.setIcon(icon13)
+        self.actionOpenQueryData.setObjectName("actionOpenQueryData")
         self.menuFiles.addAction(self.actionAddDatabase)
         self.menuFiles.addAction(self.actionAddTable)
         self.menuFiles.addAction(self.actionConnectToDatabase)
         self.menuFiles.addAction(self.actionDisconnectFromDatabase)
         self.menuFiles.addAction(self.actionOpenFile)
+        self.menuFiles.addAction(self.actionOpenQueryData)
         self.menuFiles.addAction(self.actionImportFile)
         self.menuFiles.addAction(self.actionExportFile)
         self.menuFiles.addAction(self.actionExecuteQuery)
@@ -173,6 +179,7 @@ class Ui_DatabasesMainWindow(object):
         self.toolBar.addAction(self.actionOpenFile)
         self.toolBar.addAction(self.actionExecuteQuery)
         self.toolBar.addAction(self.actionExecuteSelectedQuery)
+        self.toolBar.addAction(self.actionOpenQueryData)
 
         self.retranslateUi(DatabasesMainWindow)
         QtCore.QMetaObject.connectSlotsByName(DatabasesMainWindow)
@@ -209,5 +216,7 @@ class Ui_DatabasesMainWindow(object):
         self.actionExecuteQuery.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Execute current Query", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteSelectedQuery.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Execute Selected Query", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteSelectedQuery.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Excecute only the selected SQL", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpenQueryData.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Open Query Data", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpenQueryData.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Opens the current result query to a file view", None, QtGui.QApplication.UnicodeUTF8))
 
 from icons import icons_rc

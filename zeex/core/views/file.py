@@ -125,7 +125,7 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         if rows > 150:
             raise Exception("Max size to transpose is 150 rows to columns.")
 
-        if self._df_transposed is None:
+        if self._df_model_transposed is None:
             df = pandatools.dataframe_transpose(self.df_model.dataFrame())
             self._df_model_transposed = DataFrameModel(dataFrame=df)
             self._df_model = self.df_model
