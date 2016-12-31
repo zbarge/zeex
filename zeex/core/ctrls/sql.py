@@ -23,13 +23,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+import pandas as pd
 import sqlalchemy
 from sqlalchemy import create_engine, MetaData, inspect
 from sqlalchemy.orm import sessionmaker
 from core.compat import QtGui
 from core.utility.widgets import create_standard_item
-
+from core.models.dataframe import DataFrameModel
 
 class AlchemyConnection(object):
     """
@@ -206,6 +206,79 @@ class AlchemyConnection(object):
             name_item.setChild(row, table)
         return name_item
 
+    def read_sql(self, sql, **kwargs) -> pd.DataFrame:
+        """
+        Returns a Pandas DataFrame based on given SQL-SELECT query
+        and kwargs.
+        :param sql: (str)
+        :param kwargs: (pd.read_sql(**kwargs))
+        :return: (pd.DataFrame)
+        """
+        return pd.read_sql(sql, self.engine.connect(), **kwargs)
+
+    def get_df_model(self, df, **kwargs) -> DataFrameModel:
+        """
+        Accessor for creating a DataFrameModel.
+        :param df:
+        :param kwargs:
+        :return: (DataFrameModel)
+        """
+        kwargs['dataFrame'] = df
+        return DataFrameModel(**kwargs)
+
+    def read_sql_df_model(self, sql, filePath=None, **kwargs) -> DataFrameModel:
+        """
+        Returns a DataFrameModel based on given SQL-SELECT query
+        and kwargs.
+        :param sql: (str)
+        :param filePath: (str, default None)
+        :param kwargs: (pd.read_sql(**kwargs))
+        :return: (DataFrameModel)
+        """
+        df = self.read_sql(sql, **kwargs)
+        return self.get_df_model(df, copyDataFrame=False, filePath=filePath)
+
+    def execute_sql(self, sql, **kwargs) -> DataFrameModel:
+        """
+        Executes SQL returning a DataFrameModel based on the given
+        SQL query.
+        The following statement types are defined:
+            - ALTER
+            - CREATE
+            - DELETE
+            - SELECT
+            - UPDATE
+        :param sql:
+        :param kwargs: (pd.read_sql(**kwargs) or
+                        sqlalchemy.engine.base.Engine.execute(**kwargs))
+        :return: (DataFrameModel)
+        """
+        direction = sql[:10].lower()
+        if 'select' in direction:
+            dfm = self.read_sql_df_model(sql, **kwargs)
+        else:
+            bit = dict(params=kwargs.pop('params', None),
+                       multiparams=kwargs.pop('multiparams', None))
+            res = self.engine.execute(sql, **bit)
+            if 'delete' in direction or 'update' in direction:
+                note = "SQLite RowCount (& others) may be inaccurate."
+                dfm = self.get_df_model(pd.DataFrame([[res.rowcount, sql, note]],
+                                                    columns=['Row Count', 'Statement', 'Note'],
+                                                    index=[0]),
+                                       filePath=kwargs.get('filePath'))
+
+            elif 'create' in direction or 'alter' in direction:
+                dfm = self.get_dfm_model(pd.DataFrame([[sql, 'OK']], index=[0],
+                                                      columns=['Statement', 'Status']),
+                                         filePath=kwargs.get('filePath') )
+            else:
+                raise NotImplementedError("Not sure how to handle statement: {}".format(sql))
+        return dfm
+
+
+class DuplicateConnectionError(Exception):
+    pass
+
 
 class AlchemyConnectionManager(object):
     """
@@ -217,8 +290,10 @@ class AlchemyConnectionManager(object):
     def __init__(self):
         self._connections = {}
 
-    def add_connection(self, name=None, connection: AlchemyConnection=None,
-                       *args, **kwargs):
+    def add_connection(self, *args, name=None,
+                       connection: AlchemyConnection=None,
+                       allow_duplicate=False,
+                       **kwargs):
         """
         Registers a new AlchemyConnection by name.
 
@@ -228,6 +303,12 @@ class AlchemyConnectionManager(object):
             Nothing else is required to add a connection if this is provided.
         :param args: (AlchemyConnection.__init__(*args))
             Required if :param connection is None
+        :param allow_duplicate (bool, default False)
+            False raises DuplicateConnectionError if the name or connection url
+            has already been registered.
+            True overwrites the existing connection entry if the name is the same.
+                A unique name will add the duplicate connection without overwriting
+                the original name/connection pair.
         :param kwargs: (AlchemyConnection.__init__(**kwargs))
             Used if :param connection is None.
         :return: None
@@ -237,11 +318,24 @@ class AlchemyConnectionManager(object):
         if connection is None:
             valid_new_parameters = args or kwargs.get('engine')
             assert valid_new_parameters, "must provide AlchemyConnection args or an existing engine"
+            if not allow_duplicate:
+                try:
+                    self._connections[name]
+                    raise DuplicateConnectionError("error - duplicate connection '{}'".format(
+                        name))
+                except KeyError:
+                    pass
             connection = AlchemyConnection(name, *args, **kwargs)
         elif not isinstance(connection, AlchemyConnection):
             raise TypeError("connection parameter must be an AlchemyConnection, not {}".format(
                 type(connection)))
             name = connection.name
+        if not allow_duplicate:
+            duplicate = (name in self._connections.keys()
+                         or connection.engine.url in self.get_connection_urls())
+            if duplicate:
+                raise DuplicateConnectionError("error - duplicate connection '{}': '{}'".format(
+                    name, connection.engine.url))
         self._connections[name] = connection
 
     def remove_connection(self, name) -> AlchemyConnection:
@@ -263,6 +357,13 @@ class AlchemyConnectionManager(object):
         :return: (AlchemyConnection)
         """
         return self._connections[name]
+
+    def get_connection_urls(self) -> list:
+        """
+        Returns a list of current connection urls registered.
+        :return: list(url1, url2...)
+        """
+        return [self.connection(c).engine.url for c in self._connections.keys()]
 
     def get_standard_item_model(self, model=None, replace=True) -> QtGui.QStandardItemModel:
         """

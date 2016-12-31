@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Fri Dec 30 17:57:38 2016
+# Created: Sat Dec 31 02:20:08 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -136,6 +136,29 @@ class Ui_DatabasesMainWindow(object):
         icon10.addPixmap(QtGui.QPixmap(":/standard_icons/insert_table.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionAddTable.setIcon(icon10)
         self.actionAddTable.setObjectName("actionAddTable")
+        self.actionExecuteQuery = QtGui.QAction(DatabasesMainWindow)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/standard_icons/lightning.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionExecuteQuery.setIcon(icon11)
+        self.actionExecuteQuery.setObjectName("actionExecuteQuery")
+        self.actionExecuteSelectedQuery = QtGui.QAction(DatabasesMainWindow)
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(":/standard_icons/lightning2.png"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        self.actionExecuteSelectedQuery.setIcon(icon12)
+        self.actionExecuteSelectedQuery.setObjectName("actionExecuteSelectedQuery")
+        self.menuFiles.addAction(self.actionAddDatabase)
+        self.menuFiles.addAction(self.actionAddTable)
+        self.menuFiles.addAction(self.actionConnectToDatabase)
+        self.menuFiles.addAction(self.actionDisconnectFromDatabase)
+        self.menuFiles.addAction(self.actionOpenFile)
+        self.menuFiles.addAction(self.actionImportFile)
+        self.menuFiles.addAction(self.actionExportFile)
+        self.menuFiles.addAction(self.actionExecuteQuery)
+        self.menuFiles.addAction(self.actionExecuteSelectedQuery)
+        self.menuFiles.addAction(self.actionRefreshSchemas)
+        self.menuFiles.addAction(self.actionRemove)
+        self.menuFiles.addAction(self.actionSaveText)
+        self.menuFiles.addAction(self.actionSaveTextAs)
         self.menubar.addAction(self.menuFiles.menuAction())
         self.toolBar.addAction(self.actionAddDatabase)
         self.toolBar.addAction(self.actionAddTable)
@@ -148,6 +171,8 @@ class Ui_DatabasesMainWindow(object):
         self.toolBar.addAction(self.actionSaveText)
         self.toolBar.addAction(self.actionSaveTextAs)
         self.toolBar.addAction(self.actionOpenFile)
+        self.toolBar.addAction(self.actionExecuteQuery)
+        self.toolBar.addAction(self.actionExecuteSelectedQuery)
 
         self.retranslateUi(DatabasesMainWindow)
         QtCore.QMetaObject.connectSlotsByName(DatabasesMainWindow)
@@ -158,7 +183,7 @@ class Ui_DatabasesMainWindow(object):
         self.labelCurrentDatabase.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Database", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBoxCurrentFile.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Currently open file", None, QtGui.QApplication.UnicodeUTF8))
         self.labelCurrentFile.setText(QtGui.QApplication.translate("DatabasesMainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuFiles.setTitle(QtGui.QApplication.translate("DatabasesMainWindow", "Recent", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuFiles.setTitle(QtGui.QApplication.translate("DatabasesMainWindow", "Actions", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("DatabasesMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddDatabase.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Add Database", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddDatabase.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Add a database to the list", None, QtGui.QApplication.UnicodeUTF8))
@@ -180,5 +205,9 @@ class Ui_DatabasesMainWindow(object):
         self.actionSaveTextAs.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Save File As", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveTextAs.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Save text in the editor to a new file", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddTable.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Add Table", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExecuteQuery.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Execute Query", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExecuteQuery.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Execute current Query", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExecuteSelectedQuery.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Execute Selected Query", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExecuteSelectedQuery.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Excecute only the selected SQL", None, QtGui.QApplication.UnicodeUTF8))
 
 from icons import icons_rc

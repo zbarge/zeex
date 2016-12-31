@@ -134,8 +134,21 @@
    </property>
    <widget class="QMenu" name="menuFiles">
     <property name="title">
-     <string>Recent</string>
+     <string>Actions</string>
     </property>
+    <addaction name="actionAddDatabase"/>
+    <addaction name="actionAddTable"/>
+    <addaction name="actionConnectToDatabase"/>
+    <addaction name="actionDisconnectFromDatabase"/>
+    <addaction name="actionOpenFile"/>
+    <addaction name="actionImportFile"/>
+    <addaction name="actionExportFile"/>
+    <addaction name="actionExecuteQuery"/>
+    <addaction name="actionExecuteSelectedQuery"/>
+    <addaction name="actionRefreshSchemas"/>
+    <addaction name="actionRemove"/>
+    <addaction name="actionSaveText"/>
+    <addaction name="actionSaveTextAs"/>
    </widget>
    <addaction name="menuFiles"/>
   </widget>
@@ -161,6 +174,8 @@
    <addaction name="actionSaveText"/>
    <addaction name="actionSaveTextAs"/>
    <addaction name="actionOpenFile"/>
+   <addaction name="actionExecuteQuery"/>
+   <addaction name="actionExecuteSelectedQuery"/>
   </widget>
   <action name="actionAddDatabase">
    <property name="icon">
@@ -287,6 +302,31 @@
    </property>
    <property name="text">
     <string>Add Table</string>
+   </property>
+  </action>
+  <action name="actionExecuteQuery">
+   <property name="icon">
+    <iconset resource="../../../icons/icons.qrc">
+     <normaloff>:/standard_icons/lightning.png</normaloff>:/standard_icons/lightning.png</iconset>
+   </property>
+   <property name="text">
+    <string>Execute Query</string>
+   </property>
+   <property name="toolTip">
+    <string>Execute current Query</string>
+   </property>
+  </action>
+  <action name="actionExecuteSelectedQuery">
+   <property name="icon">
+    <iconset>
+     <activeon>:/standard_icons/lightning2.png</activeon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Execute Selected Query</string>
+   </property>
+   <property name="toolTip">
+    <string>Excecute only the selected SQL</string>
    </property>
   </action>
  </widget>

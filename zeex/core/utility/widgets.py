@@ -65,9 +65,10 @@ def ensure_modeled(item: (str, list, QtGui.QStandardItemModel)):
     return item
 
 
-def get_ok_msg_box(parent, msg):
+def get_ok_msg_box(parent, msg, title='Message!'):
     msgBox = QtGui.QMessageBox(parent)
     msgBox.setText(msg)
+    msgBox.setWindowTitle(title)
     return msgBox
 
 

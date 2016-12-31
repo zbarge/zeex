@@ -28,7 +28,7 @@ from ...ui.sql.main_ui import Ui_DatabasesMainWindow
 from ...compat import QtGui
 from ...models.fieldnames import connection_info as fieldnames_connection_info
 from ...ctrls.sql import AlchemyConnectionManager
-from core.utility.widgets import create_standard_item
+from core.utility.widgets import create_standard_item, get_ok_msg_box
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -80,6 +80,14 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.actionSaveText.triggered.connect(self.save_last_sql_text)
         self.actionSaveTextAs.triggered.connect(self.save_sql_text)
         self.actionOpenFile.triggered.connect(self.open_sql_text)
+        self.actionConnectToDatabase.triggered.connect(self.connect_database)
+        self.actionDisconnectFromDatabase.triggered.connect(self.disconnect_database)
+        self.actionExportFile.triggered.connect(self.export_table)
+        self.actionImportFile.triggered.connect(self.import_table)
+        self.actionAddDatabase.triggered.connect(self.add_database)
+        self.actionExecuteQuery.triggered.connect(self.execute_query)
+        self.actionExecuteSelectedQuery.triggered.connect(self.execute_query_selected)
+        self.treeView.expanded.connect(self.sync_current_database)
 
     def refresh_schemas(self):
         self.treeView.setModel(self.con_manager.get_standard_item_model())
@@ -143,9 +151,138 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
     def set_current_file(self, file_path):
         idx = self.comboBoxCurrentFile.findText(file_path)
         if idx < 0:
-            self.comboBoxCurrentFile.addItem(file_path)
+            self.comboBoxCurrentFile.insertItem(0, file_path)
             idx = self.comboBoxCurrentFile.findText(file_path)
         self.comboBoxCurrentFile.setCurrentIndex(idx)
+
+    def set_current_database(self, db_name):
+        idx = self.comboBoxCurrentDatabase.findText(db_name)
+        if idx < 0:
+            self.comboBoxCurrentDatabase.insertItem(0, db_name)
+            idx = self.comboBoxCurrentDatabase.currentIndex()
+        self.comboBoxCurrentDatabase.setCurrentIndex(idx)
+
+    def sync_current_database(self, idx):
+        item = self.tree_model.itemFromIndex(idx)
+        if not item.parent():
+            # It's a database
+            self.set_current_database(item.text())
+        elif not item.parent().parent():
+            # It's a table
+            self.set_current_database(item.parent().text())
+        elif not item.hasChildren():
+            # It's a column
+            self.set_current_database(item.parent().parent().text())
+
+    def connect_database(self, db_name):
+        """
+        Sets the currently active database.
+        This one is a 'tough' design call because the con_manager
+        automatically generates connections for databases
+        in order to read out their MetaData and such...
+        :param db_name: (str)
+            The name of the database to activate
+        :return: None
+        """
+        if db_name is None:
+            db_name = self.tree_model.findItems(db_name)[0].text()
+        self.set_current_database(db_name)
+
+    def disconnect_database(self):
+        """
+        Sets the comboBoxCurrentDatabase to blank.
+        :param db_name: (str)
+            The name of the database to deactivate.
+        :return: None
+        """
+        self.set_current_database('')
+
+    def import_table(self, db_name, table_name, **kwargs):
+        """
+        Opens a DatabaseTableImportDialog for the current (or given)
+        database name allowing the user to import a DataFrameModel.
+        :param db_name: (str)
+            The name of a registered AlchemyConnection/database
+        :param table_name: (str)
+            The name of the table to add
+        :param kwargs:
+        :return:
+        """
+        pass
+
+    def export_table(self, db_name, table_name, **kwargs):
+        """
+        Opens export dialog for current database displaying
+        a DatabaseTableExportDialog. The user can export a table
+        to a file from there.
+        :param db_name:
+        :param table_name:
+        :param kwargs:
+        :return: (None)
+        """
+        pass
+
+    def add_database(self, *args, **kwargs):
+        """
+        Registers a new database connection.
+        and sync's the databases treeview.
+
+        This is also a slot that gets activated
+        when the DatabaseImportDialog is accepted.
+
+        See zeex.core.ctrls.sql.AlchemyConnectionManager.add_connection(*args, **kwargs)
+        for more details.
+
+        :param args: (AlchemyConnectionManager.add_connection(*args, **kwargs))
+        :param kwargs: (AlchemyConnectionManager.add_connection(*args, **kwargs))
+        :return: (None)
+        """
+        name = kwargs.get('name', None)
+        con = kwargs.get('connection', None)
+        check_name = (name if name is not None else con.name)
+        kwargs['allow_duplicate'] = False
+        self.con_manager.add_connection(*args, **kwargs)
+        self.refresh_schemas()
+
+    def execute_query(self, db_name=None, selected_text_only=False):
+        """
+        Executes the given SQL query against the given database.
+        Displays a message box with the error (if any), otherwise:
+        Stores the DataFrameModel to the TableView.
+
+        :param db_name: (str)
+            The name of the database to execute the query on.
+        :param selected_text_only: (bool, default False)
+            True executes only the selected text in the textEdit
+            False executes the entire text no matter what.
+        :return: None
+        """
+        if db_name is None:
+            db_name = self.comboBoxCurrentDatabase.currentText()
+        con = self.con_manager.connection(db_name)
+        statement = self.textEdit.textCursor().selectedText().lstrip().rstrip()
+        if selected_text_only is False or statement is '':
+            statement = self.textEdit.document().toPlainText().lstrip().rstrip()
+        try:
+            self._last_df_model = dfm = con.execute_sql(statement)
+        except Exception as e:
+            box = get_ok_msg_box(self, str(e), title="ERROR EXECUTING QUERY")
+            box.show()
+            raise
+        self.tableView.setModel(dfm)
+
+
+    def execute_query_selected(self, db_name=None):
+        """
+        Executes the selected text against the given database.
+        DatabasesMainWindow.execute_query(db_name, selected_text_only=True)
+        :param db_name: (str)
+            The database to execute the query on.
+        :return: None
+        """
+        return self.execute_query(db_name=db_name, selected_text_only=True)
+
+
 
 
 
