@@ -51,7 +51,7 @@ class TestAlchemyConnectionManager(MainTestClass):
         name = 'field_names'
         a = AlchemyConnectionManager()
         assert not a._connections
-        a.add_connection(name, **ci)
+        a.add_connection(name=name, **ci)
         assert a.connection(name) is not None
         assert isinstance(a.get_standard_item_model(), QtGui.QStandardItemModel)
         assert a._connections

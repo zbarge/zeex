@@ -27,6 +27,7 @@ import shutil
 from configparser import ConfigParser
 from core.compat import QtGui
 from ast import literal_eval as Eval
+import keyring
 
 DEFAULT_CONFIG_NAME = 'default.ini'
 DEFAULT_CONFIG_BACKUP_NAME = 'default_backup.ini'
@@ -110,6 +111,34 @@ class BaseConfig(ConfigParser):
     def set_path(self, section, option, value, **kwargs):
         value = os.path.normpath(value).replace("\\", '/')
         self.set(section, option, value, **kwargs)
+
+    def get_password(self, service_name, username=None, section=None, prefix=None):
+        if section is None:
+            section = service_name
+        if prefix is not None:
+            user_option = "{}_username"
+        else:
+            user_option = 'username'
+        if username is None:
+            username = self.get_safe(section, user_option, fallback=None)
+        pw = keyring.get_password(service_name, username)
+        if pw is None:
+            if username is None:
+                msg = "username was not found in settings for section '{}' & option '{}'".format(
+                    section, user_option)
+            else:
+                msg = "password was not found for username {} and service name {}".format(
+                    username, service_name)
+            raise KeyError(msg)
+        self.set_safe(section, user_option, username)
+        return pw
+
+    def set_password(self, service_name, username, password, **kwargs):
+        keyring.set_password(service_name, username, password)
+        self.get_password(service_name, username, **kwargs)
+
+
+
 
     def save(self):
         with open(self._filename, "w") as fh:

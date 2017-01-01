@@ -1,10 +1,16 @@
 # zeex
 
 A Python GUI studio with a goal to make common data analysis and standardization tasks simple.
-Utilizes Qt/PySide and Pandas libraries to provide a flexible toolbox for reading, writing, and manipulating rows and columns.
+Utilizes PySide, pandas, and SQLAlchemy libraries to provide a flexible toolbox for 
+working with rows and columns in many formats.
 
 
 # Features:
+- A SQL view/query tool using SQLAlchemy
+	- PostgreSQL
+	- SQLite
+	- MySQL
+
 - A template-maker for common tasks like
     - Renaming & organizing headers
     - Sorting rows
@@ -30,8 +36,6 @@ Utilizes Qt/PySide and Pandas libraries to provide a flexible toolbox for readin
     - Compression
     - DropBox upload/download
 
--
-
 - A file reader that guesses the encoding and delimiter of most file formats
     - .csv
     - .txt
@@ -50,7 +54,7 @@ Utilizes Qt/PySide and Pandas libraries to provide a flexible toolbox for readin
 
 ![basic](images/home.png)
 
-- Simple Database utility (powered by SQLAlchemy)
+- Database Main Window
 ![basic](images/database_query1.png)
 
 - Project Window

@@ -25,7 +25,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from qtpandas.models.DataFrameModel import DataFrameModel
-from core.models.dataframe import DataFrameDescriptionModel
 from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM
 
 SEPARATORS = {'Comma': ',',
@@ -50,6 +49,7 @@ class DataFrameModelManager(DFM):
         self._file_table_windows = {}
 
     def get_df_describe_model(self, filepath) -> DataFrameModel:
+        from core.models.dataframe import DataFrameDescriptionModel
         describe_path = DataFrameDescriptionModel.get_describe_path(filepath)
         try:
             return self.models[describe_path]

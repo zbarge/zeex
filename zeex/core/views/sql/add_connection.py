@@ -45,15 +45,12 @@ DATABASE = {
 
 class AlchemyConnectionDialog(QtGui.QDialog, Ui_AlchemyConnectionDialog):
     """
-    The general query/database maintenance MainWindow that is home
-    to the following main objects:
-        - A ToolBar with actions for simple database actions.
-        - A TreeView of all databases registered.
-        - A TextEdit for writing SQL queries
-        - A TableView for viewing results.
+    A dialog that allows a user to enter database connection parameters.
+    Successful connections are registered to the AlchemyConnectionManager
+    and the connection name is emitted whenever this happens.
     """
     signalConnectionAdded = QtCore.Signal(str)
-    
+
     def __init__(self, connection_manager: AlchemyConnectionManager, **kwargs):
         QtGui.QDialog.__init__(self, **kwargs)
         self.con_manager = connection_manager
@@ -63,11 +60,15 @@ class AlchemyConnectionDialog(QtGui.QDialog, Ui_AlchemyConnectionDialog):
         db_types = list(sorted(DBAPI_MAP.keys(), reverse=True))
         db_apis = DBAPI_MAP[db_types[0]]
         self.setupUi(self)
+        # Actions
         self.btnTestConnection.clicked.connect(self.test_connection)
         self.buttonBox.clicked.connect(self.register_connection)
         self.comboBoxDatabaseType.currentIndexChanged.connect(self.sync_options)
         self.lineEditConnectionURL.textChanged.connect(self.sync_options)
         self.btnClear.clicked.connect(self.reset_line_edit_text)
+
+        # default modes & items
+        self.lineEditPassword.setEchoMode(QtGui.QLineEdit.Password)
         self.comboBoxDatabaseType.addItems(db_types)
         self.comboBoxDatabaseAPI.addItems(db_apis)
         self.sync_options()

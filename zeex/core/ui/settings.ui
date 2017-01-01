@@ -183,35 +183,15 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="headerCaseComboBox"/>
+         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="headerSpacesLabel">
            <property name="text">
             <string>Header Spaces</string>
            </property>
           </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="autoSortLabel">
-           <property name="text">
-            <string>Auto Sort</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="autoSortCheckBox"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="autoDedupeLabel">
-           <property name="text">
-            <string>Auto Dedupe</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="autoDedupeCheckBox"/>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="headerCaseComboBox"/>
          </item>
          <item row="1" column="1">
           <widget class="QComboBox" name="headerSpacesComboBox"/>
@@ -234,222 +214,24 @@
         </property>
         <layout class="QFormLayout" name="outputSettingsFormLayout">
          <item row="0" column="0">
-          <widget class="QLabel" name="fileFormatLabel">
-           <property name="text">
-            <string>File Format</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="fileFormatComboBox"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="fileNamePrefixLabel">
-           <property name="text">
-            <string>File Name Prefix</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="fileNamePrefixLineEdit"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="chartSettingsFileLabel">
-           <property name="text">
-            <string>Chart Settings File</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="chartSettingsFileLineEdit"/>
-         </item>
-         <item row="3" column="0">
           <widget class="QLabel" name="separatorLabel">
            <property name="text">
             <string>Separator</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="0" column="1">
           <widget class="QComboBox" name="separatorComboBox"/>
          </item>
-         <item row="4" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="encodingLabel">
            <property name="text">
             <string>Encoding</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QComboBox" name="encodingComboBox"/>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="databaseSettings">
-       <attribute name="title">
-        <string>Database</string>
-       </attribute>
-       <widget class="QWidget" name="formLayoutWidget_4">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>251</width>
-          <height>421</height>
-         </rect>
-        </property>
-        <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="flavorLabel">
-           <property name="text">
-            <string>Flavor</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="flavorComboBox"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="urlLabel">
-           <property name="text">
-            <string>Url</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="urlLineEdit"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="defaultDatabaseLabel">
-           <property name="text">
-            <string>Default Database</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="defaultDatabaseLineEdit"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="usernameLabel">
-           <property name="text">
-            <string>Username</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="usernameLineEdit"/>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="passwordLabel">
-           <property name="text">
-            <string>Password</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="passwordLineEdit"/>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="portLabel">
-           <property name="text">
-            <string>Port</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLineEdit" name="portLineEdit"/>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="fieldSettingsWidget">
-       <attribute name="title">
-        <string>Fields</string>
-       </attribute>
-       <widget class="QWidget" name="horizontalLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>511</width>
-          <height>421</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="fieldsGridHLayout">
-         <property name="margin">
-          <number>10</number>
-         </property>
-         <item>
-          <layout class="QGridLayout" name="fieldsGridLayout">
-           <property name="margin">
-            <number>10</number>
-           </property>
-           <item row="1" column="0">
-            <widget class="QLabel" name="dedupeFieldsLabel">
-             <property name="text">
-              <string>Dedupe Fields</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QListView" name="dedupeFieldsListView"/>
-           </item>
-           <item row="2" column="1">
-            <widget class="QColumnView" name="sortFieldsColumnView"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="sortFieldsLabel">
-             <property name="text">
-              <string>Sort Fields</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QGridLayout" name="dtypesGridLayout">
-           <item row="3" column="0">
-            <widget class="QLabel" name="floatFieldsLabel">
-             <property name="text">
-              <string>Float Fields</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QListView" name="strFieldsListView"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="intFieldsLabel">
-             <property name="text">
-              <string>Integer Fields</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="stringFieldsLabel">
-             <property name="text">
-              <string>String Fields</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QListView" name="floatFieldsListView"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="dateFieldsLabel">
-             <property name="text">
-              <string>Date Fields</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QListView" name="intFieldsListView"/>
-           </item>
-           <item row="4" column="1">
-            <widget class="QListView" name="dateFieldsListView"/>
-           </item>
-          </layout>
+          <widget class="QComboBox" name="encodingComboBox"/>
          </item>
         </layout>
        </widget>

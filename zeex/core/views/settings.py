@@ -126,12 +126,6 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         CHART_FILE =      c.get_safe('OUTPUT', 'CHART_FILENAME',  fallback="")
         SEPARATOR =       c.get_safe('OUTPUT', 'SEPARATOR',       fallback=",")
         ENCODING =        c.get_safe('OUTPUT', 'ENCODING',        fallback="UTF_8")
-        DB_FLAVOR =       c.get_safe('DATABASE', 'FLAVOR',           fallback="SQLITE")
-        DB_URL =          c.get_safe('DATABASE', 'URL',              fallback="")
-        DB_NAME =         c.get_safe('DATABASE', 'DEFAULT_DATABASE', fallback=None)
-        DB_USERNAME =     c.get_safe('DATABASE', 'USERNAME',        fallback= None)
-        DB_PASSWORD =     c.get_safe('DATABASE', 'PASSWORD',         fallback=None)
-        DB_PORT =         c.get_safe('DATABASE', 'PORT',             fallback=None)
 
 
         DEDUPE_FIELDS =   c.get_safe('FIELDS', 'DEDUPE', fallback=[])
@@ -151,53 +145,20 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
             except OSError as e:
                 raise OSError("Cannot initialize settings directory {} - {}".format(fp, e))
                 sys.exit(1)
-
-        self.autoSortCheckBox.setCheckable(True)
-        self.autoDedupeCheckBox.setCheckable(True)
-
-        if AUTO_SORT:
-            self.autoSortCheckBox.setChecked(True)
-
-        if AUTO_DEDUPE:
-            self.autoSortCheckBox.setChecked(True)
         
         #LINE EDITS
         self.rootDirectoryLineEdit.setText(      ROOT_DIR)
         self.logDirectoryLineEdit.setText(       LOG_DIR)
-        self.fileNamePrefixLineEdit.setText(     FILENAME_PFX)
-        self.chartSettingsFileLineEdit.setText(  CHART_FILE)
-        self.urlLineEdit.setText(                DB_URL)
-        self.defaultDatabaseLineEdit.setText(    DB_NAME)
-        self.usernameLineEdit.setText(           DB_USERNAME)
-        self.passwordLineEdit.setText(           DB_PASSWORD)
-        self.portLineEdit.setText(               DB_PORT)
         
         #COMBO BOXES
         configure_combo_box(self.logLevelComboBox, ['Low', 'Medium', 'High'], LOG_LEVEL)
         configure_combo_box(self.cloudProviderComboBox, ['Google Drive', 'S3', 'DropBox'], CLOUD_PROVIDER)
         configure_combo_box(self.headerCaseComboBox, ['lower', 'UPPER', 'Proper'], HEADER_CASE)
         configure_combo_box(self.headerSpacesComboBox, [' ', '_'], HEADER_SPACE)
-        configure_combo_box(self.fileFormatComboBox, DEFAULT_FILE_FORMATS, OUTPUT_FORMAT)
-        configure_combo_box(self.flavorComboBox, DEFAULT_FLAVORS, DB_FLAVOR)
         configure_combo_box(self.separatorComboBox, DEFAULT_SEPARATORS, SEPARATOR)
         configure_combo_box(self.encodingComboBox, DEFAULT_CODECS, ENCODING)
         configure_combo_box(self.themeComboBox, DEFAULT_THEME_OPTIONS, THEME_NAME)
         self.set_theme(THEME_NAME)
-        
-        #Field Models
-        self.dedupeFieldsModel = FieldsListModel(items=DEDUPE_FIELDS)
-        self.sortFieldsModel   = FieldsListModel(items=SORT_FIELDS)
-        self.strFieldsModel    = FieldsListModel(items=STRING_FIELDS)
-        self.intFieldsModel    = FieldsListModel(items=INTEGER_FIELDS)
-        self.dateFieldsModel   = FieldsListModel(items=DATE_FIELDS)
-        self.floatFieldsModel  = FieldsListModel(items=FLOAT_FIELDS)
-        
-        self.dedupeFieldsListView.setModel(self.dedupeFieldsModel)
-        self.sortFieldsColumnView.setModel(self.sortFieldsModel)
-        self.strFieldsListView.setModel(   self.strFieldsModel)
-        self.intFieldsListView.setModel(   self.intFieldsModel)
-        self.dateFieldsListView.setModel(  self.dateFieldsModel)
-        self.floatFieldsListView.setModel( self.floatFieldsModel)
 
         self.save_settings(to_path=None, write=False)
         
@@ -212,25 +173,6 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
 
         self.settings_ini.set_safe('INPUT', 'HEADER_CASE', self.headerCaseComboBox.currentText())
         self.settings_ini.set('INPUT', 'HEADER_SPACE', self.headerSpacesComboBox.currentText())
-        self.settings_ini.set_safe('INPUT', 'AUTO_SORT', self.autoSortCheckBox.isChecked())
-        self.settings_ini.set_safe('INPUT', 'AUTO_DEDUPE', self.autoDedupeCheckBox.isChecked())
-
-        self.settings_ini.set_safe('OUTPUT', 'OUTPUT_FORMAT', self.fileFormatComboBox.currentText())
-        self.settings_ini.set('OUTPUT', 'FILENAME_PREFIX', self.fileNamePrefixLineEdit.text())
-        self.settings_ini.set('OUTPUT', 'CHART_FILENAME', self.chartSettingsFileLineEdit.text())
-
-        self.settings_ini.set_safe('DATABASE', 'FLAVOR', self.flavorComboBox.currentText())
-        self.settings_ini.set('DATABASE', 'URL', self.urlLineEdit.text())
-        self.settings_ini.set('DATABASE', 'DEFAULT_DATABASE', self.defaultDatabaseLineEdit.text())
-        self.settings_ini.set('DATABASE', 'USERNAME', self.usernameLineEdit.text())
-        self.settings_ini.set('DATABASE', 'PASSWORD', self.passwordLineEdit.text())
-
-        self.settings_ini.set_safe('FIELDS', 'DEDUPE', self.dedupeFieldsModel.get_data_list())
-        self.settings_ini.set_safe('FIELDS', 'SORT', self.sortFieldsModel.get_data_list())
-        self.settings_ini.set_safe('FIELDS', 'STRING', self.strFieldsModel.get_data_list())
-        self.settings_ini.set_safe('FIELDS', 'DATE', self.dateFieldsModel.get_data_list())
-        self.settings_ini.set_safe('FIELDS', 'INTEGER', self.intFieldsModel.get_data_list())
-        self.settings_ini.set_safe('FIELDS', 'FLOAT', self.floatFieldsModel.get_data_list())
 
         if write or to_path is not None:
             if to_path is None:
@@ -245,14 +187,11 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
     def clear_settings(self):
         self.cloudProviderComboBox.clear()
         self.encodingComboBox.clear()
-        self.fileFormatComboBox.clear()
-        self.flavorComboBox.clear()
         self.headerCaseComboBox.clear()
         self.headerSpacesComboBox.clear()
         self.logLevelComboBox.clear()
         self.separatorComboBox.clear()
         self.themeComboBox.clear()
-
 
     def export_settings(self, to=None, set_self=False):
         if to is None:
