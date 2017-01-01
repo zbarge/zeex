@@ -50,6 +50,8 @@ Utilizes Qt/PySide and Pandas libraries to provide a flexible toolbox for readin
 
 ![basic](images/home.png)
 
+- Simple Database utility (powered by SQLAlchemy)
+![basic](images/database_query1.png)
 
 - Project Window
 
