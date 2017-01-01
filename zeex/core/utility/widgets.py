@@ -28,7 +28,11 @@ import os
 from core.compat import QtGui, QtCore
 
 
-def configure_combo_box(box, options, default):
+def configure_combo_box(box: QtGui.QComboBox, options, default, clear=True):
+    if clear and box.count() > 0:
+        box.clear()
+    if not isinstance(options, list):
+        options = list(options)
     box.addItems(options)
     idx = box.findText(default)
     if idx >= 0:

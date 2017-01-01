@@ -27,9 +27,10 @@ import os
 from ...ui.sql.main_ui import Ui_DatabasesMainWindow
 from ...compat import QtGui
 from ...models.fieldnames import connection_info as fieldnames_connection_info
-from ...ctrls.sql import AlchemyConnectionManager
+from core.ctrls.sql import AlchemyConnectionManager
 from core.utility.widgets import get_ok_msg_box
 from core.ctrls.dataframe import DataFrameModelManager
+from .add_connection import AlchemyConnectionDialog
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -48,11 +49,10 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         QtGui.QMainWindow.__init__(self, *args, **kwargs)
         self._last_text_dir = ''
         self._last_text_path = ''
-        self.setupUi(self)
         self.con_manager = connection_manager
         self.df_manager = df_manager
+        self._dialog_add_con = None
         self.configure()
-
 
     @property
     def tree_model(self) -> QtGui.QStandardItemModel:
@@ -62,6 +62,13 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         :return: (QtGui.QStandardItemModel)
         """
         return self.treeView.model()
+
+    @property
+    def dialog_add_con(self) -> AlchemyConnectionDialog:
+        if self._dialog_add_con is None:
+            self._dialog_add_con = AlchemyConnectionDialog(self.con_manager, parent=self)
+            self._dialog_add_con.signalConnectionAdded.connect(self.refresh_schemas)
+        return self._dialog_add_con
 
     def connect_default_databases(self):
         """
@@ -89,6 +96,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         - sets treeView model.
         :return: (None)
         """
+        self.setupUi(self)
         if self.con_manager is None:
             self.con_manager = AlchemyConnectionManager()
         if self.df_manager is None:
@@ -105,7 +113,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.actionDisconnectFromDatabase.triggered.connect(self.disconnect_database)
         self.actionExportFile.triggered.connect(self.export_table)
         self.actionImportFile.triggered.connect(self.import_table)
-        self.actionAddDatabase.triggered.connect(self.add_database)
+        self.actionAddDatabase.triggered.connect(self.open_add_connection_dialog)
         self.actionExecuteQuery.triggered.connect(self.execute_query)
         self.actionExecuteSelectedQuery.triggered.connect(self.execute_query_selected)
         self.treeView.expanded.connect(self.sync_current_database)
@@ -206,6 +214,9 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         with open(file_path, "r") as fp:
             self.textEdit.setPlainText(fp.read())
         self.set_current_file(file_path)
+
+    def open_add_connection_dialog(self):
+        self.dialog_add_con.show()
 
     def set_current_file(self, file_path):
         """
@@ -371,6 +382,9 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
                 save_path = os.path.splitext(self._last_text_path)[0] + ".csv"
             else:
                 save_path = QtGui.QFileDialog.getSaveFileName(dir=self._last_text_dir)[0]
+        base, ext = os.path.splitext(save_path)
+        if ext.lower() not in ['.txt','.xlsx', '.csv']:
+            save_path = base + ".csv"
         self.df_manager.set_model(dfm, save_path)
         self.df_manager.get_fileview_window(save_path).show()
 
