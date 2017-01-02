@@ -139,10 +139,11 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
 
         for i in range(df.index.size):
             entry = df.iloc[i]
-            matches = self.fmodel.findItems(entry['old'])
+            matches = self.fmodel.findItems(entry[columns[0]])
             if matches:
                 [self.fmodel.takeRow(r.row()) for r in matches]
-            self.fmodel.set_field(entry['old'], entry['new'], entry['dtype'])
+
+            self.fmodel.set_field(*[entry[c] for c in columns])
 
         # Clear entries that dont exist in the dataframe columns.
         for i in range(self.fmodel.rowCount()):
@@ -181,9 +182,9 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
                 self.fmodel.set_field(n, dtype=new_df[n].dtype)
 
     def export_template(self, filename=None, to_frame=False, **kwargs):
-        columns = ['old', 'new', 'dtype']
         fm = self.fmodel
-        data = [[fm.item(i, x).text() for x in range(3)]
+        columns = [fm.horizontalHeaderItem(i).text() for i in fm.columnCount()]
+        data = [[fm.item(i, x).text() for x in range(fm.columnCount())]
                 for i in range(fm.rowCount())]
 
         df = pd.DataFrame(data, columns=columns, index=list(range(len(data))))

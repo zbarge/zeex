@@ -78,7 +78,6 @@ class BaseConfig(ConfigParser):
         self._default_backup_path = default_backup_path
         self._filename = filename
 
-
     @property
     def filename(self):
         return self._filename
@@ -140,9 +139,6 @@ class BaseConfig(ConfigParser):
     def set_password(self, service_name, username, password, **kwargs):
         keyring.set_password(service_name, username, password)
         self.get_password(service_name, username, **kwargs)
-
-
-
 
     def save(self):
         with open(self._filename, "w") as fh:

@@ -29,18 +29,9 @@ from core.ui.sql.add_connection_ui import Ui_AlchemyConnectionDialog
 from core.compat import QtGui, QtCore
 from core.utility.widgets import get_ok_msg_box, configure_combo_box
 from sqlalchemy.engine.url import URL
-from sqlalchemy import create_engine
 
 DBAPI_MAP = {'sqlite':['pysqlite'], 'mysql':['mysqldb','pymysql'],
              'postgresql':['psycopg2']}
-DATABASE = {
-    'drivername': 'postgres+pg8000',
-    'host': '',
-    'port': '',
-    'username': '',
-    'password': '',
-    'database': ''
-}
 
 
 class AlchemyConnectionDialog(QtGui.QDialog, Ui_AlchemyConnectionDialog):
@@ -113,15 +104,18 @@ class AlchemyConnectionDialog(QtGui.QDialog, Ui_AlchemyConnectionDialog):
                         'username': username or None,
                         'password': password or None,
                         'database': database or None}
-            print(DATABASE)
-            a._engine = create_engine(URL(**DATABASE))
+            try:
+                __import__(db_api)
+            except ImportError:
+                print("Unable to import DBAPI: {} - you need to pip install it.".format(db_api))
+                DATABASE['drivername'] = db_type
+            uri = URL(**DATABASE)
+
         else:
             if db_type == 'sqlite' and not uri.startswith('sqlite'):
-                uri = 'sqlite:///' + uri.replace("\\", "/").replace("//", "/").replace("/", "\\\\")
-            print(uri)
-            a._engine = create_engine(uri)
-
-        a.configure(reset=False)
+                uri = uri.replace("\\", "/").replace("//", "/").replace("/", "\\\\")
+                uri = URL('sqlite', database=uri)
+        a.configure_from_url(uri)
         return a
 
     def register_connection(self, connection=None):
@@ -186,6 +180,8 @@ class AlchemyConnectionDialog(QtGui.QDialog, Ui_AlchemyConnectionDialog):
             self.labelUsername.show()
             self.labelDefaultDatabase.show()
             self.lineEditDefaultDatabase.show()
+            self.labelDatabaseAPI.show()
+            self.comboBoxDatabaseAPI.show()
         configure_combo_box(self.comboBoxDatabaseAPI, DBAPI_MAP[db_type], db_api)
 
     def reset_line_edit_text(self):

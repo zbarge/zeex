@@ -33,6 +33,7 @@ from core.utility.widgets import create_standard_item
 from core.models.dataframe import DataFrameModel
 from core.utility.collection import DictConfig, get_default_config_directory
 
+
 class AlchemyConnection(object):
     """
     A container for a SQLAlchemy connection.
@@ -337,7 +338,7 @@ class AlchemyConnectionManager(object):
     """
     def __init__(self, dict_config=None):
         self._connections = {} # AlchemyConnections stored as key/value pairs here
-        self._config = dict_config
+        self._config = dict_config # connection configuration object stored here
 
     @property
     def connections(self) -> dict:
@@ -349,6 +350,10 @@ class AlchemyConnectionManager(object):
 
     @property
     def config(self) -> DictConfig:
+        """
+        Public accessor to the DictConfig object.
+        :return: (DictConfig)
+        """
         if self._config is None:
             self._config = self.get_default_config()
         return self._config
@@ -366,7 +371,16 @@ class AlchemyConnectionManager(object):
         return self.config.filename
 
     @staticmethod
-    def get_default_config(dictionary:dict = None):
+    def get_default_config(dictionary:dict = None) -> DictConfig:
+        """
+        Returns a DictConfig object that contains data from
+        zeex.configs.databases.ini if the path exists.
+
+        :param dictionary: (dict, default None)
+            An optional dictionary of compiled settings to load.
+        :return: (DictConfig)
+            With compiled settings.
+        """
         filename = os.path.join(get_default_config_directory(), "databases.ini")
         c = DictConfig(filename=filename)
         if os.path.exists(filename):
@@ -523,6 +537,17 @@ class AlchemyConnectionManager(object):
         return model
 
     def save_settings(self, file_path=None):
+        """
+        Saves all current connection details to a file path, securely stores
+        passwords using the method::zeex.core.utility.collection.BaseConfig.set_password
+        this method wraps the keyring library to store credentials.
+
+        :param file_path: (str, default None)
+            None will save the settings to zeex.configs.databases.ini
+
+        :return: (DictConfig)
+            Containing the details of the configurations (sans passwords).
+        """
         if file_path is None:
             file_path = self.config_path
         config = self.config
@@ -544,20 +569,62 @@ class AlchemyConnectionManager(object):
             con_args = url.translate_connect_args()
             password = con_args.get('password', None)
             if password is not None:
+                # Securely store the password.
+                # Remove from connection arguments.
                 config.set_password(section,
                                     con_args.pop('username'),
                                     con_args.pop('password'))
 
             for key, value in con_args.items():
                 config.set_safe(section, key, value)
+
             if 'drivername' not in config.options(section):
                 drivername = "{}+{}".format(con.engine.name, con.engine.driver)
                 config.set_safe(section, 'drivername', drivername)
 
         config.save_as(file_path, set_self=True)
+        return config
 
     def add_connections_from_settings(self, settings: DictConfig=None, sections=None,
-                                      raise_on_error=True):
+                                      raise_on_error=False) -> list:
+        """
+        Adds database connections from a DictConfig (ConfigParser) object.
+
+        List of configuration options available from SQLAlchemy:
+        (http://docs.sqlalchemy.org/en/latest/core/engines.html)
+        ========================================================
+            drivername – the name of the database backend.
+                         This name will correspond to a module in sqlalchemy/databases
+                         or a third party plug-in.
+            username – The user name.
+            password – database password.
+            host – The name of the host.
+            port¶ – The port number.
+            database – The database name.
+            query – A dictionary of options to be passed to the
+                    dialect and/or the DBAPI upon connect.
+        ========================================================
+
+        :param settings: (DictConfig, default None)
+            None uses the last saved zeex.configs.databases.ini file
+            example configuration setup:
+                [connection name1]
+                database=C:/Users/User/database1.db
+                drivername=sqlite+pysqlite
+            The above example could be accessed like:
+                alchemy_connection = AlchemyConnectionManager.connection('connection name1')
+
+        :param sections: (list, default None)
+            An optional list of connection names to connect to.
+            None uses all available sections in the :param settings object
+
+        :param raise_on_error: (bool, default False)
+            True raises errors when a connection fails to add
+            False prints that the connection failed to add on the console.
+
+        :return: (list)
+            Of connection names that were successfully added
+        """
         if settings is None:
             settings = self.config
         if sections is None:
@@ -586,7 +653,6 @@ class AlchemyConnectionManager(object):
                         else:
                             print("Error adding connection: {}, {}".format(s, e))
         return added
-
 
 
 
