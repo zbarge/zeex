@@ -56,6 +56,10 @@ def get_default_config_path():
     return f
 
 
+def get_default_config_directory():
+    return os.path.dirname(get_default_config_path())
+
+
 def get_config_backup_path(default):
     f = os.path.join(os.path.dirname(default), DEFAULT_CONFIG_BACKUP_NAME)
     if not os.path.exists(f):

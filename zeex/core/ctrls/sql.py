@@ -23,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
 import pandas as pd
 import sqlalchemy
 from sqlalchemy import create_engine, MetaData, inspect
@@ -30,7 +31,7 @@ from sqlalchemy.orm import sessionmaker
 from core.compat import QtGui
 from core.utility.widgets import create_standard_item
 from core.models.dataframe import DataFrameModel
-
+from core.utility.collection import DictConfig, get_default_config_directory
 
 class AlchemyConnection(object):
     """
@@ -101,8 +102,10 @@ class AlchemyConnection(object):
         if reset:
 
             self._engine = create_engine(*args, **kwargs)
-            self.args = args
-            self.kwargs = kwargs
+            if args:
+                self.args = args
+            if kwargs:
+                self.kwargs = kwargs
             self._meta = MetaData(bind=self.engine)
             self._meta.reflect()
             self._inspector = inspect(self.engine)
@@ -125,6 +128,14 @@ class AlchemyConnection(object):
 
             if self._Session is None:
                 self._Session = sessionmaker(bind=self.engine)
+
+    def configure_from_url(self, url):
+        try:
+            engine = create_engine(url)
+        except TypeError as e:
+            raise TypeError("Error creating engine: {}, {}".format(url, e))
+        self._engine = engine
+        self.configure(reset=False)
 
     @property
     def Session(self) -> sqlalchemy.orm.session.sessionmaker:
@@ -324,8 +335,9 @@ class AlchemyConnectionManager(object):
     store a reference to this container and use it to store
     and retrieve AlchemyConnections & their sessions.
     """
-    def __init__(self):
+    def __init__(self, dict_config=None):
         self._connections = {} # AlchemyConnections stored as key/value pairs here
+        self._config = dict_config
 
     @property
     def connections(self) -> dict:
@@ -334,6 +346,34 @@ class AlchemyConnectionManager(object):
         :return:
         """
         return self._connections
+
+    @property
+    def config(self) -> DictConfig:
+        if self._config is None:
+            self._config = self.get_default_config()
+        return self._config
+
+    @property
+    def config_path(self) -> str:
+        """
+        An accessor to the DictConfig object's filename.
+        Defaults to "zeex.configs.databases.ini"
+
+        :return: (str)
+            Config path.
+
+        """
+        return self.config.filename
+
+    @staticmethod
+    def get_default_config(dictionary:dict = None):
+        filename = os.path.join(get_default_config_directory(), "databases.ini")
+        c = DictConfig(filename=filename)
+        if os.path.exists(filename):
+            c.read(filename)
+        if dictionary:
+            c.read_dict(dictionary)
+        return c
 
     def add_connection(self, *args, name: str=None,
                        connection: AlchemyConnection=None,
@@ -481,6 +521,76 @@ class AlchemyConnectionManager(object):
         model.setHorizontalHeaderLabels(['Connections'])
         model.sort(0)
         return model
+
+    def save_settings(self, file_path=None):
+        if file_path is None:
+            file_path = self.config_path
+        config = self.config
+
+        for name in self.connections.keys():
+            con = self.connection(name)
+            section = con.name
+            args, kwargs = con.args, con.kwargs
+            url = None
+            if args:
+                try:
+                    url = sqlalchemy.engine.url.make_url(args[0])
+                except Exception:
+                    pass
+
+            if url is None:
+                url = sqlalchemy.engine.url.make_url(con.engine.url)
+
+            con_args = url.translate_connect_args()
+            password = con_args.get('password', None)
+            if password is not None:
+                config.set_password(section,
+                                    con_args.pop('username'),
+                                    con_args.pop('password'))
+
+            for key, value in con_args.items():
+                config.set_safe(section, key, value)
+            if 'drivername' not in config.options(section):
+                drivername = "{}+{}".format(con.engine.name, con.engine.driver)
+                config.set_safe(section, 'drivername', drivername)
+
+        config.save_as(file_path, set_self=True)
+
+    def add_connections_from_settings(self, settings: DictConfig=None, sections=None,
+                                      raise_on_error=True):
+        if settings is None:
+            settings = self.config
+        if sections is None:
+            sections = settings.sections()
+        else:
+            sections = [s for s in settings.sections() if s in sections]
+        added = []
+        if sections:
+            for s in sections:
+                options = settings.options(s)
+                if 'database' in options and s not in self.connections:
+                    # should be a valid section
+                    try:
+                        info = {o: settings.get(s, o) for o in options}
+                        username = info.get('username')
+                        if username is not None:
+                            info['password'] = settings.get_password(s, username=username)
+                        url = sqlalchemy.engine.url.URL(info.pop('drivername'), **info)
+                        con = AlchemyConnection(name=s)
+                        con.configure_from_url(url)
+                        self.add_connection(connection=con)
+                        added.append(s)
+                    except Exception as e:
+                        if raise_on_error:
+                            raise
+                        else:
+                            print("Error adding connection: {}, {}".format(s, e))
+        return added
+
+
+
+
+
 
 
 

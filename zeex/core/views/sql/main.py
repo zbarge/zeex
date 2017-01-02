@@ -84,7 +84,8 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             except KeyError:
                 self.con_manager.add_connection(name=name, **ci)
                 new = True
-        if new:
+        others = self.con_manager.add_connections_from_settings()
+        if new or others:
             self.treeView.setModel(self.con_manager.get_standard_item_model())
 
     def configure(self):
