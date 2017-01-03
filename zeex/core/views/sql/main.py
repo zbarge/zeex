@@ -27,10 +27,11 @@ import os
 from ...ui.sql.main_ui import Ui_DatabasesMainWindow
 from ...compat import QtGui
 from ...models.fieldnames import connection_info as fieldnames_connection_info
-from core.ctrls.sql import AlchemyConnectionManager
+from core.ctrls.sql import AlchemyConnectionManager, AlchemyConnection
 from core.utility.widgets import get_ok_msg_box
 from core.ctrls.dataframe import DataFrameModelManager
 from .add_connection import AlchemyConnectionDialog
+from zeex.core.views.sql.query_editor import AlchemyQueryEditorWindow
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -47,11 +48,13 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
                  df_manager:DataFrameModelManager = None,
                  connection_manager: AlchemyConnectionManager = None, **kwargs):
         QtGui.QMainWindow.__init__(self, *args, **kwargs)
+        self._last_df_model = None
         self._last_text_dir = ''
         self._last_text_path = ''
         self.con_manager = connection_manager
         self.df_manager = df_manager
         self._dialog_add_con = None
+        self._key_enter = QtGui.QShortcut(self)
         self.configure()
 
     @property
@@ -69,6 +72,10 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             self._dialog_add_con = AlchemyConnectionDialog(self.con_manager, parent=self)
             self._dialog_add_con.signalConnectionAdded.connect(self.refresh_schemas)
         return self._dialog_add_con
+
+    @property
+    def connection(self) -> AlchemyConnection:
+        return self.con_manager.connection(self.comboBoxCurrentDatabase.currentText())
 
     def connect_default_databases(self):
         """
@@ -102,6 +109,8 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             self.con_manager = AlchemyConnectionManager()
         if self.df_manager is None:
             self.df_manager = DataFrameModelManager()
+        self._key_enter.setKey('return')
+        self._key_enter.activated.connect(self.open_query_alchemyview)
 
         self.treeView.setModel(self.con_manager.get_standard_item_model())
         self.actionRemove.triggered.connect(self.delete)
@@ -388,6 +397,19 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             save_path = base + ".csv"
         self.df_manager.set_model(dfm, save_path)
         self.df_manager.get_fileview_window(save_path).show()
+
+    def open_query_alchemyview(self):
+        con = self.connection
+        table_name = self.tree_model.itemFromIndex(self.treeView.selectedIndexes()[0]).text()
+        table = con.get_class_by_tablename(table_name)
+        sess = con.Session()
+        query = sess.query(con.Base.classes.fields)
+        columns = con.get_column_names(table_name)
+        model = con.get_alchemy_model(sess, query, columns)
+        print(type(model))
+        window = AlchemyQueryEditorWindow(model, parent=self)
+        window.show()
+
 
 
 

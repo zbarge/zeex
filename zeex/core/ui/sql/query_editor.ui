@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QueryEditorWindow</class>
+ <widget class="QMainWindow" name="QueryEditorWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>746</width>
+    <height>642</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Query Editor</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTableView" name="tableView"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>746</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuActions">
+    <property name="title">
+     <string>Actions</string>
+    </property>
+    <addaction name="actionCommit"/>
+    <addaction name="actionUndo"/>
+    <addaction name="actionCriteria"/>
+    <addaction name="actionRefresh"/>
+   </widget>
+   <addaction name="menuActions"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCommit"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRefresh"/>
+   <addaction name="actionCriteria"/>
+  </widget>
+  <action name="actionCommit">
+   <property name="icon">
+    <iconset>
+     <activeon>:/standard_icons/save.png</activeon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Commit</string>
+   </property>
+   <property name="toolTip">
+    <string>Commit changes to the database</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../../../icons/icons.qrc">
+     <normaloff>:/standard_icons/undo.png</normaloff>:/standard_icons/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="toolTip">
+    <string>Rollback changes made to data</string>
+   </property>
+  </action>
+  <action name="actionCriteria">
+   <property name="icon">
+    <iconset resource="../../../icons/icons.qrc">
+     <normaloff>:/standard_icons/filter.png</normaloff>:/standard_icons/filter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Criteria</string>
+   </property>
+   <property name="toolTip">
+    <string>View or change criteria</string>
+   </property>
+  </action>
+  <action name="actionRefresh">
+   <property name="icon">
+    <iconset>
+     <activeon>:/standard_icons/refresh.png</activeon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+   <property name="toolTip">
+    <string>Refresh data from the database/reset filters</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../../icons/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

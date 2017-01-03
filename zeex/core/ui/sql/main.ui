@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>704</width>
-    <height>580</height>
+    <width>785</width>
+    <height>591</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>175</width>
+          <width>125</width>
           <height>16777215</height>
          </size>
         </property>
@@ -55,7 +55,20 @@
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="2" column="0">
-         <widget class="QTextEdit" name="textEdit"/>
+         <widget class="QTextEdit" name="textEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>350</height>
+           </size>
+          </property>
+         </widget>
         </item>
         <item row="3" column="0">
          <widget class="QTableView" name="tableView"/>
@@ -128,7 +141,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>704</width>
+     <width>785</width>
      <height>21</height>
     </rect>
    </property>

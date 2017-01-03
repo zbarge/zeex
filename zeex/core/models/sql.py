@@ -7,18 +7,26 @@ https://gist.github.com/harvimt/4699169
 from core.compat import QtGui, QtCore
 QAbstractTableModel, QVariant, Qt = QtCore.QAbstractTableModel, str, QtCore.Qt
 
+class CustomQVariant(object):
+    def __init__(self, value=''):
+        self.value = str(value)
 
-class AlchemicalTableModel(QAbstractTableModel):
+    def get(self, *args, **kwargs):
+        return self.value
+
+QVariant = CustomQVariant
+
+class AlchemyTableModel(QAbstractTableModel):
     """
     A Qt Table Model that binds to a SQL Alchemy query
     Example:
-    >>> model = AlchemicalTableModel(Session, [('Name', Entity.name)])
+    >>> model = AlchemyTableModel(Session, [('Name', Entity.name)])
     >>> table = QTableView(parent)
     >>> table.setModel(model)
     """
 
     def __init__(self, session, query, columns):
-        super(AlchemicalTableModel, self).__init__()
+        super(AlchemyTableModel, self).__init__()
         # TODO self.sort_data = None
         self.session = session
         self.fields = columns
@@ -28,12 +36,18 @@ class AlchemicalTableModel(QAbstractTableModel):
         self.count = None
         self.sort = None
         self.filter = None
-
         self.refresh()
+        self.changes = []
 
     def headerData(self, col, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return QVariant(self.fields[col][0])
+        if role != Qt.DisplayRole:
+            return None
+
+        if orientation == Qt.Horizontal:
+            return self.fields[col]
+        elif orientation == Qt.Vertical:
+            return col
+
         return QVariant()
 
     def setFilter(self, filter):
@@ -45,7 +59,9 @@ class AlchemicalTableModel(QAbstractTableModel):
         """Recalculates, self.results and self.count"""
 
         self.layoutAboutToBeChanged.emit()
-
+        if not isinstance(self.fields, list):
+            print("Fields wasn't list: {}".format(self.fields))
+            self.fields = [f for f in self.fields]
         q = self.query
         if self.sort is not None:
             order, col = self.sort
@@ -70,11 +86,10 @@ class AlchemicalTableModel(QAbstractTableModel):
         if self.sort is not None:
             order, col = self.sort
 
-            if self.fields[col][3].get('dnd', False) and index.column() == col:
+            if index.column() == col:
                 _flags |= Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
 
-        if self.fields[index.column()][3].get('editable', False):
-            _flags |= Qt.ItemIsEditable
+        _flags |= Qt.ItemIsEditable
 
         return _flags
 
@@ -101,25 +116,45 @@ class AlchemicalTableModel(QAbstractTableModel):
             return QVariant()
 
         row = self.results[index.row()]
-        name = self.fields[index.column()][2]
+        name = self.fields[index.column()]
 
         return str(getattr(row, name))
 
     def setData(self, index, value, role=None):
         row = self.results[index.row()]
-        name = self.fields[index.column()][2]
-
+        name = self.fields[index.column()]
+        if not isinstance(value, str):
+            value = value.toString()
         try:
-            setattr(row, name, value.toString())
-            self.session.commit()
+            orig = getattr(row, name, value)
+            setattr(row, name, value)
+            new = getattr(row, name, value)
+            print("Commited - {} - {}".format(orig, new))
         except Exception as ex:
+            print(ex)
             QtGui.QMessageBox.critical(None, 'SQL Error', str(ex))
             return False
         else:
-            self.dataChanged.emit(index, index)
+            self.changes.append(index)
+            print("Data changed")
             return True
 
     def sort(self, col, order):
         """Sort table by given column number."""
         pass
+
+    def commit(self):
+        if self.changes:
+            self.session.commit()
+            for i in range(len(self.changes)):
+                idx = self.changes[i]
+                self.dataChanged.emit(idx, idx)
+            self.changes = []
+            self.refresh()
+
+    def rollback(self):
+        if self.changes:
+            self.session.rollback()
+            self.changes = []
+            self.refresh()
 

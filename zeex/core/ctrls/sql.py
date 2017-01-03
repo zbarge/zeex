@@ -28,10 +28,12 @@ import pandas as pd
 import sqlalchemy
 from sqlalchemy import create_engine, MetaData, inspect
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.automap import automap_base
 from core.compat import QtGui
 from core.utility.widgets import create_standard_item
 from core.models.dataframe import DataFrameModel
 from core.utility.collection import DictConfig, get_default_config_directory
+from zeex.core.models.sql import AlchemyTableModel
 
 
 class AlchemyConnection(object):
@@ -75,6 +77,7 @@ class AlchemyConnection(object):
         self._Session = kwargs.pop('Session', None)
         self._meta = kwargs.pop('meta', None)
         self._inspector = kwargs.pop('inspector', None)
+        self._Base = kwargs.pop('Base', None)
         if args or kwargs or self._engine is not None:
             # Force reset to false if
             # we're setting the connection on __init__.
@@ -111,6 +114,8 @@ class AlchemyConnection(object):
             self._meta.reflect()
             self._inspector = inspect(self.engine)
             self._Session = sessionmaker(bind=self.engine)
+            self._Base = automap_base(metadata=self.meta)
+            self._Base.prepare()
 
         else:
             if self._engine is None:
@@ -129,6 +134,10 @@ class AlchemyConnection(object):
 
             if self._Session is None:
                 self._Session = sessionmaker(bind=self.engine)
+
+            if self._Base is None:
+                self._Base = automap_base(metadata=self.meta)
+                self._Base.prepare()
 
     def configure_from_url(self, url):
         try:
@@ -149,6 +158,10 @@ class AlchemyConnection(object):
         :return: (sqlalchemy.orm.session.sessionmaker)
         """
         return self._Session
+
+    @property
+    def Base(self):
+        return self._Base
 
     @property
     def engine(self) -> sqlalchemy.engine.base.Engine:
@@ -177,6 +190,22 @@ class AlchemyConnection(object):
         :return: (sqlalchemy.MetaData)
         """
         return self._meta
+
+    def get_class_by_tablename(self, table):
+        """Return class reference mapped to table.
+
+        :param tablename: String with name of table.
+        :return: Class reference or None.
+        """
+        for c in self.Base._decl_class_registry.values():
+            if hasattr(c, '__table__') and c.__table__ == table:
+                return c
+
+    def get_table_class(self, name):
+        try:
+            return getattr(self.Base.classes, name)
+        except AttributeError:
+            return None
 
     def get_column_names(self, table) -> list:
         """
@@ -236,6 +265,9 @@ class AlchemyConnection(object):
         :return: (pd.DataFrame)
         """
         return pd.read_sql(sql, self.engine, **kwargs)
+
+    def get_alchemy_model(self, session, query, columns):
+        return AlchemyTableModel(session, query, columns)
 
     def get_df_model(self, df, **kwargs) -> DataFrameModel:
         """

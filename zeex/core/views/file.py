@@ -33,7 +33,7 @@ from core.views.actions.normalize import ColumnNormalizerDialog
 from core.views.actions.split import SplitFileDialog
 from icons import Icons
 from qtpandas.models.DataFrameModel import DataFrameModel
-from views.DataTableView import DataTableWidget
+from qtpandas.views.DataTableView import DataTableWidget
 
 
 class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):

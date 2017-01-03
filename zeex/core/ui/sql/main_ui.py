@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sat Dec 31 05:08:15 2016
+# Created: Mon Jan  2 15:05:12 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_DatabasesMainWindow(object):
     def setupUi(self, DatabasesMainWindow):
         DatabasesMainWindow.setObjectName("DatabasesMainWindow")
-        DatabasesMainWindow.resize(704, 580)
+        DatabasesMainWindow.resize(785, 591)
         self.centralwidget = QtGui.QWidget(DatabasesMainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.centralwidget)
@@ -26,7 +26,7 @@ class Ui_DatabasesMainWindow(object):
         sizePolicy.setHeightForWidth(self.treeView.sizePolicy().hasHeightForWidth())
         self.treeView.setSizePolicy(sizePolicy)
         self.treeView.setMinimumSize(QtCore.QSize(50, 0))
-        self.treeView.setMaximumSize(QtCore.QSize(175, 16777215))
+        self.treeView.setMaximumSize(QtCore.QSize(125, 16777215))
         self.treeView.setObjectName("treeView")
         self.horizontalLayout.addWidget(self.treeView)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -34,6 +34,12 @@ class Ui_DatabasesMainWindow(object):
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
         self.textEdit = QtGui.QTextEdit(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.textEdit.sizePolicy().hasHeightForWidth())
+        self.textEdit.setSizePolicy(sizePolicy)
+        self.textEdit.setMaximumSize(QtCore.QSize(16777215, 350))
         self.textEdit.setObjectName("textEdit")
         self.gridLayout.addWidget(self.textEdit, 2, 0, 1, 1)
         self.tableView = QtGui.QTableView(self.centralwidget)
@@ -70,7 +76,7 @@ class Ui_DatabasesMainWindow(object):
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
         DatabasesMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DatabasesMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 704, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 785, 21))
         self.menubar.setObjectName("menubar")
         self.menuFiles = QtGui.QMenu(self.menubar)
         self.menuFiles.setObjectName("menuFiles")
