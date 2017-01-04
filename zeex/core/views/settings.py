@@ -68,17 +68,16 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
     def __init__(self, settings=None, **kwargs):
         QtGui.QDialog.__init__(self, **kwargs)
         self.setupUi(self)
+        self.settings_ini = settings
 
-        if isinstance(settings, (SettingsINI, DictConfig)):
-            self.settings_ini = settings
-        elif isinstance(settings, str) or settings is None:
+        if isinstance(settings, str) or settings is None:
             if settings is None:
                 print("Using default settings - got settings of type {}".format(type(settings)))
             self.settings_ini = SettingsINI(filename=settings)
         elif isinstance(settings, dict):
             self.settings_ini = DictConfig(dictionary=settings)
-        else:
-            raise NotImplementedError("Unsupported settings type: {}".format(type(settings)))
+
+
 
         self.configure_settings(self.settings_ini)
         self.connect_buttons()
@@ -107,9 +106,11 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
             DATABASE
             FIELDS
         """
-        if not isinstance(config, SettingsINI):
-            raise NotImplementedError("config must be a SettingsINI object.")
 
+        if not hasattr(config, "set_safe"):
+            # We'll assume get_safe exists to.
+            raise NotImplementedError("Unsupported settings type: {}".format(
+                                      type(config)))
         c = config
         # Get items/set defaults.
         ROOT_DIR =        c.get('GENERAL', 'root_directory',  fallback=DEFAULT_ROOT_DIR)
@@ -119,23 +120,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         THEME_NAME     =  c.get_safe('GENERAL', 'THEME',           fallback=DEFAULT_THEME)
         HEADER_CASE =     c.get_safe('INPUT', 'HEADER_CASE',      fallback="Lower")
         HEADER_SPACE =    c.get_safe('INPUT', 'HEADER_SPACE',     fallback="_")
-        AUTO_SORT =       c.getboolean('INPUT', 'AUTO_SORT',        fallback=False)
-        AUTO_DEDUPE =     c.getboolean('INPUT', 'AUTO_DEDUPE',      fallback=False)
-        OUTPUT_FORMAT =   c.get_safe('OUTPUT', 'OUTPUT_FORMAT',   fallback=".csv")
-        FILENAME_PFX =    c.get_safe('OUTPUT', 'FILENAME_PREFIX', fallback="z_")
-        CHART_FILE =      c.get_safe('OUTPUT', 'CHART_FILENAME',  fallback="")
         SEPARATOR =       c.get_safe('OUTPUT', 'SEPARATOR',       fallback=",")
         ENCODING =        c.get_safe('OUTPUT', 'ENCODING',        fallback="UTF_8")
-
-
-        DEDUPE_FIELDS =   c.get_safe('FIELDS', 'DEDUPE', fallback=[])
-        SORT_FIELDS   =   c.get_safe('FIELDS', 'SORT',   fallback=['updatedate', 'insertdate'])
-        STRING_FIELDS =   c.get_safe('FIELDS', 'STRING', fallback=['address1','firstname','lastname',
-                                                              'city','state','zipcode', 'fullname',
-                                                              'email','homephone','cellphone'])
-        INTEGER_FIELDS =  c.get_safe('FIELDS', 'INTEGER',fallback=['id','users_id'])
-        DATE_FIELDS   =   c.get_safe('FIELDS', 'DATE',   fallback=['insertdate','updatedate'])
-        FLOAT_FIELDS =    c.get_safe('FIELDS', 'FLOAT',   fallback=[])
 
         #Make sure the directories exist.
         for fp in [ROOT_DIR, LOG_DIR]:

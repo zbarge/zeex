@@ -23,10 +23,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from core.compat import QtGui, QtCore
-from core.ui.sql.query_editor_ui import Ui_QueryEditorWindow
-from core.views.basic.criteria import CriteriaDialog, CriteriaTableModel
-from core.models.sql import AlchemyTableModel
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.ui.sql.query_editor_ui import Ui_QueryEditorWindow
+from zeex.core.views.basic.criteria import CriteriaDialog, CriteriaTableModel
+from zeex.core.models.sql import AlchemyTableModel
 
 
 class AlchemyQueryEditorWindow(QtGui.QMainWindow,Ui_QueryEditorWindow):
@@ -45,6 +45,7 @@ class AlchemyQueryEditorWindow(QtGui.QMainWindow,Ui_QueryEditorWindow):
         self.tableView.setModel(self._query_model)
         self.actionCriteria.triggered.connect(self._dialog_criteria.show)
         self.dialog_criteria.set_fields(self._query_model.fields)
+
     @property
     def query_model(self) -> AlchemyTableModel:
         return self._query_model

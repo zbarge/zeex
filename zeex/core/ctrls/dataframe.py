@@ -63,7 +63,7 @@ class DataFrameModelManager(DFM):
         from core.views.file import FileTableWindow
         model = self.read_file(file_path)
         try:
-            self._file_table_windows[file_path].show()
+            return self._file_table_windows[file_path]
         except KeyError:
             self._file_table_windows[file_path] = FileTableWindow(model, self, **kwargs)
             return self._file_table_windows[file_path]
