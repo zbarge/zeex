@@ -32,6 +32,7 @@ from core.utility.widgets import get_ok_msg_box
 from core.ctrls.dataframe import DataFrameModelManager
 from .add_connection import AlchemyConnectionDialog
 from zeex.core.views.sql.query_editor import AlchemyQueryEditorWindow
+from zeex.core.views.sql.table_description import AlchemyTableDescriptionDialog
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -55,6 +56,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.df_manager = df_manager
         self._dialog_add_con = None
         self._key_enter = QtGui.QShortcut(self)
+        self._key_ctrl_t = QtGui.QShortcut(self)
         self.configure()
 
     @property
@@ -110,7 +112,9 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         if self.df_manager is None:
             self.df_manager = DataFrameModelManager()
         self._key_enter.setKey('return')
+        self._key_ctrl_t.setKey('ctrl+T')
         self._key_enter.activated.connect(self.open_query_alchemyview)
+        self._key_ctrl_t.activated.connect(self.open_table_description_dialog)
 
         self.treeView.setModel(self.con_manager.get_standard_item_model())
         self.actionRemove.triggered.connect(self.delete)
@@ -227,6 +231,18 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
 
     def open_add_connection_dialog(self):
         self.dialog_add_con.show()
+
+    def open_table_description_dialog(self, idx=None):
+        if idx is None:
+            idx = self.treeView.selectedIndexes()[0]
+        table_name = self.tree_model.itemFromIndex(idx).text()
+        con_name = self.tree_model.itemFromIndex(idx.parent()).text()
+        print(con_name)
+        print(table_name)
+        con = self.con_manager.connection(con_name)
+        self._table_desc_dialog = AlchemyTableDescriptionDialog(con)
+        self._table_desc_dialog.set_table(table_name)
+        self._table_desc_dialog.show()
 
     def set_current_file(self, file_path):
         """

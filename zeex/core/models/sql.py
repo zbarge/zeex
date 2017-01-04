@@ -4,7 +4,7 @@ https://gist.github.com/harvimt/4699169
 #-*- coding=utf-8 -*-
 # © 2013 Mark Harviston, BSD License
 """
-from core.compat import QtGui, QtCore
+from zeex.core.compat import QtGui, QtCore
 QAbstractTableModel, QVariant, Qt = QtCore.QAbstractTableModel, str, QtCore.Qt
 
 class CustomQVariant(object):

@@ -148,7 +148,7 @@ class BaseConfig(ConfigParser):
         orig = self._filename
         self._filename = name
         self.save()
-        if set_self is not True:
+        if set_self is False:
             self._filename = orig
 
 
@@ -186,6 +186,7 @@ class DictConfig(BaseConfig):
 class SettingsINI(FileConfig):
     def __init__(self, filename=None):
         FileConfig.__init__(self, filename=filename)
+
     def _internals(self):
         pass
 

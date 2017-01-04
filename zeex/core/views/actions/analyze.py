@@ -23,11 +23,9 @@ SOFTWARE.
 """
 
 import os
-
-from core.compat import QtGui
-from core.models.dataframe import DataFrameDescriptionModel
-from core.ui.actions.analyze_ui import Ui_FileAnalyzerDialog
-from models import DataFrameModel
+from zeex.core.compat import QtGui
+from zeex.core.models.dataframe import DataFrameDescriptionModel, DataFrameModel
+from zeex.core.ui.actions.analyze_ui import Ui_FileAnalyzerDialog
 
 
 class FileAnalyzerDialog(QtGui.QDialog, Ui_FileAnalyzerDialog):

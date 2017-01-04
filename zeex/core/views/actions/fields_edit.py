@@ -31,7 +31,7 @@ from core.ctrls.dataframe import DataFrameModel
 from core.models.fieldnames import FieldModel
 from core.ui.actions.fields_edit_ui import Ui_FieldsEditDialog
 from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
-from utils import superReadFile
+from zeex.core.utility.pandatools import superReadFile
 
 CASE_MAP = {'lower': str.lower,
             'upper': str.upper,

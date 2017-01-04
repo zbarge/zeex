@@ -25,11 +25,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from ..compat import QtGui, QtCore
-from ..models.filetree import FileTreeModel
-from ..ui.main_ui import Ui_HomeWindow
-from ..utility.collection import get_ini_file, SettingsINI
-from ..utility.ostools import zipfile_compress, zipfile_unzip
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.models.filetree import FileTreeModel
+from zeex.core.ui.main_ui import Ui_HomeWindow
+from zeex.core.utility.collection import get_ini_file, SettingsINI
+from zeex.core.utility.ostools import zipfile_compress, zipfile_unzip
 from .basic.directory import DropBoxViewDialog
 from .project.main import ProjectMainWindow
 from .project.new import NewProjectDialog
@@ -104,7 +104,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         :return: None
         
         """
-        if rootdir is None or isinstance(rootdir, SettingsINI):
+        if rootdir is None or hasattr(rootdir, 'set_safe'):
             rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
             rootdir = os.path.realpath(rootdir)
 

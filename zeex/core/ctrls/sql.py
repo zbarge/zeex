@@ -29,10 +29,10 @@ import sqlalchemy
 from sqlalchemy import create_engine, MetaData, inspect
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
-from core.compat import QtGui
-from core.utility.widgets import create_standard_item
-from core.models.dataframe import DataFrameModel
-from core.utility.collection import DictConfig, get_default_config_directory
+from zeex.core.compat import QtGui
+from zeex.core.utility.widgets import create_standard_item
+from zeex.core.models.dataframe import DataFrameModel
+from zeex.core.utility.collection import DictConfig, get_default_config_directory
 from zeex.core.models.sql import AlchemyTableModel
 
 
