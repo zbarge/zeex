@@ -133,7 +133,33 @@ def signal_adjust(signal, newhandler=None, oldhandler=None):
                 signal.disconnect(oldhandler)
             else:
                 signal.disconnect()
-        except TypeError:
+        except (RuntimeError, TypeError):
             break
     if newhandler is not None:
         signal.connect(newhandler)
+
+
+def triggered_adjust(item, newhandler=None, oldhandler=None):
+    while True:
+        try:
+            if oldhandler is not None:
+                item.triggered.disconnect(oldhandler)
+            else:
+                item.triggered.disconnect()
+        except (RuntimeError, TypeError):
+            break
+    if newhandler is not None:
+        item.triggered.connect(newhandler)
+
+
+def activated_adjust(item, newhandler=None, oldhandler=None):
+    while True:
+        try:
+            if oldhandler is not None:
+                item.activated.disconnect(oldhandler)
+            else:
+                item.activated.disconnect()
+        except (RuntimeError, TypeError):
+            break
+    if newhandler is not None:
+        item.activated.connect(newhandler)
