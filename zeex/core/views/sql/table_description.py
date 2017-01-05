@@ -47,6 +47,8 @@ class AlchemyTableDescriptionDialog(QtGui.QDialog, Ui_AlchemyTableDescriptionDia
         self.btnDeleteColumn.clicked.connect(self.append_delete_row)
         self.btnAddColumn.clicked.connect(self.append_model_row)
         self.btnSave.clicked.connect(self.save)
+        self.btnDeleteTable.hide()
+        self.btnDeleteColumn.hide()
 
     def set_table(self, table_name):
         Table = self.con.meta.tables[table_name]
@@ -75,7 +77,7 @@ class AlchemyTableDescriptionDialog(QtGui.QDialog, Ui_AlchemyTableDescriptionDia
         self._rows_delete.append(items)
 
     def append_model_row(self):
-        data = ['COLUMN_NAME', 'COLUMN_DTYPE']
+        data = ['COLUMN_NAME', 'VARCHAR(255)']
         data = [widgets.create_standard_item(d, editable=True, checkable=False) for d in data]
         self._col_model.insertRow(self._col_model.rowCount(), data)
 
