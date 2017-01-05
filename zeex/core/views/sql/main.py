@@ -33,6 +33,8 @@ from core.ctrls.dataframe import DataFrameModelManager
 from .add_connection import AlchemyConnectionDialog
 from zeex.core.views.sql.query_editor import AlchemyQueryEditorWindow
 from zeex.core.views.sql.table_description import AlchemyTableDescriptionDialog
+from zeex.core.ctrls.bookmark import BookmarkManager
+
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -49,6 +51,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
                  df_manager:DataFrameModelManager = None,
                  connection_manager: AlchemyConnectionManager = None, **kwargs):
         QtGui.QMainWindow.__init__(self, *args, **kwargs)
+        self.bookmarks = BookmarkManager('sql_bookmark_manager')
         self._last_df_model = None
         self._last_text_dir = ''
         self._last_text_path = ''
@@ -199,9 +202,14 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             file_path = QtGui.QFileDialog.getSaveFileName(dir=self._last_text_dir)[0]
 
         self._last_text_dir = os.path.dirname(file_path)
+        new_text = self.textEdit.document().toPlainText()
         with open(file_path, "w") as fp:
-            fp.write(self.textEdit.document().toPlainText())
+            fp.write(new_text)
+        if file_path in self.bookmarks.names:
+            self.bookmarks.bookmark(file_path).set_text(new_text, save_changes=False)
+
         self.set_current_file(file_path)
+
         return file_path
 
     def save_last_sql_text(self):
@@ -225,8 +233,9 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             file_path = QtGui.QFileDialog.getOpenFileName(dir=self._last_text_dir)[0]
         self._last_text_dir = os.path.dirname(file_path)
         self._last_text_path = file_path
-        with open(file_path, "r") as fp:
-            self.textEdit.setPlainText(fp.read())
+        self.bookmarks.add_bookmark(file_path, file_path=file_path)
+        text = self.bookmarks.bookmark(file_path).get_text()
+        self.textEdit.setPlainText(text)
         self.set_current_file(file_path)
 
     def open_add_connection_dialog(self):
