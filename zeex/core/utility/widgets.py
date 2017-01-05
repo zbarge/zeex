@@ -53,7 +53,7 @@ def create_standard_item_model(columns: list = None, editable=False, checkable=F
 
 
 def create_standard_item(name, editable=False, checkable=False):
-    item = QtGui.QStandardItem(name)
+    item = QtGui.QStandardItem(str(name))
     item.setEditable(editable)
     item.setCheckable(checkable)
     return item
