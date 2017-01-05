@@ -109,9 +109,11 @@ class TestPandaTools(MainTestClass):
 
     def test_get_frame_duplicates(self, df):
         df2 = df.copy()
-        df.loc[:, 'updated'] = pd.Timestamp('2016-05-05')
-        df2.loc[:, 'updated'] = pd.Timestamp('2016-01-01')
-        df3 = pd.concat([df, df2])
+        first_date = pd.Timestamp('2016-05-05')
+        second_date = pd.Timestamp('2016-01-01')
+        df.loc[:, 'updated'] = first_date
+        df2.loc[:, 'updated'] = second_date
+        df3 = pd.concat([df, df2]).reset_index(drop=True, inplace=False)
 
         id_label = 'id'
         unique_cols = ['address', 'name']
@@ -119,8 +121,8 @@ class TestPandaTools(MainTestClass):
 
         df4, df5 = get_frame_duplicates(df3, id_label, unique_cols, sort_cols, ascending=None)
 
-        assert (df4['updated'] == df['updated']).all()
-        assert (df5['updated'] == df2['updated']).all()
+        assert (df4['updated'] == first_date).all()
+        assert (df5['updated'] == second_date).all()
         assert df4.index.size + df5.index.size == df3.index.size
 
     @pytest.mark.parametrize('chunksize', list(x for x in range(1, 30, 10)))
