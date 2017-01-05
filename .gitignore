@@ -24,7 +24,8 @@ var/
 .installed.cfg
 *.egg
 *sample*.ini
-databases.ini
+*databases.ini
+*default.ini
 fixtures/project/
 
 # PyInstaller
