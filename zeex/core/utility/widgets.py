@@ -124,3 +124,16 @@ def table_push_item_down(view):
             model.setItem(row+2, i, model.takeItem(row,i))
         model.takeRow(row)
         view.setCurrentIndex(model.item(row + 1, 0).index())
+
+
+def signal_adjust(signal, newhandler=None, oldhandler=None):
+    while True:
+        try:
+            if oldhandler is not None:
+                signal.disconnect(oldhandler)
+            else:
+                signal.disconnect()
+        except TypeError:
+            break
+    if newhandler is not None:
+        signal.connect(newhandler)

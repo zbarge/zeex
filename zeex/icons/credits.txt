@@ -12,7 +12,7 @@ https://icons8.com/web-app/6675/Suppression
 <a href="https://icons8.com/web-app/30815/Import">Import icon credits</a>
 <a href="https://icons8.com/web-app/12587/Send-File">Send file icon credits</a>
 <a href="https://icons8.com/web-app/49/Edit">Edit icon credits</a>
-<a href="https://icons8.com/web-app/5324/Device-Manager">Device manager icon credits</a>
+<a href="https://icons8.com/web-app/5324/Device-Manager">Device con_manager icon credits</a>
 <a href="https://icons8.com">Icon pack by Icons8</a>
 <a href="https://icons8.com">Icon pack by Icons8</a>
 <a href="https://icons8.com">Icon pack by Icons8</a>
@@ -21,7 +21,7 @@ https://icons8.com/web-app/6675/Suppression
 <a href="https://icons8.com/web-app/11361/Delete-Column">Delete column icon credits</a>
 <a href="https://icons8.com">Icon pack by Icons8</a>
 <a href="https://icons8.com/web-app/11365/Add-Column">Add column icon credits</a>
-<a href="https://icons8.com/web-app/12009/Device-Manager">Device manager icon credits</a>
+<a href="https://icons8.com/web-app/12009/Device-Manager">Device con_manager icon credits</a>
 <a href="https://icons8.com/web-app/22036/Poll-Topic">Poll topic icon credits</a>
 <a href="https://icons8.com/web-app/443/Archive">Archive icon credits</a>
 <a href="https://icons8.com">Icon pack by Icons8</a>
