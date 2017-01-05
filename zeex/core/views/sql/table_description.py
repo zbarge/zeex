@@ -46,6 +46,7 @@ class AlchemyTableDescriptionDialog(QtGui.QDialog, Ui_AlchemyTableDescriptionDia
         self.setupUi(self)
         self.btnDeleteColumn.clicked.connect(self.append_delete_row)
         self.btnAddColumn.clicked.connect(self.append_model_row)
+        self.btnSave.clicked.connect(self.save)
 
     def set_table(self, table_name):
         Table = self.con.meta.tables[table_name]
@@ -78,11 +79,25 @@ class AlchemyTableDescriptionDialog(QtGui.QDialog, Ui_AlchemyTableDescriptionDia
         data = [widgets.create_standard_item(d, editable=True, checkable=False) for d in data]
         self._col_model.insertRow(self._col_model.rowCount(), data)
 
-
     def save(self):
         Table = self.con.meta.tables[self.labelTableNameValue.text()]
-        for i in self._col_model.rowCount():
-            old, new, dtype = [self._col_model.item(i, r)
-                               for r in self._col_model.rowCount()]
+        add_sql = "ALTER TABLE {} ADD COLUMN {} {}"
+        added = []
+        for i in range(self._col_model.rowCount()):
+            col, dtype = [self._col_model.item(i, r).text()
+                          for r in range(2)]
+            if col not in Table.columns and col not in added:
+                try:
+                    self.con.engine.execute(add_sql.format(Table.name, col, dtype))
+                except Exception as e:
+                    box = widgets.get_ok_msg_box(self, str(e), "Add Column Error")
+                    box.show()
+                finally:
+                    added.append(col)
+        if added:
+            self.con.refresh_schemas()
+            self.set_table(Table.name)
+
+
 
 
