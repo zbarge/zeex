@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import os
+import shutil
 import pytest
 import pandas as pd
 from core.compat import QtGui, QtCore
@@ -65,7 +66,12 @@ class MainTestClass(object):
 
     @pytest.fixture
     def project_settings_path(self, project_root_dir):
-        return os.path.join(project_root_dir, "sample_project_config.ini")
+        file_path = os.path.join(project_root_dir, "sample_project_config.ini")
+        if not os.path.exists(file_path):
+            get_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "zeex", "configs", "default.ini")
+            assert os.path.exists(get_path), "missing zeex/configs/default.ini!"
+            shutil.copy2(get_path, file_path)
+        return file_path
 
     @pytest.fixture
     def example_file_path(self, project_root_dir):

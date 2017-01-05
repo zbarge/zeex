@@ -131,7 +131,7 @@ def superReadCSV(filepath, first_codec='utf8', verbose=False, **kwargs):
             try:
                 kwargs['encoding'] = c
                 return pd.read_csv(filepath, **kwargs)
-            except (UnicodeDecodeError, UnboundLocalError) as e:
+            except (UnicodeError, UnicodeDecodeError, UnboundLocalError) as e:
                 if verbose: 
                     print(e)
             except Exception as e:
