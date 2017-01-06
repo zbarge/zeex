@@ -14,16 +14,15 @@
    <string>Zeex Home</string>
   </property>
   <widget class="QWidget" name="HomeWidget">
-   <widget class="FileSystemTreeView" name="treeView">
-    <property name="geometry">
-     <rect>
-      <x>35</x>
-      <y>81</y>
-      <width>721</width>
-      <height>441</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="FileSystemTreeView" name="treeView"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="homemenu">
    <property name="geometry">

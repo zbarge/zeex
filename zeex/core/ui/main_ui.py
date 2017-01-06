@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Thu Dec 29 17:11:45 2016
+# Created: Thu Jan  5 16:40:31 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,9 +15,14 @@ class Ui_HomeWindow(object):
         HomeWindow.resize(800, 600)
         self.HomeWidget = QtGui.QWidget(HomeWindow)
         self.HomeWidget.setObjectName("HomeWidget")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.HomeWidget)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
         self.treeView = FileSystemTreeView(self.HomeWidget)
-        self.treeView.setGeometry(QtCore.QRect(35, 81, 721, 441))
         self.treeView.setObjectName("treeView")
+        self.verticalLayout.addWidget(self.treeView)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
         HomeWindow.setCentralWidget(self.HomeWidget)
         self.homemenu = QtGui.QMenuBar(HomeWindow)
         self.homemenu.setGeometry(QtCore.QRect(0, 0, 800, 21))
