@@ -48,6 +48,10 @@ class DataFrameModelManager(DFM):
         DFM.__init__(self)
         self._file_table_windows = {}
 
+    @property
+    def file_table_windows(self) -> dict:
+        return self._file_table_windows
+
     def get_df_describe_model(self, filepath) -> DataFrameModel:
         from core.models.dataframe import DataFrameDescriptionModel
         describe_path = DataFrameDescriptionModel.get_describe_path(filepath)

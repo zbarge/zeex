@@ -86,7 +86,7 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.btnImport.clicked.connect(self.import_settings)
         self.btnLogDirectory.clicked.connect(self.open_log_directory)
         self.btnRootDirectory.clicked.connect(self.open_root_directory)
-        self.btnSetDefault.clicked.connect(partial(self.export_settings, self.settings_ini.default_path, set_self=True))
+        self.btnSetDefault.clicked.connect(self.set_and_save_defaults)
         self.btnReset.clicked.connect(self.reset_settings)
 
     def configure_settings(self, config: SettingsINI):
@@ -150,7 +150,14 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         self.set_theme(THEME_NAME)
 
         self.save_settings(to_path=None, write=False)
-        
+
+    def set_and_save_defaults(self):
+        self.export_settings(self.settings_ini.default_path, set_self=True)
+        try:
+            self.export_settings(self.settings_ini.backup_path, set_self=False)
+        except Exception as e:
+            print("SettingsDialog.set_and_save_defaults: Ignored error setting backup settings path: {}".format(e))
+
     def save_settings(self, to_path=None, write=False):
         self.set_theme()
 

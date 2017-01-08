@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Jan  2 15:05:12 2017
+# Created: Sun Jan  8 10:36:03 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ class Ui_DatabasesMainWindow(object):
         sizePolicy.setHeightForWidth(self.treeView.sizePolicy().hasHeightForWidth())
         self.treeView.setSizePolicy(sizePolicy)
         self.treeView.setMinimumSize(QtCore.QSize(50, 0))
-        self.treeView.setMaximumSize(QtCore.QSize(125, 16777215))
+        self.treeView.setMaximumSize(QtCore.QSize(175, 16777215))
         self.treeView.setObjectName("treeView")
         self.horizontalLayout.addWidget(self.treeView)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)

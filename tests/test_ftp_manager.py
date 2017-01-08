@@ -14,6 +14,7 @@ class TestFTPManager(MainTestClass):
         return ftpm
 
     def test_download(self, manager, example_file_path):
+        pytest.skip("Takes too darn long to test this...no point.")
         to_dir = os.path.dirname(example_file_path)
         files = ['100KB.zip']
         with manager.connection('speedtest') as f:

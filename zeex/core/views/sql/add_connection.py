@@ -128,7 +128,7 @@ class AlchemyConnectionDialog(QtGui.QDialog, Ui_AlchemyConnectionDialog):
         """
         if not isinstance(connection, AlchemyConnection):
             connection = self.test_connection(show_success=False)
-        self.con_manager.add_connection(connection=connection)
+        self.con_manager.add_connection(connection=connection, allow_duplicate=True)
         self.con_manager.save_settings()
         self.signalConnectionAdded.emit(connection.name)
 

@@ -83,6 +83,7 @@ class AlchemyConnection(object):
             # we're setting the connection on __init__.
             kwargs.pop('reset', None)
             self.configure(*args, reset=False, **kwargs)
+        self._query_editor_windows = dict()
 
     def configure(self, *args, reset=True, **kwargs):
         """
@@ -197,15 +198,10 @@ class AlchemyConnection(object):
         :param tablename: String with name of table.
         :return: Class reference or None.
         """
-        for c in self.Base._decl_class_registry.values():
-            if hasattr(c, '__table__') and c.__table__ == table:
-                return c
+        return self.meta.tables[table]
 
     def get_table_class(self, name):
-        try:
-            return getattr(self.Base.classes, name)
-        except AttributeError:
-            return None
+        return self.meta.tables[name]
 
     def get_column_names(self, table) -> list:
         """
@@ -268,6 +264,27 @@ class AlchemyConnection(object):
 
     def get_alchemy_model(self, session, query, columns):
         return AlchemyTableModel(session, query, columns)
+
+    def get_alchemy_query_editor_window(self, table_name, session=None, query=None,
+                                        model=None, columns=None, reset=False, parent=None):
+        table = self.meta.tables[table_name]
+        if reset:
+            self._query_editor_windows.pop(table_name, None)
+
+        try:
+            return self._query_editor_windows[table_name]
+        except KeyError:
+            if session is None:
+                session = self.Session()
+            if query is None:
+                query = session.query(table)
+            if columns is None:
+                columns = self.get_column_names(table_name)
+            if model is None:
+                model = self.get_alchemy_model(session, query, columns)
+            window = AlchemyQueryEditorWindow(model, parent=parent)
+            self._query_editor_windows[table_name] = window
+            return window
 
     def get_df_model(self, df, **kwargs) -> DataFrameModel:
         """
@@ -472,7 +489,7 @@ class AlchemyConnectionManager(object):
             # No fails so far, create the connection.
             connection = AlchemyConnection(name, *args, **kwargs)
 
-        elif not isinstance(connection, AlchemyConnection):
+        elif not hasattr(connection, 'engine'):
             # Don't allow non-AlchemyConnections to be passed in here.
             raise TypeError("connection parameter must be an AlchemyConnection, not {}".format(
                 type(connection)))

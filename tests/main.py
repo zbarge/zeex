@@ -30,6 +30,7 @@ from core.compat import QtGui, QtCore
 from PySide.QtTest import QTest
 from core.utility.collection import SettingsINI
 
+
 class MainTestClass(object):
 
     @pytest.fixture

@@ -31,10 +31,10 @@ from core.ctrls.sql import AlchemyConnectionManager, AlchemyConnection
 from core.utility.widgets import get_ok_msg_box
 from core.ctrls.dataframe import DataFrameModelManager
 from .add_connection import AlchemyConnectionDialog
-from zeex.core.views.sql.query_editor import AlchemyQueryEditorWindow
 from zeex.core.views.sql.table_description import AlchemyTableDescriptionDialog
 from zeex.core.ctrls.bookmark import BookmarkManager
 from zeex.core.views.sql.table_import import AlchemyTableImportDialog
+
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -127,7 +127,6 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self._key_ctrl_t.setKey('ctrl+T')
         self._key_enter.activated.connect(self.open_query_alchemyview)
         self._key_ctrl_t.activated.connect(self.open_table_description_dialog)
-
         self.treeView.setModel(self.con_manager.get_standard_item_model())
         self.actionRemove.triggered.connect(self.delete)
         self.actionRefreshSchemas.triggered.connect(self.refresh_schemas)
@@ -207,8 +206,10 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         :return: (str)
             Of the saved file_path.
         """
-        if file_path is '':
-            file_path = QtGui.QFileDialog.getSaveFileName(dir=self._last_text_dir)[0]
+        if file_path == '':
+            file_path = self.comboBoxCurrentFile.currentText()
+            if file_path == '':
+                file_path = QtGui.QFileDialog.getSaveFileName(dir=self._last_text_dir)[0]
 
         self._last_text_dir = os.path.dirname(file_path)
         new_text = self.textEdit.document().toPlainText()
@@ -258,8 +259,6 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             idx = self.treeView.selectedIndexes()[0]
         table_name = self.tree_model.itemFromIndex(idx).text()
         con_name = self.tree_model.itemFromIndex(idx.parent()).text()
-        print(con_name)
-        print(table_name)
         con = self.con_manager.connection(con_name)
         self._table_desc_dialog = AlchemyTableDescriptionDialog(con)
         self._table_desc_dialog.set_table(table_name)
@@ -397,7 +396,6 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             raise
         self.tableView.setModel(dfm)
 
-
     def execute_query_selected(self, db_name=None):
         """
         Executes the selected text against the given database.
@@ -425,13 +423,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
     def open_query_alchemyview(self):
         con = self.connection
         table_name = self.tree_model.itemFromIndex(self.treeView.selectedIndexes()[0]).text()
-        table = con.get_class_by_tablename(table_name)
-        sess = con.Session()
-        query = sess.query(con.Base.classes.fields)
-        columns = con.get_column_names(table_name)
-        model = con.get_alchemy_model(sess, query, columns)
-        print(type(model))
-        window = AlchemyQueryEditorWindow(model, parent=self)
+        window = con.get_alchemy_query_editor_window(table_name, parent=self)
         window.show()
 
 
