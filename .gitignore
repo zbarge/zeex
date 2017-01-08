@@ -27,6 +27,12 @@ var/
 *databases.ini
 *default.ini
 fixtures/project/
+tests/*.db
+data/*.csv
+data/*.txt
+data/*.sql
+.idea*
+data/test*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
