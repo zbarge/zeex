@@ -24,14 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-import sys
 from functools import partial
 from core.compat import QtGui, QtCore
-from core.models.main import FieldsListModel
 from core.ui.settings_ui import Ui_settingsDialog
 from core.utility.collection import SettingsINI, DictConfig
 from core.utility.widgets import configure_combo_box
-from core.ctrls.dataframe import ENCODINGS, SEPARATORS
+
 
 def normpath(dirname, filename=None):
     if filename is not None:
@@ -54,7 +52,6 @@ DEFAULT_CODECS = ['UTF_8', 'ASCII', 'ISO-8859-1']
 DEFAULT_SEPARATORS = [',','|',r'\t',';']
 DEFAULT_FLAVORS = ['SQLite', 'PostgreSQL', 'MySQL']
 DEFAULT_FILE_FORMATS = ['.xlsx', '.csv', '.txt']
-
 DEFAULT_ROOT_DIR = os.path.join(os.environ['HOMEPATH'], "Zeex Projects")
 DEFAULT_LOG_DIR = os.path.join(DEFAULT_ROOT_DIR, 'logs')
 
@@ -76,9 +73,6 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
             self.settings_ini = SettingsINI(filename=settings)
         elif isinstance(settings, dict):
             self.settings_ini = DictConfig(dictionary=settings)
-
-
-
         self.configure_settings(self.settings_ini)
         self.connect_buttons()
 
@@ -123,6 +117,16 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         SEPARATOR =       c.get_safe('OUTPUT', 'SEPARATOR',       fallback=",")
         ENCODING =        c.get_safe('OUTPUT', 'ENCODING',        fallback="UTF_8")
 
+        if not os.path.exists(ROOT_DIR):
+            try:
+                os.mkdir(ROOT_DIR)
+            except OSError:
+                msg = "Defaulting root and log directories because the root directory '{}' was invalid.".format(
+                      ROOT_DIR)
+                ROOT_DIR = DEFAULT_ROOT_DIR
+                LOG_DIR = DEFAULT_LOG_DIR
+                print(msg)
+
         #Make sure the directories exist.
         for fp in [ROOT_DIR, LOG_DIR]:
             try:
@@ -130,11 +134,10 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
                     os.mkdir(fp)
             except OSError as e:
                 raise OSError("Cannot initialize settings directory {} - {}".format(fp, e))
-                sys.exit(1)
         
         #LINE EDITS
-        self.rootDirectoryLineEdit.setText(      ROOT_DIR)
-        self.logDirectoryLineEdit.setText(       LOG_DIR)
+        self.rootDirectoryLineEdit.setText(ROOT_DIR)
+        self.logDirectoryLineEdit.setText(LOG_DIR)
         
         #COMBO BOXES
         configure_combo_box(self.logLevelComboBox, ['Low', 'Medium', 'High'], LOG_LEVEL)

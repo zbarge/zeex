@@ -173,8 +173,10 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             self.sync()
 
     def sync(self):
+
         df = self.source_model.dataFrame()
         cols = df.columns.tolist()
+
         if self.dedupeOnHandler is None or self.uniqueFieldsHandler is None:
             self.set_push_grid_handlers()
         else:

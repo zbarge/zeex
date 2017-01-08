@@ -34,7 +34,7 @@ from .add_connection import AlchemyConnectionDialog
 from zeex.core.views.sql.query_editor import AlchemyQueryEditorWindow
 from zeex.core.views.sql.table_description import AlchemyTableDescriptionDialog
 from zeex.core.ctrls.bookmark import BookmarkManager
-
+from zeex.core.views.sql.table_import import AlchemyTableImportDialog
 DEFAULT_CONNECTIONS = {'field_names': fieldnames_connection_info}
 
 
@@ -58,6 +58,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.con_manager = connection_manager
         self.df_manager = df_manager
         self._dialog_add_con = None
+        self._dialog_import = None
         self._key_enter = QtGui.QShortcut(self)
         self._key_ctrl_t = QtGui.QShortcut(self)
         self.configure()
@@ -77,6 +78,14 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             self._dialog_add_con = AlchemyConnectionDialog(self.con_manager, parent=self)
             self._dialog_add_con.signalConnectionAdded.connect(self.refresh_schemas)
         return self._dialog_add_con
+
+    @property
+    def dialog_import(self) -> AlchemyTableImportDialog:
+        if self._dialog_import is None:
+            self._dialog_import = AlchemyTableImportDialog(self.connection, self.con_manager,
+                                                           df_manager=self.df_manager,
+                                                           parent=self)
+        return self._dialog_import
 
     @property
     def connection(self) -> AlchemyConnection:
@@ -129,7 +138,7 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         self.actionConnectToDatabase.triggered.connect(self.connect_database)
         self.actionDisconnectFromDatabase.triggered.connect(self.disconnect_database)
         self.actionExportFile.triggered.connect(self.export_table)
-        self.actionImportFile.triggered.connect(self.import_table)
+        self.actionImportFile.triggered.connect(self.open_import_dialog)
         self.actionAddDatabase.triggered.connect(self.open_add_connection_dialog)
         self.actionExecuteQuery.triggered.connect(self.execute_query)
         self.actionExecuteSelectedQuery.triggered.connect(self.execute_query_selected)
@@ -241,6 +250,9 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
     def open_add_connection_dialog(self):
         self.dialog_add_con.show()
 
+    def open_import_dialog(self):
+        self.dialog_import.show()
+
     def open_table_description_dialog(self, idx=None):
         if idx is None:
             idx = self.treeView.selectedIndexes()[0]
@@ -320,19 +332,6 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
         :return: None
         """
         self.set_current_database('')
-
-    def import_table(self, db_name, table_name, **kwargs):
-        """
-        Opens a DatabaseTableImportDialog for the current (or given)
-        database name allowing the user to import a DataFrameModel.
-        :param db_name: (str)
-            The name of a registered AlchemyConnection/database
-        :param table_name: (str)
-            The name of the table to add
-        :param kwargs:
-        :return:
-        """
-        pass
 
     def export_table(self, db_name, table_name, **kwargs):
         """

@@ -34,7 +34,7 @@ import zeex.core.utility.widgets as widgets
 class AlchemyTableImportDialog(QtGui.QDialog, Ui_AlchemyTableImportDialog):
     def __init__(self, con:AlchemyConnection, con_manager: AlchemyConnectionManager,
                  df_manager=None, **kwargs):
-        QtGui.QMainWindow.__init__(self, **kwargs)
+        QtGui.QDialog.__init__(self, **kwargs)
         self._con = con
         self._con_manager = con_manager
         self._df_manager = df_manager
@@ -47,7 +47,7 @@ class AlchemyTableImportDialog(QtGui.QDialog, Ui_AlchemyTableImportDialog):
 
     @property
     def con_manager(self) -> AlchemyConnectionManager:
-        return self._manager
+        return self._con_manager
 
     @property
     def df_manager(self) -> DataFrameModelManager:
@@ -57,12 +57,11 @@ class AlchemyTableImportDialog(QtGui.QDialog, Ui_AlchemyTableImportDialog):
 
     @property
     def source_model(self) -> DataFrameModel:
-        if self._source_model is None:
-            file_path = self.lineEditSourcePath.text()
-            assert os.path.isfile(file_path), "file_path must be a valid file, not {}".format(
-                                               file_path)
+        file_path = self.lineEditSourcePath.text()
+        if self._source_model is None or file_path == '':
+            if not os.path.isfile(file_path):
+                file_path = QtGui.QFileDialog.getOpenFileName(dir='')[0]
             self._source_model = self.df_manager.read_file(file_path)
-
         return self._source_model
 
     def configure(self):
@@ -80,15 +79,16 @@ class AlchemyTableImportDialog(QtGui.QDialog, Ui_AlchemyTableImportDialog):
         :param model: (DataFrameModel, default None)
         :return: None
         """
-        if model is None:
+        if isinstance(model, str) and os.path.isfile(model):
+            model = self.df_manager.read_file(model)
+        elif model is None:
             model = self.source_model
-        else:
-            if self._source_model is not None:
-                widgets.signal_adjust(self._source_model.dataChanged,
-                                      oldhandler=self.set_source_model)
-            self._source_model = model
-            if model.filePath is not None and model.filePath not in self.df_manager.file_paths:
-                self.df_manager.set_model(model, model.filePath)
+        if self._source_model is not None:
+            widgets.signal_adjust(self._source_model.dataChanged,
+                                  oldhandler=self.set_source_model)
+        self._source_model = model
+        if model.filePath is not None and model.filePath not in self.df_manager.file_paths:
+            self.df_manager.set_model(model, model.filePath)
         widgets.signal_adjust(model.dataChanged, self.set_source_model, self.set_source_model)
 
         if model.filePath is not None:
@@ -103,13 +103,50 @@ class AlchemyTableImportDialog(QtGui.QDialog, Ui_AlchemyTableImportDialog):
         table_name = self.lineEditTableName.text()
         source_model = self.source_model
         df = source_model.dataFrame().copy()
+        orig_size = df.index.size
         key_name = self.comboBoxPrimaryKey.currentText()
         key_priority = self.comboBoxPrimaryKeyPriority.currentText()
         if_exists = self.comboBoxExistingTableOption.currentText()
+
         try:
             Table = self.con.meta.tables[table_name]
         except (KeyError, AttributeError):
             Table = None
+
+        if key_name in df.columns and key_name != df.index.name:
+            df.set_index(key_name, drop=True, inplace=True)
+
+        if Table is not None:
+            if if_exists == 'fail':
+                raise Exception("Table name {} already exists!".format(table_name))
+            elif if_exists == 'append' and key_name != '':
+                session = self.con.Session()
+                query = session.query(Table)
+                if key_priority == 'delete from table':
+                    # Delete the data from the table that has the same primary_key
+                    try:
+                        keys = list(df.index)
+                        query.filter(getattr(Table, key_name).in_(keys)).delete()
+                        session.commit()
+                    except Exception as e:
+                        session.rollback()
+                        print("Got an error trying to delete matching keys: {}".format(e))
+
+                elif key_priority == 'delete from import data':
+                    # Delete the data from the df that has a matching key.
+                    ids = [getattr(o, key_name) for o in query.all()]
+                    df = df.loc[~df.index.isin(ids), :]
+                    print("Removed {} records from the import data with matching keys".format(orig_size - df.index.size))
+                session.close()
+
+        if key_name == '':
+            key_name = None
+            index = False
+        else:
+            index = True
+
+        if not df.empty:
+            df.to_sql(table_name, self.con.engine, if_exists=if_exists, index_label=key_name, index=index)
 
     def edit_source_model(self):
         source_path = self.lineEditSourcePath.text()
