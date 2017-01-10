@@ -22,17 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-
 import pandas as pd
-
-import core.utility.pandatools as pandatools
 from core.compat import QtGui
+import core.utility.pandatools as pandatools
 from core.ctrls.dataframe import DataFrameModel
 from core.models.fieldnames import FieldModel
 from core.ui.actions.fields_edit_ui import Ui_FieldsEditDialog
 from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
 from zeex.core.utility.pandatools import superReadFile
-
+import core.utility.widgets as widgets
 CASE_MAP = {'lower': str.lower,
             'upper': str.upper,
             'proper': str.title,
@@ -58,6 +56,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.setupUi(self)
         self.dfmodel = model
         self.fmodel = FieldModel()
+        self.key_delete = QtGui.QShortcut(self)
         self.configure()
 
     def configure(self):
@@ -72,11 +71,16 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.btnParseDates.clicked.connect(self.parse_dates)
         self.btnUp.clicked.connect(self.push_field_up)
         self.btnDown.clicked.connect(self.push_field_down)
+        self.btnTop.clicked.connect(self.push_field_top)
+        self.btnBottom.clicked.connect(self.push_field_bottom)
+        self.btnDelete.clicked.connect(self.delete_selected_fields)
         self.btnSort.clicked.connect(self.sort_fields)
         self.setWindowTitle("Edit Fields - {}".format(os.path.basename(self.dfmodel.filePath)))
-
+        self.key_delete.setKey('del')
+        self.key_delete.activated.connect(self.delete_selected_fields)
         # TODO: Make this work.
         self.radioBtnSyncDatabase.setVisible(False)
+        self.tableView.setSelectionMode(self.tableView.ExtendedSelection)
 
     def apply_case(self):
         value = self.setCaseComboBox.currentText()
@@ -108,24 +112,31 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
             self.fmodel.set_field(col, dtype=df[col].dtype)
 
     def push_field_down(self):
-        idx = self.tableView.selectedIndexes()[0]
-        row = idx.row()
-        if row < self.fmodel.rowCount()-1:
-            self.fmodel.insertRow(row+2)
-            for i in range(self.fmodel.columnCount()):
-               self.fmodel.setItem(row+2,i,self.fmodel.takeItem(row,i))
-            self.fmodel.takeRow(row)
-            self.tableView.setCurrentIndex(self.fmodel.item(row + 1, 0).index())
+        widgets.table_push_item_down(self.tableView)
 
     def push_field_up(self):
-        idx = self.tableView.selectedIndexes()[0]
-        row = idx.row()
-        if row > 0:
-            self.fmodel.insertRow(row-1)
-            for i in range(self.fmodel.columnCount()):
-                self.fmodel.setItem(row - 1, i, self.fmodel.takeItem(row + 1, i))
-            self.fmodel.takeRow(row+1)
-            self.tableView.setCurrentIndex(self.fmodel.item(row - 1, 0).index())
+        widgets.table_push_item_up(self.tableView)
+
+    def push_field_top(self):
+        model = self.fmodel
+        view = self.tableView
+        rows = reversed([v.row() for v in view.selectedIndexes()])
+        for ct, row in enumerate(rows, start=1):
+            model.insertRow(0)
+            [model.setItem(0, i, v) for i, v in enumerate(model.takeRow(row + ct))]
+            view.setCurrentIndex(model.item(row, 0).index())
+
+    def push_field_bottom(self):
+        model = self.fmodel
+        view = self.tableView
+        rows = reversed([v.row() for v in view.selectedIndexes()])
+        for ct, row in enumerate(rows, start=1):
+            print(row)
+            bottom = model.rowCount()
+            model.insertRow(bottom)
+            [model.setItem(bottom, i, v) for i, v in enumerate(model.takeRow(row))]
+            model.takeRow(model.rowCount() - 2)
+            view.setCurrentIndex(model.item(row, 0).index())
 
     def sort_fields(self):
         asc = self.checkBoxSortAscending.isChecked()
@@ -150,6 +161,22 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
             name = self.fmodel.item(i, 0)
             if name and name.text() not in current_frame_cols:
                 self.fmodel.takeRow(i)
+
+    def delete_selected_fields(self):
+        model = self.fmodel
+        view = self.tableView
+        for idx in view.selectedIndexes():
+            row_num = idx.row()
+            row = model.takeRow(row_num)
+            if row:
+                self.dfmodel.dataFrame().drop(row[0].text(), axis=1, inplace=True)
+            if row_num > model.rowCount():
+                row_num = model.rowCount() - 1
+
+        self.dfmodel.dataChanged.emit()
+        self.dfmodel.layoutChanged.emit()
+        view.setCurrentIndex(model.item(row_num, 0).index())
+
 
     def import_template(self, filename=None,df=None, columns=None):
         def_cols = ['old', 'new', 'dtype']
@@ -214,12 +241,13 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         orig_cols = [str(x) for x in df.columns]
         new_cols = [self.fmodel.item(i, 0).text() for i in range(self.fmodel.rowCount())]
         extra_cols = [x for x in new_cols if x not in orig_cols]
-        new_cols = [x for x in new_cols if x in orig_cols]
+        new_cols = [x for x in orig_cols if x in new_cols]
         order_match = [x for i, x in enumerate(new_cols) if orig_cols[i] == x]
         change_order = len(order_match) != len(new_cols)
 
         if change_order:
             df = df.loc[:, new_cols]
+
         if extra_cols:
             for e in extra_cols:
                 idx = self.fmodel.findItems(e)

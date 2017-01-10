@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fields_edit.ui'
 #
-# Created: Mon Dec 26 11:55:09 2016
+# Created: Mon Jan  9 22:53:41 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,10 +34,16 @@ class Ui_FieldsEditDialog(object):
         sizePolicy.setHeightForWidth(self.btnUp.sizePolicy().hasHeightForWidth())
         self.btnUp.setSizePolicy(sizePolicy)
         self.btnUp.setObjectName("btnUp")
-        self.gridLayout_4.addWidget(self.btnUp, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.btnUp, 1, 0, 1, 1)
         self.btnDown = QtGui.QPushButton(FieldsEditDialog)
         self.btnDown.setObjectName("btnDown")
-        self.gridLayout_4.addWidget(self.btnDown, 1, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.btnDown, 2, 0, 1, 1)
+        self.btnTop = QtGui.QPushButton(FieldsEditDialog)
+        self.btnTop.setObjectName("btnTop")
+        self.gridLayout_4.addWidget(self.btnTop, 0, 0, 1, 1)
+        self.btnBottom = QtGui.QPushButton(FieldsEditDialog)
+        self.btnBottom.setObjectName("btnBottom")
+        self.gridLayout_4.addWidget(self.btnBottom, 3, 0, 1, 1)
         self.gridLayout.addLayout(self.gridLayout_4, 0, 0, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout)
         self.gridLayout_2 = QtGui.QGridLayout()
@@ -69,7 +75,7 @@ class Ui_FieldsEditDialog(object):
         self.btnSort = QtGui.QPushButton(FieldsEditDialog)
         self.btnSort.setObjectName("btnSort")
         self.gridLayout_3.addWidget(self.btnSort, 1, 1, 1, 1)
-        self.gridLayout_2.addLayout(self.gridLayout_3, 11, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout_3, 12, 0, 1, 1)
         self.radioBtnSyncDatabase = QtGui.QRadioButton(FieldsEditDialog)
         self.radioBtnSyncDatabase.setChecked(True)
         self.radioBtnSyncDatabase.setObjectName("radioBtnSyncDatabase")
@@ -77,11 +83,14 @@ class Ui_FieldsEditDialog(object):
         self.btnReset = QtGui.QPushButton(FieldsEditDialog)
         self.btnReset.setObjectName("btnReset")
         self.gridLayout_2.addWidget(self.btnReset, 1, 0, 1, 1)
-        spacerItem = QtGui.QSpacerItem(150, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem, 6, 0, 1, 1)
         self.btnParseDates = QtGui.QPushButton(FieldsEditDialog)
         self.btnParseDates.setObjectName("btnParseDates")
         self.gridLayout_2.addWidget(self.btnParseDates, 8, 0, 1, 1)
+        spacerItem = QtGui.QSpacerItem(150, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_2.addItem(spacerItem, 6, 0, 1, 1)
+        self.btnDelete = QtGui.QPushButton(FieldsEditDialog)
+        self.btnDelete.setObjectName("btnDelete")
+        self.gridLayout_2.addWidget(self.btnDelete, 9, 0, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout_2)
 
         self.retranslateUi(FieldsEditDialog)
@@ -91,6 +100,8 @@ class Ui_FieldsEditDialog(object):
         FieldsEditDialog.setWindowTitle(QtGui.QApplication.translate("FieldsEditDialog", "Edit Fields", None, QtGui.QApplication.UnicodeUTF8))
         self.btnUp.setText(QtGui.QApplication.translate("FieldsEditDialog", "Up", None, QtGui.QApplication.UnicodeUTF8))
         self.btnDown.setText(QtGui.QApplication.translate("FieldsEditDialog", "Down", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnTop.setText(QtGui.QApplication.translate("FieldsEditDialog", "Top", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnBottom.setText(QtGui.QApplication.translate("FieldsEditDialog", "Bottom", None, QtGui.QApplication.UnicodeUTF8))
         self.btnExportTemplate.setText(QtGui.QApplication.translate("FieldsEditDialog", "Save Template", None, QtGui.QApplication.UnicodeUTF8))
         self.btnLoadTemplate.setText(QtGui.QApplication.translate("FieldsEditDialog", "Load Template", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSaveFile.setText(QtGui.QApplication.translate("FieldsEditDialog", "Save", None, QtGui.QApplication.UnicodeUTF8))
@@ -104,4 +115,5 @@ class Ui_FieldsEditDialog(object):
         self.radioBtnSyncDatabase.setText(QtGui.QApplication.translate("FieldsEditDialog", "Sync Database", None, QtGui.QApplication.UnicodeUTF8))
         self.btnReset.setText(QtGui.QApplication.translate("FieldsEditDialog", "Reset", None, QtGui.QApplication.UnicodeUTF8))
         self.btnParseDates.setText(QtGui.QApplication.translate("FieldsEditDialog", "Parse Dates", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnDelete.setText(QtGui.QApplication.translate("FieldsEditDialog", "Delete", None, QtGui.QApplication.UnicodeUTF8))
 

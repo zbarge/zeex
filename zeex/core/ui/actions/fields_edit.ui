@@ -27,7 +27,7 @@
      </item>
      <item row="0" column="0">
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QPushButton" name="btnUp">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -40,10 +40,24 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QPushButton" name="btnDown">
          <property name="text">
           <string>Down</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="btnTop">
+         <property name="text">
+          <string>Top</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="btnBottom">
+         <property name="text">
+          <string>Bottom</string>
          </property>
         </widget>
        </item>
@@ -74,7 +88,7 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="12" column="0">
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
         <widget class="QComboBox" name="setCaseComboBox">
@@ -140,6 +154,13 @@
        </property>
       </widget>
      </item>
+     <item row="8" column="0">
+      <widget class="QPushButton" name="btnParseDates">
+       <property name="text">
+        <string>Parse Dates</string>
+       </property>
+      </widget>
+     </item>
      <item row="6" column="0">
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -156,10 +177,10 @@
        </property>
       </spacer>
      </item>
-     <item row="8" column="0">
-      <widget class="QPushButton" name="btnParseDates">
+     <item row="9" column="0">
+      <widget class="QPushButton" name="btnDelete">
        <property name="text">
-        <string>Parse Dates</string>
+        <string>Delete</string>
        </property>
       </widget>
      </item>

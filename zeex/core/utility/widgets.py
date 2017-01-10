@@ -104,26 +104,26 @@ def shift_grid_layout_down(layout):
 
 def table_push_item_up(view):
     model = view.model()
-    idx = view.selectedIndexes()[0]
-    row = idx.row()
-    if row > 0:
-        model.insertRow(row-1)
-        for i in range(model.columnCount()):
-            model.setItem(row - 1, i, model.takeItem(row + 1, i))
-        model.takeRow(row+1)
-        view.setCurrentIndex(model.item(row - 1, 0).index())
+    for idx in view.selectedIndexes():
+        row = idx.row()
+        if row > 0:
+            model.insertRow(row-1)
+            for i in range(model.columnCount()):
+                model.setItem(row - 1, i, model.takeItem(row + 1, i))
+            model.takeRow(row+1)
+            view.setCurrentIndex(model.item(row - 1, 0).index())
 
 
 def table_push_item_down(view):
     model = view.model()
-    idx = view.selectedIndexes()[0]
-    row = idx.row()
-    if row < model.rowCount()-1:
-        model.insertRow(row+2)
-        for i in range(model.columnCount()):
-            model.setItem(row+2, i, model.takeItem(row,i))
-        model.takeRow(row)
-        view.setCurrentIndex(model.item(row + 1, 0).index())
+    for idx in view.selectedIndexes():
+        row = idx.row()
+        if row < model.rowCount()-1:
+            model.insertRow(row+2)
+            for i in range(model.columnCount()):
+                model.setItem(row+2, i, model.takeItem(row,i))
+            model.takeRow(row)
+            view.setCurrentIndex(model.item(row + 1, 0).index())
 
 
 def signal_adjust(signal, newhandler=None, oldhandler=None):
