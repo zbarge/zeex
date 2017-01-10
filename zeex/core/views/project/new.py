@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
+import shutil
 from core.compat import QtGui, QtCore
 from core.ui.project.new_ui import Ui_NewProjectDialog
 
@@ -50,10 +51,15 @@ class NewProjectDialog(QtGui.QDialog, Ui_NewProjectDialog):
     def create_project(self):
         proj_dirname = self.nameLineEdit.text()
         proj_ini = self.settingsFileLineEdit.text()
+        ini_correct = os.path.join(proj_dirname, os.path.basename(proj_ini))
 
         if not os.path.exists(proj_dirname):
             os.mkdir(proj_dirname)
-        self.signalProjectNew.emit([proj_dirname, proj_ini])
+
+        if not os.path.exists(ini_correct):
+            shutil.copy2(proj_ini, ini_correct)
+
+        self.signalProjectNew.emit([proj_dirname, ini_correct])
         self.close()
 
 

@@ -26,172 +26,84 @@ SOFTWARE.
 """
 import os
 from zeex.core.compat import QtGui, QtCore
-from zeex.core.models.filetree import FileTreeModel
 from zeex.core.ui.main_ui import Ui_HomeWindow
-from zeex.core.utility.collection import get_ini_file, SettingsINI
 from zeex.core.utility.ostools import zipfile_compress, zipfile_unzip
 from .basic.directory import DropBoxViewDialog
-from .project.main import ProjectMainWindow
-from .project.new import NewProjectDialog
-from .settings import SettingsDialog
 from icons import Icons
 from .sql.main import DatabasesMainWindow
+from zeex.core.ctrls.main import MainController
 
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
-    signalProjectOpened = QtCore.Signal(list)          # [dirname, settings.ini]
 
-    def __init__(self):
+    def __init__(self, main_controller: MainController):
         QtGui.QMainWindow.__init__(self)
+        self.control = main_controller
         self.setupUi(self)
-        self.setMaximumHeight(600)
-        self.setMaximumWidth(800)
         self.icons = Icons()
-        self.dialog_settings = SettingsDialog(parent=self)
-        self.dialog_new_project = NewProjectDialog(parent=self)
         self.dialog_cloud = None
         self.window_sql = DatabasesMainWindow(parent=self)
         self.key_enter = QtGui.QShortcut(self)
         self.key_delete = QtGui.QShortcut(self)
-
-        self.connect_actions()
-        self.connect_filetree()
-        self.connect_icons()
-        self.connect_cloud_dialog()
-        self._project_cache = {}
+        self.configure()
         
-    def connect_actions(self):
-        self.key_delete.setKey('del')
-        self.key_enter.setKey('return')
-        self.dialog_new_project.signalProjectNew.connect(self.open_project)
-        self.dialog_settings.signalSettingsSaved.connect(self.connect_filetree)
-        self.actionSettings.triggered.connect(self.open_settings)
-        self.actionOpen.triggered.connect(self.open_project)
-        self.actionNew.triggered.connect(self.create_new_project)
-        self.actionZipFolder.triggered.connect(self.handle_compression)
+    def configure(self):
+        self.connect_cloud_dialog()
+
+        self.control.main_window = self
+        self.btnClearFilter.clicked.connect(lambda: self.lineEditFilter.setText(''))
+        self.btnOpenProject.clicked.\
+             connect(lambda: self.control.tree_set_project_from_file_path(self.comboBoxProject.currentText()))
+        self.btnOpenFile.clicked.connect(self.open_combo_box_file)
+        self.control.register_tree_views(projects=self.treeView, project=self.treeView_2, configure=True)
+        self.lineEditFilter.textChanged.connect(self.filter)
+        self.actionGeneralSettings.triggered.connect(self.control.dialog_settings_main.show)
+        self.actionProjectSettings.triggered.connect(self.open_project_settings)
+        self.actionOpenProject.triggered.connect(self.control.tree_set_project)
+        self.actionNewProject.triggered.connect(self.create_new_project)
+        self.actionZip.triggered.connect(self.handle_compression)
         self.actionUnzip.triggered.connect(self.handle_compression)
         self.actionEdit.setVisible(False)
+        self.actionMergePurge.triggered.connect(lambda: self.control.current_project.get_dialog_merge_purge().show())
         self.actionSQL.triggered.connect(self.window_sql.show)
-        self.key_enter.activated.connect(self.open_project)
+        self.actionOpenSheet.triggered.connect(self.open_sheet)
+        self.actionRename.triggered.connect(lambda: self.control.current_project.get_dialog_rename_path().show())
+
+        self.key_enter.setKey('return')
+        self.key_enter.activated.connect(self.control.tree_set_project)
+        self.key_enter.activated.connect(self.open_sheet)
+        self.key_delete.setKey('del')
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         # TODO: Show these actions when they do something.
-        self.actionSave.setVisible(False)
-
-    def connect_icons(self):
+        self.actionSaveFile.setVisible(False)
+        self.actionPurgeFile.setVisible(False)
         self.setWindowIcon(self.icons['home'])
-        self.dialog_new_project.setWindowIcon(self.icons['spreadsheet'])
-        self.dialog_settings.setWindowIcon(self.icons['settings'])
-        self.actionSettings.setIcon(self.icons['settings'])
-        self.actionNew.setIcon(self.icons['add'])
-        self.actionOpen.setIcon(self.icons['folder'])
-        self.actionEdit.setIcon(self.icons['edit'])
-        self.actionSave.setIcon(self.icons['save'])
-        self.actionZipFolder.setIcon(self.icons['archive'])
-        self.actionUnzip.setIcon(self.icons['unzip'])
-        self.actionSQL.setIcon(self.icons['sql'])
-
-    @QtCore.Slot()
-    def connect_filetree(self, rootdir=None):
-        """
-        Handles the FileSystemModel for the home view.
-        Connects with dialog_settings.signalProjectSaved.
-        Ignores the SettingsINI file emitted.
-
-        :param rootdir: (str, default=None)
-            a filepath to set as the root of the filetree.
-            The dialog_settings.rootDirectoryLineEdit is used
-            as a backup.
-        :return: None
-        
-        """
-        if rootdir is None or hasattr(rootdir, 'set_safe'):
-            rootdir = self.dialog_settings.rootDirectoryLineEdit.text()
-            rootdir = os.path.realpath(rootdir)
-
-        if not os.path.exists(rootdir):
-            os.mkdir(rootdir)
-
-        model = self.treeView.model()
-
-        if model is None:
-            model = FileTreeModel(root_dir=rootdir)
-            self.treeView.setModel(model)
-
-        if model.rootPath() is not rootdir:
-            print("root directory: {}".format(rootdir))
-            self.treeView.setRootIndex(model.index(rootdir))
-            self.treeView.setColumnWidth(0, 175)
-        
-    def open_settings(self):
-        self.dialog_settings.show()
-
-    @QtCore.Slot(list)
-    def open_project(self, contents: list = None):
-        if contents:
-            # New project came in off the slot.
-            dirname, ini = contents
-        else:
-            # User must have selected off the tree.
-            try:
-                idx = self.treeView.selectedIndexes()[0]
-            except IndexError:
-                # User failed to select anything..
-                return self.display_ok_msg("No project folder selected")
-
-            dirname = idx.model().filePath(idx)
-            ini = get_ini_file(dirname)
-
-        # See if project is cached.
-        try:
-
-            self._project_cache[dirname].show()
-
-        except KeyError:
-            # Oh well, not cached...
-            # Make sure the project is valid
-            assert ini and os.path.exists(ini), "Need a settings.ini file for project '{}'- got: '{}'".format(dirname, ini)
-            assert dirname and os.path.exists(dirname), "Directory '{}' needs to exist!".format(dirname)
-            p = os.path.normpath
-            root_dir = p(self.dialog_settings.rootDirectoryLineEdit.text())
-            assert not p(dirname) == root_dir, "Project directory cannot be the root!"
-
-            # Update ROOT_DIRECTORY in settings.
-            settings = SettingsINI(ini)
-            settings.set_path('GENERAL', 'ROOT_DIRECTORY', dirname)
-            ini_name = os.path.basename(ini)
-
-            # Make sure the ini file goes
-            # in the home folder of the project.
-            ini = os.path.join(dirname, ini_name)
-            settings.save_as(ini, set_self=True)
-
-            # Build & cache window
-            window = ProjectMainWindow(settings, parent=self)
-            self._cache_project(dirname, window)
-            self.signalProjectOpened.emit([dirname, ini])
-            window.show()
 
     def connect_cloud_dialog(self):
         try:
-            self.dialog_cloud = DropBoxViewDialog(self.treeView, self)
+            self.dialog_cloud = DropBoxViewDialog(self.treeView_2, self)
             self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
             self.actionViewCloud.setIcon(self.icons['cloud'])
         except Exception as e:
             print("Error connecting to cloud: {}".format(e))
             self.actionViewCloud.setVisible(False)
 
-    def display_ok_msg(self, msg):
-        box = QtGui.QMessageBox(self)
-        box.setText(msg)
-        box.show()
+    def open_combo_box_file(self):
+        file_path = self.comboBoxFile.currentText()
+        orig_path = file_path
+        project = None
+        while project is None:
+            file_path = os.path.dirname(file_path)
+            project = self.control.project(file_path)
+            if os.path.dirname(file_path) == file_path:
+                break
+        self.control.tree_set_project_from_file_path(file_path)
+        self.control.current_project.df_manager.get_fileview_window(orig_path).show()
 
     def create_new_project(self):
         # Creates new project dialog and
         # Routes the user back to self.open_existing_project
-        self.dialog_new_project.show()
-
-    def _cache_project(self, dirname, window):
-        self._project_cache.update({dirname: window})
+        self.control.dialog_new_project.show()
 
     def handle_compression(self, fpath=None, **kwargs):
         if fpath is None:
@@ -203,15 +115,14 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             return zipfile_unzip(file_path=fpath)
 
     def get_tree_selected_path(self):
-        selected = self.treeView.selectedIndexes()
+        selected = self.treeView_2.selectedIndexes()
         if selected:
             idx = selected[0]
-            return self.treeView.model().filePath(idx)
-        return None
+            return self.treeView_2.model().filePath(idx)
 
     def remove_tree_selected_path(self):
         #TODO: need to emit a signal here.
-        idxes = self.treeView.selectedIndexes()
+        idxes = self.treeView_2.selectedIndexes()
         if idxes:
             file_model = self.treeView.model()
             for idx in idxes:
@@ -219,3 +130,24 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
                     file_model.remove(idx)
                 else:
                     file_model.rmdir(idx)
+
+    def open_sheet(self):
+        w = self.control.get_fileview_window()
+        if w is not None:
+            w.show()
+
+    def open_project_settings(self):
+        w = self.control.get_project_settings_dialog()
+        w.show()
+
+    def filter(self):
+        info = self.lineEditFilter.text()
+        model = self.treeView_2.model()
+        if info != '':
+            if not info.startswith("*"):
+                info = "*" + info
+            if not info.endswith("*"):
+                info += "*"
+            model.setNameFilters([info])
+        else:
+            model.setNameFilters(['*'])

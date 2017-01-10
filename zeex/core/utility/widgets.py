@@ -163,3 +163,17 @@ def activated_adjust(item, newhandler=None, oldhandler=None):
             break
     if newhandler is not None:
         item.activated.connect(newhandler)
+
+
+def combo_box_append(box, value, select=True):
+    value = str(value)
+    match = box.findText(value)
+    if match >= 0:
+        if select:
+            box.setCurrentIndex(match)
+    else:
+        box.addItem(value)
+        combo_box_append(box, value, select)
+    return box
+
+

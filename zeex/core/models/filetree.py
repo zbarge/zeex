@@ -30,7 +30,7 @@ from core.compat import QtGui, QtCore
 
 class FileTreeModel(QtGui.QFileSystemModel):
     def __init__(self, parent=None, root_dir=None):
-        super(FileTreeModel, self).__init__(parent)
+        QtGui.QFileSystemModel.__init__(self, parent)
         self._root_dir = root_dir
         self.setRootPath(self._root_dir)
 
@@ -49,6 +49,6 @@ class FileTreeModel(QtGui.QFileSystemModel):
         return mimedata
 
     def setData(self, index, value, role):
-        print("setData")
         super(FileTreeModel, self).setData(index, value, role)
+
 

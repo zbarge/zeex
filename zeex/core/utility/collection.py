@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import os
+import copy
 import shutil
 from configparser import ConfigParser
 from core.compat import QtGui
@@ -150,6 +151,9 @@ class BaseConfig(ConfigParser):
         self.save()
         if set_self is False:
             self._filename = orig
+
+    def copy(self):
+        return copy.copy(self)
 
 
 class FileConfig(BaseConfig):

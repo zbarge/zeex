@@ -26,11 +26,17 @@ SOFTWARE.
 
 from core.compat import QtGui
 from core.views.main import ZeexMainWindow
+from zeex.core.ctrls.main import MainController
 
 
 class ZeexApp(QtGui.QApplication):
     def __init__(self, sys_argv):
         super(ZeexApp, self).__init__(sys_argv)
-        self.main_view = ZeexMainWindow()
+        self.main_view = ZeexMainWindow(MainController())
         self.main_view.show()
+
+    @property
+    def control(self) -> MainController:
+        return self.main_view.control
+
 
