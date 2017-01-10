@@ -53,7 +53,7 @@ class ProjectController(object):
 
     @property
     def directory(self):
-        return self._directory
+        return self._dialog_settings.rootDirectoryLineEdit.text()
 
     @property
     def df_manager(self) -> DataFrameModelManager:
@@ -114,6 +114,7 @@ class ProjectController(object):
             if model is None or model.rootPath() != self.file_tree_model.rootPath():
                 model = self.file_tree_model
                 view.setModel(model)
+                print("Project tree view configured for {}".format(model.rootPath()))
 
             view.setRootIndex(model.index(self.directory))
             view.setColumnWidth(0, 300)

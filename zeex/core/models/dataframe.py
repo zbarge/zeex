@@ -25,6 +25,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
+import pandas as pd
+import logging
 from core.ctrls.dataframe import DataFrameModel
 
 
@@ -69,14 +71,19 @@ class DataFrameDescriptionModel(DataFrameModel):
 
     @staticmethod
     def get_describe_frame(df, index_label='category', include='all', **kwargs):
-        df = df.describe(include=include, **kwargs)
-        orig_cols = df.columns.tolist()
-        df.index.name = index_label
-        df.reset_index(drop=False, inplace=True)
+        try:
+            df = df.describe(include=include, **kwargs)
+            orig_cols = df.columns.tolist()
+            df.index.name = index_label
+            df.reset_index(drop=False, inplace=True)
 
-        if df.index.size < len(orig_cols):
-            df = df.transpose().reset_index()
-            df.columns = [df.iloc[0][c] for c in df.columns]
-            df = df[1:]
+            if df.index.size < len(orig_cols):
+                df = df.transpose().reset_index()
+                df.columns = [df.iloc[0][c] for c in df.columns]
+                df = df[1:]
+        except TypeError as e:
+            df = pd.DataFrame()
+            # TODO: Figure out how to overcome this?
+            logging.warning('DataFrameDescriptionDialog.get_describe_frame: Error getting describe frame: {}'.format(e))
 
         return df

@@ -24,8 +24,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import zeex.core.utility.pandatools as pandatools
 from qtpandas.models.DataFrameModel import DataFrameModel
-from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFM
+from qtpandas.models.DataFrameModelManager import DataFrameModelManager as DFMM
 
 SEPARATORS = {'Comma': ',',
               'Semicolon': ';',
@@ -39,13 +40,15 @@ ENCODINGS = {'UTF-8':'UTF_8',
              'ISO-8859-1':'ISO-8859-1'}
 
 
-class DataFrameModelManager(DFM):
+
+
+class DataFrameModelManager(DFMM):
     """
     A central storage unit for managing
     DataFrameModels.
     """
     def __init__(self):
-        DFM.__init__(self)
+        DFMM.__init__(self)
         self._file_table_windows = {}
 
     @property

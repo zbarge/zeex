@@ -147,7 +147,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
             True re-configures file path line edits and the listviews.
         :return:
         """
-        if not isinstance(model, DataFrameModel):
+        if not hasattr(model, 'dataFrame'):
             if model is None:
                 model = self.sourcePathLineEdit.text()
             if isinstance(model, str) and os.path.exists(model):

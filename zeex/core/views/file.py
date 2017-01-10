@@ -31,8 +31,8 @@ from core.views.actions.fields_edit import FieldsEditDialog
 from core.views.actions.merge_purge import MergePurgeDialog
 from core.views.actions.normalize import ColumnNormalizerDialog
 from core.views.actions.split import SplitFileDialog
-from icons import Icons
-from qtpandas.models.DataFrameModel import DataFrameModel
+from icons import icons_rc
+from zeex.core.ctrls.dataframe import DataFrameModel
 from qtpandas.views.DataTableView import DataTableWidget
 
 
@@ -51,7 +51,6 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self._widget = DataTableWidget()
         self._widget.setModel(model)
         kwargs['parent'] = self
-        self.icons = Icons()
         self.setupUi(self)
         self.dialog_fields_edit = FieldsEditDialog(model, parent=self)
         self.dialog_export = DataFrameModelExportDialog(df_manager, filename=model.filePath,
@@ -62,7 +61,6 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.dialog_merge_purge = kwargs.pop('merge_purge_dialog', MergePurgeDialog(df_manager,
                                                                                     source_model=model,
                                                                                     ))
-
         self.connect_actions()
         self.connect_icons()
 
@@ -79,15 +77,17 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         pass
 
     @property
-    def df_model(self):
+    def df_model(self) -> DataFrameModel:
         return self.widget.model()
 
     @property
     def df(self):
         return self.df_model.dataFrame()
 
+
     def connect_actions(self):
         self.actionAnalyze.triggered.connect(self.dialog_analyze.show)
+        self.actionDropNaN.triggered.connect(self.drop_nan)
         self.actionEditFields.triggered.connect(self.dialog_fields_edit.show)
         self.actionMergePurge.triggered.connect(self.dialog_merge_purge.show)
         self.actionNormalize.triggered.connect(self.dialog_normalize.show)
@@ -104,23 +104,13 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.sync()
 
     def connect_icons(self):
-        self.setWindowIcon(self.icons['spreadsheet'])
-        self.actionExecuteScript.setIcon(self.icons['edit'])
-        self.actionDelete.setIcon(self.icons['delete'])
-        self.actionMergePurge.setIcon(self.icons['merge'])
-        self.actionSave.setIcon(self.icons['save'])
-        self.actionSaveAs.setIcon(self.icons['saveas'])
-        self.actionSplit.setIcon(self.icons['split'])
-        self.actionSuppress.setIcon(self.icons['suppress'])
-        self.actionTranspose.setIcon(self.icons['transpose'])
-        self.actionEditFields.setIcon(self.icons['add_column'])
-        self.actionAnalyze.setIcon(self.icons['count'])
-        self.actionNormalize.setIcon(self.icons['normalize'])
-        self.dialog_normalize.setWindowIcon(self.icons['normalize'])
-        self.dialog_analyze.setWindowIcon(self.icons['count'])
-        self.dialog_export.setWindowIcon(self.icons['export_generic'])
+        self.setWindowIcon(QtGui.QIcon(':/standard_icons/spreadsheet.png'))
 
     def transpose(self):
+        """
+        TODO: Give this functionality to the DataFrameModel
+        :return:
+        """
         rows = self.df_model.dataFrame().index.size
         if rows > 150:
             raise Exception("Max size to transpose is 150 rows to columns.")
@@ -136,6 +126,18 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         else:
             self.widget.setModel(self._df_model_transposed)
             self._view_transposed = True
+
+    def drop_nan(self):
+        for c in self.df.columns:
+            dtype = str(self.df[c].dtype)
+            if 'float' in dtype:
+                sum = self.df[c].sum()
+                if sum == 0 or str(sum) == 'nan':
+                    self.df.loc[:, c] = self.df.loc[:, c].apply(lambda x: str(x))
+
+            if str(self.df[c].dtype) == 'object':
+                self.df.loc[:, c] = pandatools.series_blank_na(self.df.loc[:, c])
+        self.df_model.dataChanged.emit()
 
     def sync(self):
         self.setWindowTitle("{}".format(self.df_model.filePath))

@@ -111,15 +111,16 @@ class MainController(object):
     def build_project_controller(self, dirname, settings_ini=None, tree_view=None, register=True) -> ProjectController:
         if settings_ini is None:
             if os.path.exists(dirname):
-                for dirname, subdirs, files in os.walk(dirname):
-                    for f in files:
-                        if f.endswith('.ini'):
-                            try:
-                                settings_ini = SettingsINI(filename=os.path.join(dirname, f))
-                                if 'GENERAL' in settings_ini.sections():
-                                    break
-                            except Exception:
-                                pass
+                for d, subdirs, files in os.walk(dirname):
+                    if d == dirname:
+                        for f in files:
+                            if f.endswith('.ini'):
+                                try:
+                                    settings_ini = SettingsINI(filename=os.path.join(d, f))
+                                    if 'GENERAL' in settings_ini.sections():
+                                        break
+                                except Exception:
+                                    pass
             if settings_ini is None:
                 settings_ini = self.settings_ini.copy()
                 settings_ini._default_path = os.path.join(dirname, "config.ini")

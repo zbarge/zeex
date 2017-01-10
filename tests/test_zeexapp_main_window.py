@@ -29,23 +29,23 @@ from core.views.main import ZeexMainWindow
 from core.views.settings import SettingsDialog
 from tests.main import MainTestClass
 from core.compat import QtCore, QtTest, QtGui
-
+from zeex.core.ctrls.main import MainController
 
 class TestMainWindow(MainTestClass):
 
     @pytest.fixture
     def window(self, qtbot) -> ZeexMainWindow:
-        window = ZeexMainWindow()
+        window = ZeexMainWindow(MainController())
         window.show()
         qtbot.addWidget(window)
         return window
 
     @pytest.fixture
-    def settings_dialog(self, window):
-        return window.dialog_settings
+    def settings_dialog(self, window: ZeexMainWindow):
+        return window.control.dialog_settings_main
 
-    def test_settings_dialog(self, qtbot, window, settings_dialog: SettingsDialog, fixtures_dir):
-        window.actionSettings.trigger()
+    def test_settings_dialog(self, qtbot, window:ZeexMainWindow, settings_dialog: SettingsDialog, fixtures_dir):
+        window.actionGeneralSettings.trigger()
         dialog = settings_dialog
         assert dialog.isEnabled()
         qtbot.mouseClick(window.homemenu, QtCore.Qt.LeftButton)
@@ -75,8 +75,8 @@ class TestMainWindow(MainTestClass):
         dialog.close()
 
     def test_new_project_dialog(self, qtbot, window: ZeexMainWindow, fixtures_dir):
-        window.actionNew.trigger()
-        dialog = window.dialog_new_project
+        window.actionNewProject.trigger()
+        dialog = window.control.dialog_new_project
         assert dialog.isEnabled()
         proj_dir = os.path.join(fixtures_dir, "project")
         if os.path.exists(proj_dir):
@@ -84,7 +84,7 @@ class TestMainWindow(MainTestClass):
 
         log_dir = os.path.join(proj_dir, "logs")
 
-        dialog.settingsFileLineEdit.setText(window.dialog_settings.settings_ini.default_path)
+        dialog.settingsFileLineEdit.setText(window.control.dialog_settings_main.settings_ini.default_path)
         dialog.nameLineEdit.setText(proj_dir)
 
         button = dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok)
@@ -100,7 +100,7 @@ class TestMainWindow(MainTestClass):
                 if f.endswith('ini'):
                     found = True
 
-        assert found
+        assert found, "Expected dirname {} to contain a .ini file... none exists.".format(proj_dir)
         window.close()
 
 
