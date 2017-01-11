@@ -67,7 +67,7 @@ class DataFrameModelManager(DFMM):
             return self.get_model(describe_path)
 
     def get_fileview_window(self, file_path, **kwargs):
-        from core.views.file import FileTableWindow
+        from zeex.core.views.file import FileTableWindow
         model = self.read_file(file_path)
         try:
             return self._file_table_windows[file_path]

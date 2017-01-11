@@ -6,12 +6,13 @@ working with rows and columns in many formats.
 
 
 # Features:
-- A SQL view/query tool using SQLAlchemy
-	- PostgreSQL
-	- SQLite
-	- MySQL
+- A light-weight SQL view/query tool using SQLAlchemy:
+	- Connect PostgreSQL, SQLite, & MySQL databases
+	- Edit, execute, and save SQL queries.
+	- Import files to tables
+	- Export tables/queries to files
 
-- A template-maker for common tasks like
+- A template-maker for common tasks like:
     - Renaming & organizing headers
     - Sorting rows
     - Merging/purging other data sets based on common fields
@@ -20,7 +21,7 @@ working with rows and columns in many formats.
     - Text-to-columns
     - Concatenate columns
 
-- 1-click data normalizations
+- Easy data-normalizations
     - Drop/fill missing values
     - Merge or split columns
     - Set case (upper/lower/proper)

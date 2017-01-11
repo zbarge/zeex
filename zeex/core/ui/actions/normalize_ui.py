@@ -250,4 +250,4 @@ class Ui_ColumnNormalizerDialog(object):
         self.btnLoadSettings.setToolTip(QtGui.QApplication.translate("ColumnNormalizerDialog", "Load a pre-saved .ini template file", None, QtGui.QApplication.UnicodeUTF8))
         self.btnLoadSettings.setText(QtGui.QApplication.translate("ColumnNormalizerDialog", "Load Settings", None, QtGui.QApplication.UnicodeUTF8))
 
-from core.views.dataframe import ColumnsListView
+from zeex.core.views.dataframe import ColumnsListView
