@@ -21,8 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from core.compat import QtGui, QtCore
-from qtpandas.models.DataFrameModel import DataFrameModel
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.models.dataframe import DataFrameModel
 
 
 class ColumnsModel(QtGui.QStandardItemModel):

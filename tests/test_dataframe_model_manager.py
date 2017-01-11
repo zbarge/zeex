@@ -23,7 +23,7 @@ SOFTWARE.
 """
 import os
 import pytest
-from core.ctrls.dataframe import DataFrameModelManager
+from zeex.core.ctrls.dataframe import DataFrameModelManager
 from tests.main import MainTestClass
 
 

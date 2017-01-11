@@ -23,12 +23,13 @@ SOFTWARE.
 """
 import os
 import pandas as pd
-from core.ui.actions.normalize_ui import Ui_ColumnNormalizerDialog
-from core.compat import QtGui, QtCore
-import core.utility.pandatools as pandatools
-from core.ctrls.dataframe import DataFrameModel
-from core.utility.widgets import configure_combo_box
-from core.utility.collection import DictConfig, SettingsINI
+import logging
+from zeex.core.ui.actions.normalize_ui import Ui_ColumnNormalizerDialog
+from zeex.core.compat import QtGui, QtCore
+import zeex.core.utility.pandatools as pandatools
+from zeex.core.ctrls.dataframe import DataFrameModel
+from zeex.core.utility.widgets import configure_combo_box
+from zeex.core.utility.collection import DictConfig, SettingsINI
 
 
 class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
@@ -169,9 +170,10 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
             except:
                 dirname = ''
             to = QtGui.QFileDialog.getSaveFileName(self, dir=dirname)[0]
-        settings = self.get_settings()
-        ini = DictConfig(dictionary=dict(NORMALIZE=settings), filename=to)
-        ini.save()
+        if to != '' and to is not None:
+            settings = self.get_settings()
+            ini = DictConfig(dictionary=dict(NORMALIZE=settings), filename=to)
+            ini.save()
 
     def import_settings(self, filename=None, dictconfig:DictConfig=None, **kwargs):
         """
@@ -288,7 +290,7 @@ class ColumnNormalizerDialog(QtGui.QDialog, Ui_ColumnNormalizerDialog):
             df.columns = pandatools.rename_dupe_cols(df.columns)
 
         if any(activation_options):
-            print("Executed normalization on {}".format(self.df_model.filePath))
+            logging.info("Executed normalization on {}".format(self.df_model.filePath))
             self.df_model.setDataFrame(df, filePath=self.df_model.filePath)
 
 

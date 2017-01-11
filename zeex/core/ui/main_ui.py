@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Jan  9 16:38:20 2017
+# Created: Wed Jan 11 00:01:12 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -189,9 +189,10 @@ class Ui_HomeWindow(object):
         self.menuProjects.addAction(self.actionNewProject)
         self.menuProjects.addAction(self.actionSaveFile)
         self.menuProjects.addAction(self.actionEdit)
-        self.menuActions.addAction(self.actionRename)
+        self.menuActions.addAction(self.actionImportSheet)
         self.menuActions.addAction(self.actionMergePurge)
         self.menuActions.addAction(self.actionPurgeFile)
+        self.menuActions.addAction(self.actionRename)
         self.menuActions.addAction(self.actionSQL)
         self.menuActions.addAction(self.actionViewCloud)
         self.menuActions.addAction(self.actionUnzip)
@@ -237,9 +238,9 @@ class Ui_HomeWindow(object):
         self.actionOpenProject.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+P", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNewProject.setText(QtGui.QApplication.translate("HomeWindow", "New Project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNewProject.setToolTip(QtGui.QApplication.translate("HomeWindow", "Create a new project", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNewProject.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveFile.setText(QtGui.QApplication.translate("HomeWindow", "Save File", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveFile.setToolTip(QtGui.QApplication.translate("HomeWindow", "Sync the currently selected file to disk", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSaveFile.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit.setText(QtGui.QApplication.translate("HomeWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
         self.actionGeneralSettings.setText(QtGui.QApplication.translate("HomeWindow", "General", None, QtGui.QApplication.UnicodeUTF8))
         self.actionGeneralSettings.setToolTip(QtGui.QApplication.translate("HomeWindow", "Open general settings", None, QtGui.QApplication.UnicodeUTF8))
@@ -247,10 +248,11 @@ class Ui_HomeWindow(object):
         self.actionZip.setToolTip(QtGui.QApplication.translate("HomeWindow", "Zip the currently selected file/folder", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZip.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+Z", None, QtGui.QApplication.UnicodeUTF8))
         self.actionViewCloud.setText(QtGui.QApplication.translate("HomeWindow", "View Cloud", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionViewCloud.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+Z", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionViewCloud.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+C", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUnzip.setText(QtGui.QApplication.translate("HomeWindow", "Unzip", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSQL.setText(QtGui.QApplication.translate("HomeWindow", "SQL", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSQL.setToolTip(QtGui.QApplication.translate("HomeWindow", "Open SQL manager", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSQL.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionProjectSettings.setText(QtGui.QApplication.translate("HomeWindow", "Project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionProjectSettings.setToolTip(QtGui.QApplication.translate("HomeWindow", "View project settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRename.setText(QtGui.QApplication.translate("HomeWindow", "Rename Path", None, QtGui.QApplication.UnicodeUTF8))
@@ -260,7 +262,7 @@ class Ui_HomeWindow(object):
         self.actionOpenSheet.setToolTip(QtGui.QApplication.translate("HomeWindow", "Open the selected sheet", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenSheet.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionImportSheet.setText(QtGui.QApplication.translate("HomeWindow", "Import Sheet", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionImportSheet.setToolTip(QtGui.QApplication.translate("HomeWindow", "Imports the selected sheet with custom import settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionImportSheet.setToolTip(QtGui.QApplication.translate("HomeWindow", "Import a file to the current project\'s folder", None, QtGui.QApplication.UnicodeUTF8))
         self.actionImportSheet.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+I", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPurgeFile.setText(QtGui.QApplication.translate("HomeWindow", "Purge File", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPurgeFile.setToolTip(QtGui.QApplication.translate("HomeWindow", "Opens settings to purge the selected file path", None, QtGui.QApplication.UnicodeUTF8))
@@ -269,5 +271,5 @@ class Ui_HomeWindow(object):
         self.actionMergePurge.setToolTip(QtGui.QApplication.translate("HomeWindow", "Opens Merge/Purge settings for the selected sheet", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMergePurge.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+M", None, QtGui.QApplication.UnicodeUTF8))
 
-from core.views.basic.treeview import FileSystemTreeView
-from icons import icons_rc
+from zeex.core.views.basic.treeview import FileSystemTreeView
+from zeex.icons import icons_rc

@@ -27,7 +27,7 @@ SOFTWARE.
 
 
 import sys
-from core.main import ZeexApp
+from zeex.core.main import ZeexApp
 
 __version__ = '1.0.0'
 

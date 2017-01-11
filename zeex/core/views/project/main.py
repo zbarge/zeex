@@ -23,21 +23,22 @@ SOFTWARE.
 """
 
 import os
-from icons import Icons
+import logging
+from zeex.icons import Icons
 from functools import partial
-from core.compat import QtGui, QtCore
-from core.ctrls.dataframe import DataFrameModelManager, DataFrameModel
-from core.models.filetree import FileTreeModel
-from core.ui.project.main_ui import Ui_ProjectWindow
-from core.utility.collection import SettingsINI
-import core.utility.ostools as ostools
-from core.views.settings import SettingsDialog
-from core.views.actions.export import DataFrameModelExportDialog
-from core.views.actions.merge_purge import MergePurgeDialog
-from core.views.basic.directory import DropBoxViewDialog
-from core.views.basic.line_edit import DirectoryPathCreateDialog
-from core.views.basic.line_edit import FilePathRenameDialog
-from core.views.actions.import_file import DataFrameModelImportDialog
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.ctrls.dataframe import DataFrameModelManager, DataFrameModel
+from zeex.core.models.filetree import FileTreeModel
+from zeex.core.ui.project.main_ui import Ui_ProjectWindow
+from zeex.core.utility.collection import SettingsINI
+import zeex.core.utility.ostools as ostools
+from zeex.core.views.settings import SettingsDialog
+from zeex.core.views.actions.export import DataFrameModelExportDialog
+from zeex.core.views.actions.merge_purge import MergePurgeDialog
+from zeex.core.views.basic.directory import DropBoxViewDialog
+from zeex.core.views.basic.line_edit import DirectoryPathCreateDialog
+from zeex.core.views.basic.line_edit import FilePathRenameDialog
+from zeex.core.views.actions.import_file import DataFrameModelImportDialog
 
 
 class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
@@ -217,7 +218,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
             self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
             self.actionViewCloud.setIcon(self.icons['cloud'])
         except Exception as e:
-            print("Error connecting to cloud: {}".format(e))
+            logging.error("Error connecting to cloud: {}".format(e))
             self.actionViewCloud.setVisible(False)
 
     def connect_export_dialog(self):

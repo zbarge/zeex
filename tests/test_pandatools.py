@@ -26,7 +26,7 @@ import shutil
 
 import pytest
 
-from core.utility.pandatools import *
+from zeex.core.utility.pandatools import *
 from tests.main import MainTestClass
 
 SAMPLE_DATE_PASSES = ['2016-10-01', '9/15/2016', '2016-01-01 12:33:45 AM', '09-15-2016', '10-05-88']

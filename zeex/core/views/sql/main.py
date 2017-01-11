@@ -24,13 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from ...ui.sql.main_ui import Ui_DatabasesMainWindow
-from ...compat import QtGui
-from ...models.fieldnames import connection_info as fieldnames_connection_info
-from core.ctrls.sql import AlchemyConnectionManager, AlchemyConnection
-from core.utility.widgets import get_ok_msg_box
-from core.ctrls.dataframe import DataFrameModelManager
-from .add_connection import AlchemyConnectionDialog
+from zeex.core.ui.sql.main_ui import Ui_DatabasesMainWindow
+from zeex.core.compat import QtGui
+from zeex.core.models.fieldnames import connection_info as fieldnames_connection_info
+from zeex.core.ctrls.sql import AlchemyConnectionManager, AlchemyConnection
+from zeex.core.utility.widgets import get_ok_msg_box
+from zeex.core.ctrls.dataframe import DataFrameModelManager
+from zeex.core.views.sql.add_connection import AlchemyConnectionDialog
 from zeex.core.views.sql.table_description import AlchemyTableDescriptionDialog
 from zeex.core.ctrls.bookmark import BookmarkManager
 from zeex.core.views.sql.table_import import AlchemyTableImportDialog
@@ -103,8 +103,12 @@ class DatabasesMainWindow(QtGui.QMainWindow, Ui_DatabasesMainWindow):
             try:
                 self.con_manager.connection(name)
             except KeyError:
-                self.con_manager.add_connection(name=name, **ci)
-                new = True
+                try:
+                    self.con_manager.add_connection(name=name, **ci)
+                    new = True
+                except Exception as e:
+                    pass
+
         others = self.con_manager.add_connections_from_settings()
         if new or others:
             self.treeView.setModel(self.con_manager.get_standard_item_model())

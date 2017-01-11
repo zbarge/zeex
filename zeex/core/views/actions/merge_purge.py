@@ -24,17 +24,18 @@ SOFTWARE.
 
 import os
 import pandas as pd
+import logging
 from functools import partial
-from core.compat import QtGui, QtCore
-from core.models.actions import FileViewModel
-from core.ctrls.dataframe import DataFrameModelManager
-from core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
-from core.utility.collection import DictConfig, SettingsINI
-from core.utility.pandatools import gather_frame_fields
-from core.utility.widgets import create_standard_item_model
-from core.views.basic.map_grid import MapGridDialog
-from core.views.basic.push_grid import PushGridHandler
-from core.ctrls.dataframe import DataFrameModel
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.models.actions import FileViewModel
+from zeex.core.ctrls.dataframe import DataFrameModelManager
+from zeex.core.ui.actions.merge_purge_ui import Ui_MergePurgeDialog
+from zeex.core.utility.collection import DictConfig, SettingsINI
+from zeex.core.utility.pandatools import gather_frame_fields
+from zeex.core.utility.widgets import create_standard_item_model
+from zeex.core.views.basic.map_grid import MapGridDialog
+from zeex.core.views.basic.push_grid import PushGridHandler
+from zeex.core.ctrls.dataframe import DataFrameModel
 
 
 class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
@@ -337,9 +338,9 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
                     self.df_manager.read_file(f)
                     if model_signal is not None:
                         model_signal.emit(f)
-                        print("Emitted signal: {}".format(f))
+                        logging.info("Emitted signal: {}".format(f))
             except Exception as e:
-                print(e)
+                logging.error(e)
 
     @QtCore.Slot(str)
     def add_merge_file(self, file_path):
@@ -553,7 +554,7 @@ class MergePurgeDialog(QtGui.QDialog, Ui_MergePurgeDialog):
         # Export the data - done!
         source_df.drop(['ORIG_IDXER'], axis=1, inplace=True, errors='ignore')
         source_df.to_csv(dest_path, index=False)
-        print("Exported: {}".format(dest_path))
+        logging.info("Exported: {}".format(dest_path))
 
         merge_string = "\n".join("Gained {} merging {}".format(v, k) for k, v in merged_results.items())
         suppress_string = "\n".join("Lost {} suppressing {}".format(v, k) for k,v in suppressed_results.items())

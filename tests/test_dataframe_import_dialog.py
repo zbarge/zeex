@@ -26,8 +26,8 @@ SOFTWARE.
 import os
 import pytest
 from tests.main import MainTestClass
-from core.views.actions.import_file import DataFrameModelImportDialog, pandatools
-from core.ctrls.dataframe import DataFrameModel, DataFrameModelManager, SEPARATORS, ENCODINGS
+from zeex.core.views.actions.import_file import DataFrameModelImportDialog, pandatools
+from zeex.core.ctrls.dataframe import DataFrameModel, DataFrameModelManager, SEPARATORS, ENCODINGS
 
 
 class TestDataFrameModelImportDialog(MainTestClass):

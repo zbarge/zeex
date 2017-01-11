@@ -26,9 +26,9 @@ import os
 import shutil
 import pytest
 import pandas as pd
-from core.compat import QtGui, QtCore
+from zeex.core.compat import QtGui, QtCore
 from PySide.QtTest import QTest
-from core.utility.collection import SettingsINI
+from zeex.core.utility.collection import SettingsINI
 
 
 class MainTestClass(object):

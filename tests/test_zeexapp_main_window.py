@@ -25,10 +25,10 @@ SOFTWARE.
 import os
 import shutil
 import pytest
-from core.views.main import ZeexMainWindow
-from core.views.settings import SettingsDialog
+from zeex.core.views.main import ZeexMainWindow
+from zeex.core.views.settings import SettingsDialog
 from tests.main import MainTestClass
-from core.compat import QtCore, QtTest, QtGui
+from zeex.core.compat import QtCore, QtTest, QtGui
 from zeex.core.ctrls.main import MainController
 
 class TestMainWindow(MainTestClass):
@@ -81,7 +81,7 @@ class TestMainWindow(MainTestClass):
         proj_dir = os.path.join(fixtures_dir, "project")
         if os.path.exists(proj_dir):
             shutil.rmtree(proj_dir)
-
+        dialog.set_base_dirname(proj_dir)
         log_dir = os.path.join(proj_dir, "logs")
 
         dialog.settingsFileLineEdit.setText(window.control.dialog_settings_main.settings_ini.default_path)

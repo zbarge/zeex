@@ -4,6 +4,7 @@ https://gist.github.com/harvimt/4699169
 #-*- coding=utf-8 -*-
 # © 2013 Mark Harviston, BSD License
 """
+import logging
 from zeex.core.compat import QtGui, QtCore
 QAbstractTableModel, QVariant, Qt = QtCore.QAbstractTableModel, str, QtCore.Qt
 
@@ -60,7 +61,7 @@ class AlchemyTableModel(QAbstractTableModel):
 
         self.layoutAboutToBeChanged.emit()
         if not isinstance(self.fields, list):
-            print("Fields wasn't list: {}".format(self.fields))
+            logging.info("Fields wasn't list: {}".format(self.fields))
             self.fields = [f for f in self.fields]
         q = self.query
         if self.sort is not None:
@@ -129,14 +130,13 @@ class AlchemyTableModel(QAbstractTableModel):
             orig = getattr(row, name, value)
             setattr(row, name, value)
             new = getattr(row, name, value)
-            print("Commited - {} - {}".format(orig, new))
+            logging.info("Commited - {} - {}".format(orig, new))
         except Exception as ex:
-            print(ex)
+            logging.error(str(ex))
             QtGui.QMessageBox.critical(None, 'SQL Error', str(ex))
             return False
         else:
             self.changes.append(index)
-            print("Data changed")
             return True
 
     def sort(self, col, order):

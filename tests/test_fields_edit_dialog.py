@@ -23,7 +23,7 @@ SOFTWARE.
 """
 import pytest
 from tests.main import MainTestClass
-from core.views.actions.fields_edit import FieldsEditDialog, DataFrameModel
+from zeex.core.views.actions.fields_edit import FieldsEditDialog, DataFrameModel
 
 
 class TestFieldsEditDialog(MainTestClass):

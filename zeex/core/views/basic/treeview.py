@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from core.compat import QtGui, QtCore
-from core.models.filetree import FileTreeModel
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.models.filetree import FileTreeModel
 
 
 class FileSystemTreeView(QtGui.QTreeView):

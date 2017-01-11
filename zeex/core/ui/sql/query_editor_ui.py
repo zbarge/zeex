@@ -82,4 +82,4 @@ class Ui_QueryEditorWindow(object):
         self.actionRefresh.setText(QtGui.QApplication.translate("QueryEditorWindow", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefresh.setToolTip(QtGui.QApplication.translate("QueryEditorWindow", "Refresh data from the database/reset filters", None, QtGui.QApplication.UnicodeUTF8))
 
-from icons import icons_rc
+from zeex.icons import icons_rc

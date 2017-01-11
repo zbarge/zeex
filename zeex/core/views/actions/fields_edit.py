@@ -23,19 +23,22 @@ SOFTWARE.
 """
 import os
 import pandas as pd
-from core.compat import QtGui
-import core.utility.pandatools as pandatools
-from core.ctrls.dataframe import DataFrameModel
-from core.models.fieldnames import FieldModel
-from core.ui.actions.fields_edit_ui import Ui_FieldsEditDialog
-from core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
+from zeex.core.compat import QtGui
+import zeex.core.utility.pandatools as pandatools
+from zeex.core.ctrls.dataframe import DataFrameModel
+from zeex.core.models.fieldnames import FieldModel
+from zeex.core.ui.actions.fields_edit_ui import Ui_FieldsEditDialog
+from zeex.core.utility.pandatools import dataframe_to_datetime, rename_dupe_cols
 from zeex.core.utility.pandatools import superReadFile
-import core.utility.widgets as widgets
+import zeex.core.utility.widgets as widgets
 CASE_MAP = {'lower': str.lower,
             'upper': str.upper,
             'proper': str.title,
             'default': lambda x: x}
 
+ORIG_NAME = 'orig_name'
+NEW_NAME = 'new_name'
+DTYPE = 'dtype'
 
 class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
     """
@@ -131,7 +134,6 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         view = self.tableView
         rows = reversed([v.row() for v in view.selectedIndexes()])
         for ct, row in enumerate(rows, start=1):
-            print(row)
             bottom = model.rowCount()
             model.insertRow(bottom)
             [model.setItem(bottom, i, v) for i, v in enumerate(model.takeRow(row))]
@@ -141,10 +143,12 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
     def sort_fields(self):
         asc = self.checkBoxSortAscending.isChecked()
         df = self.export_template(to_frame=True)
-        df.sort_values('new', ascending=asc, inplace=True)
+        df.sort_values(NEW_NAME, ascending=asc, inplace=True)
         self.import_template(df=df)
 
-    def apply_template(self, df, columns=['old', 'new', 'dtype']):
+    def apply_template(self, df, columns=None):
+        if columns is None:
+            columns = [ORIG_NAME, NEW_NAME, DTYPE]
         current_frame_cols = self.dfmodel.dataFrame().columns.tolist()
         df.columns = columns  # Make or break this frame.
 
@@ -177,9 +181,8 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         self.dfmodel.layoutChanged.emit()
         view.setCurrentIndex(model.item(row_num, 0).index())
 
-
     def import_template(self, filename=None,df=None, columns=None):
-        def_cols = ['old', 'new', 'dtype']
+        def_cols = [ORIG_NAME, NEW_NAME, DTYPE]
         if df is None:
             if filename is None:
                 try:
@@ -210,7 +213,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
 
     def export_template(self, filename=None, to_frame=False, **kwargs):
         fm = self.fmodel
-        columns = [fm.horizontalHeaderItem(i).text() for i in fm.columnCount()]
+        columns = [fm.horizontalHeaderItem(i).text() for i in range(fm.columnCount())]
         data = [[fm.item(i, x).text() for x in range(fm.columnCount())]
                 for i in range(fm.rowCount())]
 

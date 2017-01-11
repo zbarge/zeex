@@ -1,7 +1,7 @@
-from core.ui.basic.line_edit_ui import Ui_LineEditDialog
-from core.compat import QtGui, QtCore
+from zeex.core.ui.basic.line_edit_ui import Ui_LineEditDialog
+from zeex.core.compat import QtGui, QtCore
 import os
-from core.utility.ostools import path_incremented
+from zeex.core.utility.ostools import path_incremented
 
 
 class LineEditDialog(QtGui.QDialog, Ui_LineEditDialog):

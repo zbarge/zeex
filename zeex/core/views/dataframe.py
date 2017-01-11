@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from core.compat import QtGui, QtCore
-from core.models.columns import ColumnsModel
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.models.columns import ColumnsModel
 
 
 class ColumnsListView(QtGui.QListView):

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from functools import partial
-from core.compat import QtGui, QtCore
-from core.views.file import DataFrameModel
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.views.file import DataFrameModel
 
 
 class AbstractAction(object):

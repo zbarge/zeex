@@ -40,9 +40,9 @@
 ############################################################################
 
 
-from core.compat import QtWebKit
-from ext.ftp.downloader import Downloader
-from ext.ftp.networkaccessmanager import NetworkAccessManager
+from zeex.core.compat import QtWebKit
+from zeex.ext.ftp.downloader import Downloader
+from zeex.ext.ftp.networkaccessmanager import NetworkAccessManager
 
 
 class FtpView(QtWebKit.QWebView):

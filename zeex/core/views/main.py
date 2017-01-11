@@ -28,10 +28,11 @@ import os
 from zeex.core.compat import QtGui, QtCore
 from zeex.core.ui.main_ui import Ui_HomeWindow
 from zeex.core.utility.ostools import zipfile_compress, zipfile_unzip
-from .basic.directory import DropBoxViewDialog
-from icons import Icons
-from .sql.main import DatabasesMainWindow
+from zeex.core.views.basic.directory import DropBoxViewDialog
+from zeex.core.views.sql.main import DatabasesMainWindow
 from zeex.core.ctrls.main import MainController
+from zeex.icons import icons_rc
+import logging
 
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
@@ -40,7 +41,6 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         QtGui.QMainWindow.__init__(self)
         self.control = main_controller
         self.setupUi(self)
-        self.icons = Icons()
         self.dialog_cloud = None
         self.window_sql = DatabasesMainWindow(parent=self)
         self.key_enter = QtGui.QShortcut(self)
@@ -68,7 +68,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.actionSQL.triggered.connect(self.window_sql.show)
         self.actionOpenSheet.triggered.connect(self.open_sheet)
         self.actionRename.triggered.connect(lambda: self.control.current_project.get_dialog_rename_path().show())
-
+        self.actionImportSheet.triggered.connect(lambda: self.control.current_project.dialog_import_df_model.show())
         self.key_enter.setKey('return')
         self.key_enter.activated.connect(self.control.tree_set_project)
         self.key_enter.activated.connect(self.open_sheet)
@@ -77,15 +77,15 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         # TODO: Show these actions when they do something.
         self.actionSaveFile.setVisible(False)
         self.actionPurgeFile.setVisible(False)
-        self.setWindowIcon(self.icons['home'])
+        self.setWindowIcon(QtGui.QIcon(':/standard_icons/home.png'))
 
     def connect_cloud_dialog(self):
         try:
             self.dialog_cloud = DropBoxViewDialog(self.treeView_2, self)
             self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
-            self.actionViewCloud.setIcon(self.icons['cloud'])
+            self.actionViewCloud.setIcon(QtGui.QIcon(':/standard_icons/dropbox.png'))
         except Exception as e:
-            print("Error connecting to cloud: {}".format(e))
+            logging.warning("Error connecting to cloud: {}".format(e))
             self.actionViewCloud.setVisible(False)
 
     def open_combo_box_file(self):

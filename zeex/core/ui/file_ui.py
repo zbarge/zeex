@@ -157,4 +157,4 @@ class Ui_FileWindow(object):
         self.actionDropNaN.setText(QtGui.QApplication.translate("FileWindow", "Drop NaN", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDropNaN.setToolTip(QtGui.QApplication.translate("FileWindow", "Replaces \'nan\' values with blanks on string fields.", None, QtGui.QApplication.UnicodeUTF8))
 
-from icons import icons_rc
+from zeex.icons import icons_rc

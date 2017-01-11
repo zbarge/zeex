@@ -25,10 +25,11 @@ SOFTWARE.
 """
 import os
 from functools import partial
-from core.compat import QtGui, QtCore
-from core.ui.settings_ui import Ui_settingsDialog
-from core.utility.collection import SettingsINI, DictConfig
-from core.utility.widgets import configure_combo_box
+import logging
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.ui.settings_ui import Ui_settingsDialog
+from zeex.core.utility.collection import SettingsINI, DictConfig
+from zeex.core.utility.widgets import configure_combo_box
 
 
 def normpath(dirname, filename=None):
@@ -125,7 +126,7 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
                       ROOT_DIR)
                 ROOT_DIR = DEFAULT_ROOT_DIR
                 LOG_DIR = DEFAULT_LOG_DIR
-                print(msg)
+                logging.warning(msg)
 
         #Make sure the directories exist.
         for fp in [ROOT_DIR, LOG_DIR]:
@@ -148,7 +149,8 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         configure_combo_box(self.encodingComboBox, DEFAULT_CODECS, ENCODING)
         configure_combo_box(self.themeComboBox, DEFAULT_THEME_OPTIONS, THEME_NAME)
         self.set_theme(THEME_NAME)
-
+        self.cloudProviderLabel.hide()
+        self.cloudProviderComboBox.hide()
         self.save_settings(to_path=None, write=False)
 
     def set_and_save_defaults(self):
@@ -156,7 +158,7 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         try:
             self.export_settings(self.settings_ini.backup_path, set_self=False)
         except Exception as e:
-            print("SettingsDialog.set_and_save_defaults: Ignored error setting backup settings path: {}".format(e))
+            logging.warning("SettingsDialog.set_and_save_defaults: Ignored error setting backup settings path: {}".format(e))
 
     def save_settings(self, to_path=None, write=False):
         self.set_theme()
@@ -200,7 +202,7 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
         if theme_name is None:
             theme_name = self.themeComboBox.currentText()
             if isinstance(theme_name, int):
-                print("No theme selected.")
+                logging.info("No theme selected.")
                 theme_name = THEME_NAME2
 
         theme_path = normpath(self._themes_dir, theme_name)
@@ -210,7 +212,7 @@ class SettingsDialog(QtGui.QDialog, Ui_settingsDialog):
                 app = QtCore.QCoreApplication.instance()
                 app.setStyleSheet(fh.read())
         else:
-            print("Couldnt find theme {}!".format(theme_path))
+            logging.warning("Couldnt find theme {}!".format(theme_path))
 
     def import_settings(self, filename=None):
         if filename is None:

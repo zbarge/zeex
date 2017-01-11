@@ -220,9 +220,10 @@
     <property name="title">
      <string>Actions</string>
     </property>
-    <addaction name="actionRename"/>
+    <addaction name="actionImportSheet"/>
     <addaction name="actionMergePurge"/>
     <addaction name="actionPurgeFile"/>
+    <addaction name="actionRename"/>
     <addaction name="actionSQL"/>
     <addaction name="actionViewCloud"/>
     <addaction name="actionUnzip"/>
@@ -292,6 +293,9 @@
    <property name="toolTip">
     <string>Create a new project</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionSaveFile">
    <property name="icon">
@@ -303,9 +307,6 @@
    </property>
    <property name="toolTip">
     <string>Sync the currently selected file to disk</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionEdit">
@@ -354,7 +355,7 @@
     <string>View Cloud</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Z</string>
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionUnzip">
@@ -376,6 +377,9 @@
    </property>
    <property name="toolTip">
     <string>Open SQL manager</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionProjectSettings">
@@ -429,7 +433,7 @@
     <string>Import Sheet</string>
    </property>
    <property name="toolTip">
-    <string>Imports the selected sheet with custom import settings</string>
+    <string>Import a file to the current project's folder</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -470,7 +474,7 @@
   <customwidget>
    <class>FileSystemTreeView</class>
    <extends>QTreeView</extends>
-   <header>core/views/basic/treeview.h</header>
+   <header>zeex/core/views/basic/treeview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

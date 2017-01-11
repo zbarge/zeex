@@ -1,8 +1,8 @@
 import pytest
 from tests.main import MainTestClass
-from core.views.actions.normalize import ColumnNormalizerDialog, DataFrameModel
-import core.utility.pandatools as pandatools
-from core.compat import QtGui, QtCore
+from zeex.core.views.actions.normalize import ColumnNormalizerDialog, DataFrameModel
+import zeex.core.utility.pandatools as pandatools
+from zeex.core.compat import QtGui, QtCore
 import os
 
 

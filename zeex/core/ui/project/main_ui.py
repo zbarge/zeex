@@ -100,4 +100,4 @@ class Ui_ProjectWindow(object):
         self.actionAddFolder.setText(QtGui.QApplication.translate("ProjectWindow", "Add Folder", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUnzip.setText(QtGui.QApplication.translate("ProjectWindow", "Unzip", None, QtGui.QApplication.UnicodeUTF8))
 
-from core.views.basic.treeview import FileSystemTreeView
+from zeex.core.views.basic.treeview import FileSystemTreeView

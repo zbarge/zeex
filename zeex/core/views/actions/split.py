@@ -24,12 +24,11 @@ SOFTWARE.
 
 import os
 from functools import partial
-
-from core.compat import QtGui, QtCore
-from core.ui.actions.split_ui import Ui_FileSplitDialog
-from core.utility.collection import DictConfig, import_settings, export_settings
-from core.utility.pandatools import dataframe_split_to_files
-from core.views.basic.push_grid import PushGridHandler
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.ui.actions.split_ui import Ui_FileSplitDialog
+from zeex.core.utility.collection import DictConfig, import_settings, export_settings
+from zeex.core.utility.pandatools import dataframe_split_to_files
+from zeex.core.views.basic.push_grid import PushGridHandler
 
 
 class SplitFileDialog(QtGui.QDialog, Ui_FileSplitDialog):

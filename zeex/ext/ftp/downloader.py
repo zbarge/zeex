@@ -40,7 +40,7 @@
 ############################################################################
 
 
-from core.compat import QtCore, QtGui, QtNetwork, QtWebKit
+from zeex.core.compat import QtCore, QtGui, QtNetwork, QtWebKit
 
 
 class Downloader(QtCore.QObject):

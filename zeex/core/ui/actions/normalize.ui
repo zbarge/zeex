@@ -27,8 +27,11 @@
        </item>
        <item row="0" column="1">
         <widget class="ColumnsListView" name="listViewColumns">
-         <property name="whatsThis">
+         <property name="toolTip">
           <string>Columns in the data to be normalized.</string>
+         </property>
+         <property name="whatsThis">
+          <string/>
          </property>
          <property name="inputMethodHints">
           <set>Qt::ImhNone</set>
@@ -51,8 +54,11 @@
        </item>
        <item row="2" column="1">
         <widget class="QCheckBox" name="checkBoxTrimSpaces">
-         <property name="whatsThis">
+         <property name="toolTip">
           <string>Activate - trim spaces from left/right</string>
+         </property>
+         <property name="whatsThis">
+          <string/>
          </property>
         </widget>
        </item>
@@ -67,8 +73,11 @@
          </item>
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxMergeOrSplit">
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Activate - split or merge column(s)</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -80,8 +89,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Separator(s) to split or mege on (e.g:    , (comma)    (space))</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -98,8 +110,11 @@
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxReplaceSpaces">
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Activate - Replace spaces</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -111,8 +126,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>replace spaces with text (e.g:     _     )</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -129,8 +147,11 @@
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxSetCase">
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Activate - set the case upper/lower/proper</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -142,8 +163,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Set Case option lower/upper/proper</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -153,8 +177,11 @@
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="1">
           <widget class="QCheckBox" name="checkBoxDropFillNA">
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Activate - Drop or Fill NA values</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -166,8 +193,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Value to use to fill NA values</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -179,8 +209,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>'all' drops/fill rows only if all columns are NA.</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
            <item>
             <property name="text">
@@ -205,8 +238,11 @@
        </item>
        <item row="8" column="0">
         <widget class="QPushButton" name="btnUncheckAll">
-         <property name="whatsThis">
+         <property name="toolTip">
           <string>Uncheck all activation options &amp; selected columns.</string>
+         </property>
+         <property name="whatsThis">
+          <string/>
          </property>
          <property name="text">
           <string>Uncheck All</string>
@@ -237,8 +273,11 @@
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="comboBoxMergeOrSplit">
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Select Split or Merge</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
            <item>
             <property name="text">
@@ -268,8 +307,11 @@
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="comboBoxDropFillNA">
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Drop or fill NA values in selected columns</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
            <item>
             <property name="text">
@@ -289,8 +331,11 @@
         <layout class="QGridLayout" name="gridLayout_8">
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxRemoveSpecialChars">
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>Activate - remove special characters from columns</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -302,8 +347,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="whatsThis">
+           <property name="toolTip">
             <string>special characters to not remove (e.g ' -%)</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
           </widget>
          </item>
@@ -325,8 +373,11 @@
        </item>
        <item row="3" column="1">
         <widget class="QCheckBox" name="checkBoxScrubLineBreaks">
-         <property name="whatsThis">
+         <property name="toolTip">
           <string>Activate - strip new line characters (line breaks) from columns</string>
+         </property>
+         <property name="whatsThis">
+          <string/>
          </property>
          <property name="text">
           <string/>
@@ -339,8 +390,11 @@
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
         <widget class="QPushButton" name="btnSaveSettings">
-         <property name="whatsThis">
+         <property name="toolTip">
           <string>Save a template with all normalization settings</string>
+         </property>
+         <property name="whatsThis">
+          <string/>
          </property>
          <property name="text">
           <string>Save Settings</string>
@@ -352,8 +406,11 @@
        </item>
        <item row="0" column="1">
         <widget class="QPushButton" name="btnLoadSettings">
-         <property name="whatsThis">
+         <property name="toolTip">
           <string>Load a pre-saved .ini template file</string>
+         </property>
+         <property name="whatsThis">
+          <string/>
          </property>
          <property name="text">
           <string>Load Settings</string>

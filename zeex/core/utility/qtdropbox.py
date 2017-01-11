@@ -1,7 +1,7 @@
 import os
 import dropbox
 import dropbox.exceptions as exceptions
-from core.compat import QtCore, QtGui
+from zeex.core.compat import QtCore, QtGui
 from collections import defaultdict
 
 class QtDropBox(QtCore.QObject):

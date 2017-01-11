@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from core.compat import QtGui
+from zeex.core.compat import QtGui
 
             
 class FieldsListModel(QtGui.QStandardItemModel):

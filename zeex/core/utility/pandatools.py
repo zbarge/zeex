@@ -26,10 +26,11 @@ SOFTWARE.
 
 import re
 import os
+import logging
 import datetime
 import pandas as pd
 import numpy as np
-from core.utility.ostools import path_incremented
+from zeex.core.utility.ostools import path_incremented
 
 
 NA_VALUES = ['nan', 'na', 'none', 'null']
@@ -133,7 +134,7 @@ def superReadCSV(filepath, first_codec='utf8', verbose=False, **kwargs):
                 return pd.read_csv(filepath, **kwargs)
             except (UnicodeError, UnicodeDecodeError, UnboundLocalError) as e:
                 if verbose: 
-                    print(e)
+                    logging.info(e)
             except Exception as e:
                 if 'tokenizing' in str(e):
                     pass

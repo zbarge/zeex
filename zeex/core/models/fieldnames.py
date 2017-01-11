@@ -25,11 +25,12 @@ SOFTWARE.
 """
 import os
 import datetime
-from PySide import QtGui
+import logging
+from zeex.core.compat import QtGui
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (Column, Integer, String, DateTime, create_engine)
 from sqlalchemy.orm import sessionmaker
-from core.models.config import config
+from zeex.core.models.config import config
 
 
 Base = declarative_base()
@@ -251,19 +252,19 @@ def test_fieldnames():
     try:
         fns.add_entries(renames)
     except Exception as e:
-        print("ignored exception : {}".format(e))
+        logging.error("ignored exception : {}".format(e))
         fns.session.rollback()
     
     
     gots = fns.get_renames(renames.keys())
     
     for key, value in gots.items():
-        print("{}:{}".format(key, value))
+        logging.info("{}:{}".format(key, value))
         assert renames[key] == value
     
     
     fns.delete_entries(renames.keys())
-    print("tests passed")
+    logging.info("tests passed")
 
                 
 if __name__ == "__main__":

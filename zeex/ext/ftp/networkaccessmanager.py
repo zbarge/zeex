@@ -40,8 +40,8 @@
 ############################################################################
 
 
-from core.compat import QtNetwork
-from ext.ftp.ftpreply import FtpReply
+from zeex.core.compat import QtNetwork
+from zeex.ext.ftp.ftpreply import FtpReply
 
 
 class NetworkAccessManager(QtNetwork.QNetworkAccessManager):

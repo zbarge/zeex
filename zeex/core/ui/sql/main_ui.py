@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Jan  8 10:36:03 2017
+# Created: Wed Jan 11 00:06:25 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -200,29 +200,40 @@ class Ui_DatabasesMainWindow(object):
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("DatabasesMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddDatabase.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Add Database", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddDatabase.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Add a database to the list", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAddDatabase.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+A", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRemove.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Remove ", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRemove.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Remove selected item from list, database, or table.", None, QtGui.QApplication.UnicodeUTF8))
         self.actionConnectToDatabase.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Connect to Database", None, QtGui.QApplication.UnicodeUTF8))
         self.actionConnectToDatabase.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Connect to selected database", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionConnectToDatabase.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+C", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDisconnectFromDatabase.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Disconnect From Database", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDisconnectFromDatabase.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+D", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenFile.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Open File", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenFile.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Open a .sql file", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpenFile.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionImportFile.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Import File", None, QtGui.QApplication.UnicodeUTF8))
         self.actionImportFile.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Imports a file to the selected database/table", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionImportFile.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+I", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExportFile.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Export File", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExportFile.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Export a table/database to file(s)", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExportFile.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+E", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefreshSchemas.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Refresh Schemas", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefreshSchemas.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Refresh database schema(s)", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionRefreshSchemas.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveText.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Save File", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveText.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Saves text in the text editor to file", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSaveText.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveTextAs.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Save File As", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveTextAs.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Save text in the editor to a new file", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddTable.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Add Table", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteQuery.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Execute Query", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteQuery.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Execute current Query", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExecuteQuery.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+Enter", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteSelectedQuery.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Execute Selected Query", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExecuteSelectedQuery.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Excecute only the selected SQL", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExecuteSelectedQuery.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+Shift+Enter", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenQueryData.setText(QtGui.QApplication.translate("DatabasesMainWindow", "Open Query Data", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenQueryData.setToolTip(QtGui.QApplication.translate("DatabasesMainWindow", "Opens the current result query to a file view", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpenQueryData.setShortcut(QtGui.QApplication.translate("DatabasesMainWindow", "Ctrl+Q", None, QtGui.QApplication.UnicodeUTF8))
 
-from icons import icons_rc
+from zeex.icons import icons_rc

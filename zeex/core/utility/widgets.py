@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from core.compat import QtGui, QtCore
+from zeex.core.compat import QtGui, QtCore
 
 
 def configure_combo_box(box: QtGui.QComboBox, options, default, clear=True):

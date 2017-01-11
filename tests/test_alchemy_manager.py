@@ -23,8 +23,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from core.compat import QtGui
-from core.ctrls.sql import AlchemyConnection, AlchemyConnectionManager
+from zeex.core.compat import QtGui
+from zeex.core.ctrls.sql import AlchemyConnection, AlchemyConnectionManager
 from tests.main import MainTestClass
 
 

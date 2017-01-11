@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
+import logging
 from zeex.core.ctrls.dataframe import DataFrameModel, DataFrameModelManager
 from zeex.core.ui.sql.table_import_ui import Ui_AlchemyTableImportDialog
 from zeex.core.ctrls.sql import AlchemyConnection, AlchemyConnectionManager
@@ -130,13 +131,13 @@ class AlchemyTableImportDialog(QtGui.QDialog, Ui_AlchemyTableImportDialog):
                         session.commit()
                     except Exception as e:
                         session.rollback()
-                        print("Got an error trying to delete matching keys: {}".format(e))
+                        logging.error("Got an error trying to delete matching keys: {}".format(e))
 
                 elif key_priority == 'delete from import data':
                     # Delete the data from the df that has a matching key.
                     ids = [getattr(o, key_name) for o in query.all()]
                     df = df.loc[~df.index.isin(ids), :]
-                    print("Removed {} records from the import data with matching keys".format(orig_size - df.index.size))
+                    logging.info("Removed {} records from the import data with matching keys".format(orig_size - df.index.size))
                 session.close()
 
         if key_name == '':

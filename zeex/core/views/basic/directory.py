@@ -1,9 +1,10 @@
 import os
-
-from core.compat import QtGui, QtCore
-from core.ui.basic.directory_ui import Ui_DirectoryViewDialog
-from core.views.basic.line_edit import DirectoryPathCreateDialog
-from icons import Icons
+import logging
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.ui.basic.directory_ui import Ui_DirectoryViewDialog
+from zeex.core.views.basic.line_edit import DirectoryPathCreateDialog
+from zeex.core.utility.qtdropbox import QtDropBox
+from zeex.icons import icons_rc
 
 
 class DirectoryViewDialog(QtGui.QDialog, Ui_DirectoryViewDialog):
@@ -12,7 +13,6 @@ class DirectoryViewDialog(QtGui.QDialog, Ui_DirectoryViewDialog):
         QtGui.QDialog.__init__(self, parent=parent)
         self._source_view = source_view
         self.setupUi(self)
-        self.icons = Icons()
 
     def configure(self):
         self.btnDelete.clicked.connect(self.delete)
@@ -46,9 +46,6 @@ class DirectoryViewDialog(QtGui.QDialog, Ui_DirectoryViewDialog):
         self._source_view = tree_view
 
 
-from core.utility.qtdropbox import QtDropBox
-
-
 class DropBoxViewDialog(DirectoryViewDialog):
     def __init__(self, source_view, parent):
         DirectoryViewDialog.__init__(self, source_view=source_view, parent=parent)
@@ -58,7 +55,7 @@ class DropBoxViewDialog(DirectoryViewDialog):
         self.configure()
 
     def configure(self):
-        self.setWindowIcon(self.icons['dropbox'])
+        self.setWindowIcon(QtGui.QIcon(':/standard_icons/add.png'))
         self.setWindowTitle("DropBox")
         self.dialog_add_folder.setWindowTitle("Add DropBox Folder")
         self.dialog_add_folder.signalDirectoryCreated.connect(self.refresh)
@@ -70,7 +67,7 @@ class DropBoxViewDialog(DirectoryViewDialog):
         to = self.treeView.model().directory(self.treeView.selectedIndexes()[0])
         for p in paths:
             self.dropbox.upload_file(p, to)
-            print("DropBox - Uploaded {} to {}".format(p, to))
+            logging.info("DropBox - Uploaded {} to {}".format(p, to))
 
     def download(self):
         index = self.source_view.selectedIndexes()[0]
@@ -82,7 +79,7 @@ class DropBoxViewDialog(DirectoryViewDialog):
             to = os.path.dirname(to)
         to = os.path.join(to, os.path.basename(from_path))
         self.dropbox.download_file(from_path, to)
-        print("DropBox - Downloaded {} to {}".format(from_path, to))
+        logging.info("DropBox - Downloaded {} to {}".format(from_path, to))
 
     def refresh(self):
         self.treeView.setModel(self.dropbox.get_filesystem_model(update=True))
@@ -96,7 +93,7 @@ class DropBoxViewDialog(DirectoryViewDialog):
             # Way too easy to make a big mistake otherwise
             raise Exception("Can't delete folder that is not empty.")
         self.dropbox.con.files_delete(from_path)
-        print("DropBox - Deleted {}".format(from_path))
+        logging.info("DropBox - Deleted {}".format(from_path))
         self.refresh()
 
     def show(self, *args, **kwargs):

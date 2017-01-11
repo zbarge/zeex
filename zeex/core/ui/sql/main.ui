@@ -204,6 +204,9 @@
    <property name="toolTip">
     <string>Add a database to the list</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="actionRemove">
    <property name="icon">
@@ -228,6 +231,9 @@
    <property name="toolTip">
     <string>Connect to selected database</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionDisconnectFromDatabase">
    <property name="icon">
@@ -236,6 +242,9 @@
    </property>
    <property name="text">
     <string>Disconnect From Database</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionOpenFile">
@@ -249,6 +258,9 @@
    <property name="toolTip">
     <string>Open a .sql file</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionImportFile">
    <property name="icon">
@@ -260,6 +272,9 @@
    </property>
    <property name="toolTip">
     <string>Imports a file to the selected database/table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionExportFile">
@@ -273,6 +288,9 @@
    <property name="toolTip">
     <string>Export a table/database to file(s)</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionRefreshSchemas">
    <property name="icon">
@@ -285,6 +303,9 @@
    <property name="toolTip">
     <string>Refresh database schema(s)</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="actionSaveText">
    <property name="icon">
@@ -296,6 +317,9 @@
    </property>
    <property name="toolTip">
     <string>Saves text in the text editor to file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionSaveTextAs">
@@ -330,6 +354,9 @@
    <property name="toolTip">
     <string>Execute current Query</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Enter</string>
+   </property>
   </action>
   <action name="actionExecuteSelectedQuery">
    <property name="icon">
@@ -343,6 +370,9 @@
    <property name="toolTip">
     <string>Excecute only the selected SQL</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Enter</string>
+   </property>
   </action>
   <action name="actionOpenQueryData">
    <property name="icon">
@@ -355,6 +385,9 @@
    </property>
    <property name="toolTip">
     <string>Opens the current result query to a file view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>

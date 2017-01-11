@@ -25,11 +25,11 @@ SOFTWARE.
 import os
 import shutil
 import pytest
-from core.views.project.main import ProjectMainWindow
-from core.views.main import ZeexMainWindow
-from core.views.settings import SettingsDialog, SettingsINI
+from zeex.core.views.project.main import ProjectMainWindow
+from zeex.core.views.main import ZeexMainWindow
+from zeex.core.views.settings import SettingsDialog, SettingsINI
 from tests.main import MainTestClass
-from core.compat import QtCore, QtTest, QtGui
+from zeex.core.compat import QtCore, QtTest, QtGui
 
 
 class TestProjectMainWindow(MainTestClass):

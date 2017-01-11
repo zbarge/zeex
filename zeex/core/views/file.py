@@ -21,17 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import core.utility.pandatools as pandatools
-from core.compat import QtGui
-from core.ui.file_ui import Ui_FileWindow
-from core.utility.widgets import create_standard_item_model
-from core.views.actions.analyze import FileAnalyzerDialog
-from core.views.actions.export import DataFrameModelExportDialog
-from core.views.actions.fields_edit import FieldsEditDialog
-from core.views.actions.merge_purge import MergePurgeDialog
-from core.views.actions.normalize import ColumnNormalizerDialog
-from core.views.actions.split import SplitFileDialog
-from icons import icons_rc
+import zeex.core.utility.pandatools as pandatools
+from zeex.core.compat import QtGui
+from zeex.core.ui.file_ui import Ui_FileWindow
+from zeex.core.utility.widgets import create_standard_item_model
+from zeex.core.views.actions.analyze import FileAnalyzerDialog
+from zeex.core.views.actions.export import DataFrameModelExportDialog
+from zeex.core.views.actions.fields_edit import FieldsEditDialog
+from zeex.core.views.actions.merge_purge import MergePurgeDialog
+from zeex.core.views.actions.normalize import ColumnNormalizerDialog
+from zeex.core.views.actions.split import SplitFileDialog
+from zeex.icons import icons_rc
 from zeex.core.ctrls.dataframe import DataFrameModel
 from qtpandas.views.DataTableView import DataTableWidget
 

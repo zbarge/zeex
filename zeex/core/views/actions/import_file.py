@@ -25,20 +25,23 @@ SOFTWARE.
 """
 import os
 import pandas as pd
-from core.ui.actions.import_ui import Ui_ImportFileDialog
-from core.compat import QtGui, QtCore
-import core.utility.pandatools as pandatools
-from core.ctrls.dataframe import DataFrameModelManager, DataFrameModel,SEPARATORS, ENCODINGS
-from core.utility.widgets import configure_combo_box
+from zeex.core.ui.actions.import_ui import Ui_ImportFileDialog
+from zeex.core.compat import QtGui, QtCore
+import zeex.core.utility.pandatools as pandatools
+from zeex.core.ctrls.dataframe import DataFrameModelManager, DataFrameModel,SEPARATORS, ENCODINGS
+from zeex.core.utility.widgets import configure_combo_box
 
 
 class DataFrameModelImportDialog(QtGui.QDialog, Ui_ImportFileDialog):
     signalImported = QtCore.Signal(str) # file path
 
-    def __init__(self, df_manager: DataFrameModelManager, file_path=None, **kwargs):
+    def __init__(self, df_manager: DataFrameModelManager, file_path=None, dir='', **kwargs):
         QtGui.QDialog.__init__(self, **kwargs)
         self.df_manager = df_manager
         self.file_path = file_path
+        self.dir = dir
+        if file_path is not None and dir == '':
+            self.dir = os.path.dirname(file_path)
         self.setupUi(self)
         self.configure()
 
@@ -46,7 +49,7 @@ class DataFrameModelImportDialog(QtGui.QDialog, Ui_ImportFileDialog):
         self.checkBoxHasHeaders.setChecked(True)
         if self.file_path is not None:
             self.set_file_path(self.file_path)
-        self.btnBrowseFilePath.clicked.connect(self.set_file_path)
+        self.btnBrowseFilePath.clicked.connect(self.browse_file_path)
         self.buttonBox.accepted.connect(self.execute)
         configure_combo_box(self.comboBoxSeparator, list(SEPARATORS.keys()), 'Comma')
         configure_combo_box(self.comboBoxEncoding, list(ENCODINGS.keys()), 'ISO-8859-1')
@@ -62,9 +65,18 @@ class DataFrameModelImportDialog(QtGui.QDialog, Ui_ImportFileDialog):
             if last is not None:
                 kwargs = dict(dir=os.path.dirname(last))
             else:
-                kwargs = dict()
+                kwargs = dict(dir=self.dir)
             file_path = QtGui.QFileDialog.getOpenFileName(**kwargs)[0]
         self.lineEditFilePath.setText(str(file_path))
+
+    def browse_file_path(self):
+        last = self.df_manager.last_path_updated
+        if last is not None and self.dir == '':
+            kwargs = dict(dir=os.path.dirname(last))
+        else:
+            kwargs = dict(dir=self.dir)
+        file_path = QtGui.QFileDialog.getOpenFileName(**kwargs)[0]
+        self.set_file_path(file_path)
 
     def process_dataframe(self, df, trim_spaces=False, remove_linebreaks=False, parse_dates=False):
         if trim_spaces and not remove_linebreaks:

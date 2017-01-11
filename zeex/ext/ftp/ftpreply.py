@@ -40,7 +40,7 @@
 ############################################################################
 
 
-from core.compat import QtCore, QtNetwork
+from zeex.core.compat import QtCore, QtNetwork
 
 
 class FtpReply(QtNetwork.QNetworkReply):

@@ -22,11 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from core.compat import QtGui, QtCore
-from core.ui.actions.export_ui import Ui_ExportFileDialog
-from core.utility.widgets import configure_combo_box, get_ok_msg_box
-from core.ctrls.dataframe import DataFrameModelManager, ENCODINGS, SEPARATORS
-from core.utility.ostools import path_incremented
+import logging
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.ui.actions.export_ui import Ui_ExportFileDialog
+from zeex.core.utility.widgets import configure_combo_box, get_ok_msg_box
+from zeex.core.ctrls.dataframe import DataFrameModelManager, ENCODINGS, SEPARATORS
+from zeex.core.utility.ostools import path_incremented
 
 
 class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
@@ -137,7 +138,7 @@ class DataFrameModelExportDialog(QtGui.QDialog, Ui_ExportFileDialog):
         self.hide()
         #box = get_ok_msg_box(self.parent, "Exported {}!".format(file_path))
         #box.show()
-        print("Exported {} to {}".format(source_path, file_path))
+        logging.info("Exported {} to {}".format(source_path, file_path))
 
 
 

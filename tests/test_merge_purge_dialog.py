@@ -26,8 +26,8 @@ import os
 
 import pytest
 
-from core.compat import QtGui
-from core.views.actions.merge_purge import MergePurgeDialog, DataFrameModelManager, DataFrameModel
+from zeex.core.compat import QtGui
+from zeex.core.views.actions.merge_purge import MergePurgeDialog, DataFrameModelManager, DataFrameModel
 from tests.main import MainTestClass
 
 

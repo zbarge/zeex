@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
+import logging
 from zeex.core.compat import QtGui, QtCore
 from zeex.core.ctrls.dataframe import DataFrameModelManager
 from zeex.core.models.filetree import FileTreeModel
@@ -35,8 +36,9 @@ from zeex.core.views.project.settings import ProjectSettingsDialog
 
 
 class ProjectController(object):
-    def __init__(self, directory, settings_ini, default_dirs=True, tree_view=None, **kwargs):
+    def __init__(self, directory, settings_ini, default_dirs=True, tree_view=None, main_control=None,**kwargs):
         self.parent = kwargs.get('parent', None)
+        self.main_control = main_control
         if default_dirs is True:
             settings_ini.set_safe('GENERAL', 'ROOT_DIRECTORY', directory)
             settings_ini.set_safe('GENERAL', 'LOG_DIRECTORY', os.path.join(directory, 'logs'))
@@ -47,6 +49,7 @@ class ProjectController(object):
         self._dialog_merge_purge = MergePurgeDialog(self.df_manager, parent=self.parent)
         self._dialog_add_directory = DirectoryPathCreateDialog(base_dirname=directory, parent=self.parent)
         self._dialog_import_df_model = DataFrameModelImportDialog(self.df_manager, parent=self.parent)
+        self._dialog_import_df_model.signalImported.connect(self._handle_imported_df_model)
         self._dialog_settings = ProjectSettingsDialog(settings_ini)
         self._tree_view = None
         self.tree_view = tree_view
@@ -69,7 +72,11 @@ class ProjectController(object):
 
     @property
     def dialog_import_df_model(self) -> DataFrameModelImportDialog:
-        return self._dialog_import_df_model
+        d = self._dialog_import_df_model
+        fp = d.lineEditFilePath.text()
+        if fp == '' and d.dir == '':
+            d.dir = self.directory
+        return d
 
     @property
     def dialog_merge_purge(self) -> MergePurgeDialog:
@@ -114,7 +121,7 @@ class ProjectController(object):
             if model is None or model.rootPath() != self.file_tree_model.rootPath():
                 model = self.file_tree_model
                 view.setModel(model)
-                print("Project tree view configured for {}".format(model.rootPath()))
+                logging.info("Project tree view configured for {}".format(model.rootPath()))
 
             view.setRootIndex(model.index(self.directory))
             view.setColumnWidth(0, 300)
@@ -124,9 +131,19 @@ class ProjectController(object):
             model.setNameFilterDisables(False)
         return view
 
+    def _handle_imported_df_model(self, file_path):
+        dfm = self.df_manager.get_model(file_path)
+        dirname = os.path.dirname(dfm.filePath)
+        if dirname.replace("\\","/") != self.directory.replace("\\", "/"):
+            to_path = os.path.join(self.directory, os.path.basename(dfm.filePath))
+            self.df_manager.save_file(file_path, save_as=to_path,
+                                      keep_orig=False, index=False)
+            file_path = to_path
+        if hasattr(self.main_control, 'get_fileview_window'):
+            self.main_control.get_fileview_window(self.tree_view.model().index(file_path)).show()
+        else:
+            self.df_manager.get_fileview_window(file_path).show()
 
-    def selected_paths(self):
-        return self.tree_view.model().selectedPaths()
 
 
 

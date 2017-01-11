@@ -1,1 +1,1 @@
-from icons.icons import Icons
+from zeex.icons.icons import Icons

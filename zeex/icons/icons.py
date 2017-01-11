@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import os
-from core.compat import QtGui
+from zeex.core.compat import QtGui
 
 ICONS_DIRECTORY = os.path.dirname(__file__)
 ICON_NAMES = ['add', 'delete', 'download', 'export_csv',

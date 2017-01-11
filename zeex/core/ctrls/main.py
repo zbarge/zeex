@@ -68,8 +68,12 @@ class MainController(object):
     @property
     def dialog_new_project(self) -> NewProjectDialog:
         if self._dialog_new_project is None:
-            self._dialog_new_project = NewProjectDialog(parent=self.main_window)
-            self._dialog_new_project.signalProjectNew.connect(self.tree_set_project_from_dialog)
+            p = NewProjectDialog(parent=self.main_window)
+            p.nameLineEdit.setText("my_project")
+            p.settingsFileLineEdit.setText(self.settings_ini.filename)
+            p.signalProjectNew.connect(self.tree_set_project_from_dialog)
+            self._dialog_new_project = p
+        self._dialog_new_project.set_base_dirname(self.directory)
         return self._dialog_new_project
 
     @property
@@ -126,7 +130,7 @@ class MainController(object):
                 settings_ini._default_path = os.path.join(dirname, "config.ini")
                 settings_ini._default_backup_path = os.path.join(dirname, "config.ini")
                 settings_ini.save()
-        controller = ProjectController(dirname, settings_ini, tree_view=tree_view, parent=self.main_window)
+        controller = ProjectController(dirname, settings_ini, tree_view=tree_view, parent=self.main_window, main_control=self)
         if register is True:
             self.register_project(controller)
         return controller

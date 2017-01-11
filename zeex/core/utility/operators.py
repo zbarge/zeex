@@ -1,6 +1,6 @@
 import operator
 from pandas import notnull, isnull
-from core.utility.collection import Eval
+from zeex.core.utility.collection import Eval
 STRING_TO_OP = {
                 '+' : operator.add,
                 '-' : operator.sub,

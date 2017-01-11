@@ -50,8 +50,8 @@ except ImportError:
     pass
 
 import sys
-from core.compat import QtCore, QtGui
-from ext.ftp.ftpview import FtpView
+from zeex.core.compat import QtCore, QtGui
+from zeex.ext.ftp.ftpview import FtpView
 
 
 def main():

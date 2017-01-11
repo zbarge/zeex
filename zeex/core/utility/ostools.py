@@ -26,13 +26,14 @@ SOFTWARE.
 import os
 import zipfile
 import shutil
+import logging
 import sys
 try:
     import zlib
     DEFAULT_COMPRESSION = zipfile.ZIP_DEFLATED
 except ImportError:
     DEFAULT_COMPRESSION = zipfile.ZIP_STORED
-from core.compat import QtGui
+from zeex.core.compat import QtGui
 
 def path_incremented(p, overwrite=False):
     """
@@ -146,7 +147,7 @@ def zipfile_compress(from_path, to=None, **kwargs):
         return_path = zipfile_make_archive(from_path, to=to, **kwargs)
     else:
         raise NotImplementedError(":param from_path is not a file or directory name: {}".format(from_path))
-    print("Compressed {} to {}".format(from_path, return_path))
+    logging.info("Compressed {} to {}".format(from_path, return_path))
     return return_path
 
 def zipfile_unzip(file_path=None, extract_dir=None, **filedialog_kwargs):

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from core.compat import QtGui, QtCore
-from core.ui.basic.map_grid_ui import Ui_MapGrid
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.ui.basic.map_grid_ui import Ui_MapGrid
 
 
 class MapGridDialog(QtGui.QDialog, Ui_MapGrid):

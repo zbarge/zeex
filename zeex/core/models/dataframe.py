@@ -27,7 +27,7 @@ SOFTWARE.
 import os
 import pandas as pd
 import logging
-from core.ctrls.dataframe import DataFrameModel
+from zeex.core.ctrls.dataframe import DataFrameModel
 
 
 class DataFrameDescriptionModel(DataFrameModel):

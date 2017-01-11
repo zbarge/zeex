@@ -26,7 +26,7 @@ import os
 import copy
 import shutil
 from configparser import ConfigParser
-from core.compat import QtGui
+from zeex.core.compat import QtGui
 from ast import literal_eval as Eval
 import keyring
 

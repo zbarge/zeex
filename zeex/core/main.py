@@ -24,8 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from core.compat import QtGui
-from core.views.main import ZeexMainWindow
+from zeex.core.compat import QtGui
+from zeex.core.views.main import ZeexMainWindow
 from zeex.core.ctrls.main import MainController
 
 

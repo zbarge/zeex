@@ -24,10 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-from core.ctrls.sql import AlchemyConnectionManager, AlchemyConnection
-from core.ui.sql.add_connection_ui import Ui_AlchemyConnectionDialog
-from core.compat import QtGui, QtCore
-from core.utility.widgets import get_ok_msg_box, configure_combo_box
+import logging
+from zeex.core.ctrls.sql import AlchemyConnectionManager, AlchemyConnection
+from zeex.core.ui.sql.add_connection_ui import Ui_AlchemyConnectionDialog
+from zeex.core.compat import QtGui, QtCore
+from zeex.core.utility.widgets import get_ok_msg_box, configure_combo_box
 from sqlalchemy.engine.url import URL
 
 DBAPI_MAP = {'sqlite':['pysqlite'], 'mysql':['mysqldb','pymysql'],
@@ -107,7 +108,7 @@ class AlchemyConnectionDialog(QtGui.QDialog, Ui_AlchemyConnectionDialog):
             try:
                 __import__(db_api)
             except ImportError:
-                print("Unable to import DBAPI: {} - you need to pip install it.".format(db_api))
+                logging.error("Unable to import DBAPI: {} - you need to pip install it.".format(db_api))
                 DATABASE['drivername'] = db_type
             uri = URL(**DATABASE)
 

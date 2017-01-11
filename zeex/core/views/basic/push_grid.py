@@ -21,9 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from core.compat import QtGui
-from core.ui.basic.push_grid_ui import Ui_PushGridWidget
-from core.utility.widgets import create_standard_item_model
+from zeex.core.compat import QtGui
+from zeex.core.ui.basic.push_grid_ui import Ui_PushGridWidget
+from zeex.core.utility.widgets import create_standard_item_model
 
 
 class PushGridHandler(object):

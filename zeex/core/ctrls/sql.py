@@ -26,6 +26,7 @@ SOFTWARE.
 import os
 import pandas as pd
 import sqlalchemy
+import logging
 from sqlalchemy import create_engine, MetaData, inspect
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
@@ -700,7 +701,7 @@ class AlchemyConnectionManager(object):
                         if raise_on_error:
                             raise
                         else:
-                            print("Error adding connection: {}, {}".format(s, e))
+                            logging.error("Error adding connection: {}, {}".format(s, e))
         return added
 
 
