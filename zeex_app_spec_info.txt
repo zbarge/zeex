@@ -1,0 +1,13 @@
+"""
+PyInstaller is used for distribution of zeex. 
+
+NOTE: delete /dist/zeex_app/zeex before running.
+"""
+
+Windows:
+#For fresh build
+pyinstaller  --noconfirm --clean --noconsole zeex_app.spec
+
+# For typical build
+pyinstaller  --noconfirm --nowindowed --noconsole zeex_app.spec
+
