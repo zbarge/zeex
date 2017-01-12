@@ -40,6 +40,7 @@ ORIG_NAME = 'orig_name'
 NEW_NAME = 'new_name'
 DTYPE = 'dtype'
 
+
 class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
     """
     The FieldsEditDialog shows the data types and field names
@@ -244,7 +245,7 @@ class FieldsEditDialog(QtGui.QDialog, Ui_FieldsEditDialog):
         orig_cols = [str(x) for x in df.columns]
         new_cols = [self.fmodel.item(i, 0).text() for i in range(self.fmodel.rowCount())]
         extra_cols = [x for x in new_cols if x not in orig_cols]
-        new_cols = [x for x in orig_cols if x in new_cols]
+        new_cols = [x for x in new_cols if x in orig_cols]
         order_match = [x for i, x in enumerate(new_cols) if orig_cols[i] == x]
         change_order = len(order_match) != len(new_cols)
 
