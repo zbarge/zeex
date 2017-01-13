@@ -37,7 +37,7 @@ import logging
 
 class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
 
-    def __init__(self, main_controller: MainController):
+    def __init__(self, main_controller: MainController, configure=True):
         QtGui.QMainWindow.__init__(self)
         self.control = main_controller
         self.setupUi(self)
@@ -45,7 +45,8 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.window_sql = DatabasesMainWindow(parent=self)
         self.key_enter = QtGui.QShortcut(self)
         self.key_delete = QtGui.QShortcut(self)
-        self.configure()
+        if configure:
+            self.configure()
         
     def configure(self):
         self.connect_cloud_dialog()
