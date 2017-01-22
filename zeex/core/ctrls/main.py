@@ -29,10 +29,18 @@ from zeex.core.views.settings import SettingsDialog, SettingsINI
 import zeex.core.utility.widgets as widgets
 from zeex.core.views.project.new import NewProjectDialog
 from zeex.core.models.filetree import FileTreeModel
+from zeex.core.ctrls.ftp import FtpManager
+
+# !!! WARNING - moving this file requires checking this file path
+CONFIGS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "configs")
+FTP_CONFIG_PATH = os.path.join(CONFIGS_DIR, "ftp.ini")
+DEFAULT_CONFIG_PATH = os.path.join(CONFIGS_DIR, 'default.ini')
 
 
 class MainController(object):
     def __init__(self, window=None, settings_ini=None):
+        if settings_ini is None:
+            settings_ini = SettingsINI(filename=DEFAULT_CONFIG_PATH)
         self.main_window = window
         self._settings_ini = settings_ini
         self._project_controllers = dict()
@@ -42,6 +50,7 @@ class MainController(object):
         self._dialog_settings_main = None
         self._dialog_new_project = None
         self._current_project = None
+        self._ftp_manager = FtpManager(SettingsINI(filename=FTP_CONFIG_PATH))
 
     @property
     def projects(self) -> dict:
@@ -54,6 +63,10 @@ class MainController(object):
     @property
     def con_manager(self) -> AlchemyConnectionManager:
         return self._con_manager
+
+    @property
+    def ftp_manager(self) -> FtpManager:
+        return self._ftp_manager
 
     @property
     def current_project(self) -> ProjectController:

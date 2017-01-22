@@ -26,26 +26,40 @@ from zeex.core.utility.collection import SettingsINI, DictConfig
 from zeex.ext.ftp.downloader import Downloader
 from zeex.ext.ftp.networkaccessmanager import NetworkAccessManager
 from zeex.ext.ftp.ftpreply import FtpReply
-from zeex.core.compat import QtNetwork
-
-
-class QtFtpConnection(object):
-    def __init__(self, *args, **kwargs):
-        self.manager = NetworkAccessManager(QtNetwork.QNetworkAccessManager(), self)
-        self.downloader = Downloader(self, self.manager)
+from zeex.core.compat import QtNetwork, QtGui, QtCore
+from zeex.core.views.ftp.main import FtpMainWindow
 
 
 class FtpConnection(object):
-    def __init__(self, name, *args, **kwargs):
-        self.name = name
-        self.args = args
+    """
+    Holds ftputil FTP credentials.
+    Uses either a QFtp connection or a
+    FtpUtil connection depending on the request.
+    """
+    def __init__(self, **kwargs):
         self.kwargs = kwargs
-        self.qcon = QtFtpConnection()
 
-    def con_ftputil(self):
-        return ftputil.FTPHost(*self.args, **self.kwargs)
+    def __call__(self, *args, **kwargs):
+        if args is None:
+            user = self.username
+            password = self.password
+            host = self.host
+        else:
+            user, password, host = args
 
-    def con_qt(self):
+        return ftputil.FTPHost(host, user, password, **kwargs)
+    def get_filesystem_model(self):
+        model = QtGui.QStandardItemModel()
+        directories, files = [], []
+        dir_row = 0
+        with self() as ftp:
+            for dirname, subdirs, files in ftp.walk():
+                dir_item = QtGui.QStandardItem(dirname)
+                directories.append(dirname)
+                for f in files:
+                    fp = dirname + "/" + f
+                    file_item = QtGui.QStandardItem(fp)
+
 
 
 
