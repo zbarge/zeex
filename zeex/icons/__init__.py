@@ -1,1 +1,0 @@
-from zeex.icons.icons import Icons

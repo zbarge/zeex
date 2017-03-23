@@ -220,6 +220,7 @@
     <property name="title">
      <string>Actions</string>
     </property>
+    <addaction name="actionFTP"/>
     <addaction name="actionImportSheet"/>
     <addaction name="actionMergePurge"/>
     <addaction name="actionPurgeFile"/>
@@ -266,6 +267,7 @@
    <addaction name="separator"/>
    <addaction name="actionSQL"/>
    <addaction name="actionViewCloud"/>
+   <addaction name="actionFTP"/>
   </widget>
   <action name="actionOpenProject">
    <property name="icon">
@@ -467,6 +469,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionFTP">
+   <property name="icon">
+    <iconset>
+     <activeon>:/standard_icons/ftp.png</activeon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>FTP</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the FTP Viewer</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

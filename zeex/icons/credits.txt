@@ -27,3 +27,4 @@ https://icons8.com/web-app/6675/Suppression
 <a href="https://icons8.com">Icon pack by Icons8</a>
 <a href="https://icons8.com/web-app/15469/Refresh">Refresh icon credits</a>
 <a href="https://icons8.com/web-app/37162/Insert-Table">Insert table icon credits</a>
+<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>

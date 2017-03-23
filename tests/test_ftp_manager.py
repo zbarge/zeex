@@ -1,5 +1,6 @@
 from ext.ftp.manager import FTPManager
 from tests.main import MainTestClass
+from zeex.core.ctrls.ftp import FtpReply, FtpManager, FtpUtilConnection, AbstractFtpConnection, Downloader
 import pytest
 import os
 
@@ -25,3 +26,5 @@ class TestFTPManager(MainTestClass):
                 f.download(name, to_path)
                 assert os.path.exists(to_path)
                 os.remove(to_path)
+    def test_ftp_manager(self):
+        ftp = FtpUtilConnection()

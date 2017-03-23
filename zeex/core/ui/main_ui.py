@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Wed Jan 11 00:01:12 2017
+# Created: Sun Jan 22 19:23:00 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -185,10 +185,16 @@ class Ui_HomeWindow(object):
         icon13.addPixmap(QtGui.QPixmap(":/standard_icons/merge.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionMergePurge.setIcon(icon13)
         self.actionMergePurge.setObjectName("actionMergePurge")
+        self.actionFTP = QtGui.QAction(HomeWindow)
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/standard_icons/ftp.png"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        self.actionFTP.setIcon(icon14)
+        self.actionFTP.setObjectName("actionFTP")
         self.menuProjects.addAction(self.actionOpenProject)
         self.menuProjects.addAction(self.actionNewProject)
         self.menuProjects.addAction(self.actionSaveFile)
         self.menuProjects.addAction(self.actionEdit)
+        self.menuActions.addAction(self.actionFTP)
         self.menuActions.addAction(self.actionImportSheet)
         self.menuActions.addAction(self.actionMergePurge)
         self.menuActions.addAction(self.actionPurgeFile)
@@ -217,6 +223,7 @@ class Ui_HomeWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionSQL)
         self.toolBar.addAction(self.actionViewCloud)
+        self.toolBar.addAction(self.actionFTP)
 
         self.retranslateUi(HomeWindow)
         QtCore.QMetaObject.connectSlotsByName(HomeWindow)
@@ -270,6 +277,9 @@ class Ui_HomeWindow(object):
         self.actionMergePurge.setText(QtGui.QApplication.translate("HomeWindow", "Merge/Purge", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMergePurge.setToolTip(QtGui.QApplication.translate("HomeWindow", "Opens Merge/Purge settings for the selected sheet", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMergePurge.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+M", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFTP.setText(QtGui.QApplication.translate("HomeWindow", "FTP", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFTP.setToolTip(QtGui.QApplication.translate("HomeWindow", "Open the FTP Viewer", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFTP.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+F", None, QtGui.QApplication.UnicodeUTF8))
 
 from zeex.core.views.basic.treeview import FileSystemTreeView
 from zeex.icons import icons_rc

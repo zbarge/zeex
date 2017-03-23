@@ -30,6 +30,7 @@ from zeex.core.ui.main_ui import Ui_HomeWindow
 from zeex.core.utility.ostools import zipfile_compress, zipfile_unzip
 from zeex.core.views.basic.directory import DropBoxViewDialog
 from zeex.core.views.sql.main import DatabasesMainWindow
+from zeex.core.views.ftp.main import FtpMainWindow
 from zeex.core.ctrls.main import MainController
 from zeex.icons import icons_rc
 import logging
@@ -43,6 +44,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.setupUi(self)
         self.dialog_cloud = None
         self.window_sql = DatabasesMainWindow(parent=self)
+        self.window_ftp = FtpMainWindow(main_controller, parent=self)
         self.key_enter = QtGui.QShortcut(self)
         self.key_delete = QtGui.QShortcut(self)
         if configure:
@@ -58,6 +60,7 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.btnOpenFile.clicked.connect(self.open_combo_box_file)
         self.control.register_tree_views(projects=self.treeView, project=self.treeView_2, configure=True)
         self.lineEditFilter.textChanged.connect(self.filter)
+        self.actionFTP.triggered.connect(self.window_ftp.show)
         self.actionGeneralSettings.triggered.connect(self.control.dialog_settings_main.show)
         self.actionProjectSettings.triggered.connect(self.open_project_settings)
         self.actionOpenProject.triggered.connect(self.control.tree_set_project)

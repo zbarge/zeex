@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="standard_icons">
+    <file>ftp.png</file>
     <file>sql.png</file>
     <file>lightning2.png</file>
     <file>insert_table.png</file>
