@@ -217,6 +217,7 @@ def superReadFile(filepath,**kwargs):
     ext = os.path.splitext(filepath)[1].lower()
     
     if ext in ['.xlsx', '.xls']:
+        kwargs.pop('dtype')
         return pd.read_excel(filepath,**kwargs)
 
     elif ext in ['.txt','.tsv','.csv']:
