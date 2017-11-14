@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Jan 22 19:23:00 2017
+# Created: Mon Nov 13 22:23:10 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -190,14 +190,23 @@ class Ui_HomeWindow(object):
         icon14.addPixmap(QtGui.QPixmap(":/standard_icons/ftp.png"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.actionFTP.setIcon(icon14)
         self.actionFTP.setObjectName("actionFTP")
+        self.actionOpenFile = QtGui.QAction(HomeWindow)
+        self.actionOpenFile.setObjectName("actionOpenFile")
+        self.actionHome = QtGui.QAction(HomeWindow)
+        self.actionHome.setObjectName("actionHome")
+        self.actionClearAll = QtGui.QAction(HomeWindow)
+        self.actionClearAll.setObjectName("actionClearAll")
         self.menuProjects.addAction(self.actionOpenProject)
         self.menuProjects.addAction(self.actionNewProject)
-        self.menuProjects.addAction(self.actionSaveFile)
         self.menuProjects.addAction(self.actionEdit)
+        self.menuProjects.addAction(self.actionHome)
+        self.menuProjects.addAction(self.actionClearAll)
         self.menuActions.addAction(self.actionFTP)
         self.menuActions.addAction(self.actionImportSheet)
         self.menuActions.addAction(self.actionMergePurge)
+        self.menuActions.addAction(self.actionOpenFile)
         self.menuActions.addAction(self.actionPurgeFile)
+        self.menuActions.addAction(self.actionSaveFile)
         self.menuActions.addAction(self.actionRename)
         self.menuActions.addAction(self.actionSQL)
         self.menuActions.addAction(self.actionViewCloud)
@@ -280,6 +289,9 @@ class Ui_HomeWindow(object):
         self.actionFTP.setText(QtGui.QApplication.translate("HomeWindow", "FTP", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFTP.setToolTip(QtGui.QApplication.translate("HomeWindow", "Open the FTP Viewer", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFTP.setShortcut(QtGui.QApplication.translate("HomeWindow", "Ctrl+F", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpenFile.setText(QtGui.QApplication.translate("HomeWindow", "Open File", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionHome.setText(QtGui.QApplication.translate("HomeWindow", "Home", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClearAll.setText(QtGui.QApplication.translate("HomeWindow", "Clear All", None, QtGui.QApplication.UnicodeUTF8))
 
 from zeex.core.views.basic.treeview import FileSystemTreeView
 from zeex.icons import icons_rc

@@ -213,8 +213,9 @@
     </property>
     <addaction name="actionOpenProject"/>
     <addaction name="actionNewProject"/>
-    <addaction name="actionSaveFile"/>
     <addaction name="actionEdit"/>
+    <addaction name="actionHome"/>
+    <addaction name="actionClearAll"/>
    </widget>
    <widget class="QMenu" name="menuActions">
     <property name="title">
@@ -223,7 +224,9 @@
     <addaction name="actionFTP"/>
     <addaction name="actionImportSheet"/>
     <addaction name="actionMergePurge"/>
+    <addaction name="actionOpenFile"/>
     <addaction name="actionPurgeFile"/>
+    <addaction name="actionSaveFile"/>
     <addaction name="actionRename"/>
     <addaction name="actionSQL"/>
     <addaction name="actionViewCloud"/>
@@ -485,6 +488,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionOpenFile">
+   <property name="text">
+    <string>Open File</string>
+   </property>
+  </action>
+  <action name="actionHome">
+   <property name="text">
+    <string>Home</string>
+   </property>
+  </action>
+  <action name="actionClearAll">
+   <property name="text">
+    <string>Clear All</string>
    </property>
   </action>
  </widget>
