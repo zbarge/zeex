@@ -147,6 +147,9 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
     def filter(self):
         info = self.lineEditFilter.text()
         model = self.treeView_2.model()
+        if model is None:
+            model = self.treeView.model()
+
         if info != '':
             if not info.startswith("*"):
                 info = "*" + info
