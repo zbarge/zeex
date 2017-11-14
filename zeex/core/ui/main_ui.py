@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main.ui'
+# Form implementation generated from reading ui file 'C:/Users/Zeke/Google Drive/dev/python/zeex/zeex/core/ui/main.ui'
 #
-# Created: Mon Nov 13 22:23:10 2017
+# Created: Mon Nov 13 22:59:49 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

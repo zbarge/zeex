@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main.ui'
+# Form implementation generated from reading ui file 'C:/Users/Zeke/Google Drive/dev/python/zeex/zeex/core/ui/project/main.ui'
 #
-# Created: Wed Dec 28 21:42:27 2016
+# Created: Mon Nov 13 22:57:18 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -100,4 +100,4 @@ class Ui_ProjectWindow(object):
         self.actionAddFolder.setText(QtGui.QApplication.translate("ProjectWindow", "Add Folder", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUnzip.setText(QtGui.QApplication.translate("ProjectWindow", "Unzip", None, QtGui.QApplication.UnicodeUTF8))
 
-from zeex.core.views.basic.treeview import FileSystemTreeView
+from core.views.basic.treeview import FileSystemTreeView

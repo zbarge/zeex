@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'fields_edit.ui'
+# Form implementation generated from reading ui file 'C:/Users/Zeke/Google Drive/dev/python/zeex/zeex/core/ui/actions/fields_edit.ui'
 #
-# Created: Mon Jan  9 22:53:41 2017
+# Created: Mon Nov 13 22:57:16 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

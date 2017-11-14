@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'file.ui'
+# Form implementation generated from reading ui file 'C:/Users/Zeke/Google Drive/dev/python/zeex/zeex/core/ui/file.ui'
 #
-# Created: Mon Jan  9 18:14:46 2017
+# Created: Mon Nov 13 22:57:14 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,8 +47,8 @@ class Ui_FileWindow(object):
         self.actionSave.setObjectName("actionSave")
         self.actionDelete = QtGui.QAction(FileWindow)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/standard_icons/delete.png"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon1.addPixmap(QtGui.QPixmap(":/standard_icons/delete.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/standard_icons/delete.png"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.actionDelete.setIcon(icon1)
         self.actionDelete.setObjectName("actionDelete")
         self.actionMergePurge = QtGui.QAction(FileWindow)
