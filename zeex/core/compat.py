@@ -46,7 +46,8 @@ def if_we_need_multi_version_support():
 
 
 
-
+PYQT_VERSION = QtCore.__version_info__
+PYQT_VERSION_INT = int(PYQT_VERSION[0])
 
 
 

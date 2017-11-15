@@ -44,6 +44,6 @@
     <file>suppress.png</file>
     <file>transpose.png</file>
     <file>undo.png</file>
-    <file>unzip.png</file>
+	<file>unzip.png</file>
   </qresource>
 </RCC>
