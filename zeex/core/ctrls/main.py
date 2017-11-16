@@ -41,6 +41,7 @@ class MainController(object):
     def __init__(self, window=None, settings_ini=None):
         if settings_ini is None:
             settings_ini = SettingsINI(filename=DEFAULT_CONFIG_PATH)
+
         self.main_window = window
         self._settings_ini = settings_ini
         self._project_controllers = dict()
@@ -75,7 +76,9 @@ class MainController(object):
     @property
     def dialog_settings_main(self) -> SettingsDialog:
         if self._dialog_settings_main is None:
-            self._dialog_settings_main = SettingsDialog(settings=self._settings_ini, parent=self.main_window)
+            self._dialog_settings_main = \
+                SettingsDialog(settings=self._settings_ini,
+                               parent=self.main_window)
         return self._dialog_settings_main
 
     @property
@@ -125,25 +128,38 @@ class MainController(object):
         if configure is True:
             self.set_projects_file_tree()
 
-    def build_project_controller(self, dirname, settings_ini=None, tree_view=None, register=True) -> ProjectController:
+    def build_project_controller(self,
+                                 dirname,
+                                 settings_ini=None,
+                                 tree_view=None,
+                                 register=True) -> ProjectController:
+        if settings_ini is None and os.path.exists(dirname):
+            for d, subdirs, files in os.walk(dirname):
+                if d != dirname:
+                    continue
+
+                for f in files:
+                    if not f.endswith('.ini'):
+                        continue
+
+                    try:
+                        settings_ini = SettingsINI(filename=os.path.join(d, f))
+                        if 'GENERAL' in settings_ini.sections():
+                            break
+                    except Exception:
+                        pass
+
         if settings_ini is None:
-            if os.path.exists(dirname):
-                for d, subdirs, files in os.walk(dirname):
-                    if d == dirname:
-                        for f in files:
-                            if f.endswith('.ini'):
-                                try:
-                                    settings_ini = SettingsINI(filename=os.path.join(d, f))
-                                    if 'GENERAL' in settings_ini.sections():
-                                        break
-                                except Exception:
-                                    pass
-            if settings_ini is None:
-                settings_ini = self.settings_ini.copy()
-                settings_ini._default_path = os.path.join(dirname, "config.ini")
-                settings_ini._default_backup_path = os.path.join(dirname, "config.ini")
-                settings_ini.save()
-        controller = ProjectController(dirname, settings_ini, tree_view=tree_view, parent=self.main_window, main_control=self)
+            settings_ini = self.settings_ini.copy()
+            settings_ini._default_path = os.path.join(dirname, "config.ini")
+            settings_ini._default_backup_path = os.path.join(dirname, "config.ini")
+            settings_ini.save()
+
+        controller = ProjectController(dirname,
+                                       settings_ini,
+                                       tree_view=tree_view,
+                                       parent=self.main_window,
+                                       main_control=self)
         if register is True:
             self.register_project(controller)
         return controller
@@ -167,6 +183,8 @@ class MainController(object):
             return window
 
     def get_project_settings_dialog(self):
+        if not self.current_project:
+            return None
         return self.current_project.dialog_settings
 
     def tree_set_project(self, idx=None):

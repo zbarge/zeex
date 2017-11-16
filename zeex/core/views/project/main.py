@@ -24,7 +24,6 @@ SOFTWARE.
 
 import os
 import logging
-from zeex.icons import Icons
 from functools import partial
 from zeex.core.compat import QtGui, QtCore
 from zeex.core.ctrls.dataframe import DataFrameModelManager, DataFrameModel
@@ -65,7 +64,6 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         self.df_manager = DataFrameModelManager()
         QtGui.QMainWindow.__init__(self, parent=parent)
         self.setupUi(self)
-        self.icons = Icons()
         self.dialog_settings = SettingsDialog(settings=settings_ini)
         self.dialog_merge_purge = MergePurgeDialog(self.df_manager)
         self.dialog_export = DataFrameModelExportDialog(self.df_manager, parent=self)
@@ -158,20 +156,23 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         Sets all the menu/window icons.
         :return: None
         """
-        self.setWindowIcon(self.icons['folder'])
-        self.actionNew.setIcon(self.icons['add'])
-        self.actionAddFolder.setIcon(self.icons['folder'])
-        self.actionOpen.setIcon(self.icons['spreadsheet'])
-        self.actionPreferences.setIcon(self.icons['settings'])
-        self.actionRemove.setIcon(self.icons['delete'])
-        self.actionSave.setIcon(self.icons['save'])
-        self.dialog_settings.setWindowIcon(self.icons['settings'])
-        self.actionMergePurge.setIcon(self.icons['merge'])
-        self.actionRename.setIcon(self.icons['rename'])
-        self.dialog_merge_purge.setWindowIcon(self.icons['merge'])
-        self.actionZip.setIcon(self.icons['archive'])
-        self.dialog_new_folder.setWindowIcon(self.icons['folder'])
-        self.actionUnzip.setIcon(self.icons['unzip'])
+        def i(n):
+            return QtGui.QIcon(':/standard_icons/{}'.format(n))
+        
+        self.setWindowIcon(i('folder.png'))
+        self.actionNew.setIcon(i('add.png'))
+        self.actionAddFolder.setIcon(i('folder.png'))
+        self.actionOpen.setIcon(i('spreadsheet.png'))
+        self.actionPreferences.setIcon(i('settings.png'))
+        self.actionRemove.setIcon(i('delete.png'))
+        self.actionSave.setIcon(i('save.png'))
+        self.dialog_settings.setWindowIcon(i('settings.png'))
+        self.actionMergePurge.setIcon(i('merge.png'))
+        self.actionRename.setIcon(i('rename.png'))
+        self.dialog_merge_purge.setWindowIcon(i('merge.png'))
+        self.actionZip.setIcon(i('archive.png'))
+        self.dialog_new_folder.setWindowIcon(i('folder.png'))
+        self.actionUnzip.setIcon(i('unzip.png'))
 
     def connect_treeview(self):
         """
@@ -216,7 +217,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         try:
             self.dialog_cloud = DropBoxViewDialog(self.treeView, self)
             self.actionViewCloud.triggered.connect(self.dialog_cloud.show)
-            self.actionViewCloud.setIcon(self.icons['cloud'])
+            self.actionViewCloud.setIcon(QtGui.QIcon(':/standard_icons/cloud.png'))
         except Exception as e:
             logging.error("Error connecting to cloud: {}".format(e))
             self.actionViewCloud.setVisible(False)
@@ -227,7 +228,7 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         :return: None
         """
         self.dialog_export.signalExported.connect(self._flush_export)
-        self.dialog_export.setWindowIcon(self.icons['export_generic'])
+        self.dialog_export.setWindowIcon(QtGui.QIcon(':/standard_icons/export_generic.png'))
         sep = self.dialog_settings.separatorComboBox.currentText()
         enc = self.dialog_settings.encodingComboBox.currentText()
         self.dialog_export.set_encoding(enc)
@@ -239,7 +240,8 @@ class ProjectMainWindow(QtGui.QMainWindow, Ui_ProjectWindow):
         :return: None
         """
         self.dialog_import.signalImported.connect(self.import_file)
-        self.dialog_import.setWindowIcon(self.icons['add'])
+
+        self.dialog_import.setWindowIcon(QtGui.QIcon(':/standard_icons/add.png'))
         sep = self.dialog_settings.separatorComboBox.currentText()
         enc = self.dialog_settings.encodingComboBox.currentText()
         self.dialog_import.set_encoding(enc)

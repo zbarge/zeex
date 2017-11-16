@@ -142,7 +142,10 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
 
     def open_project_settings(self):
         w = self.control.get_project_settings_dialog()
-        w.show()
+        if w is not None:
+            w.show()
+        else:
+            raise Exception("No project selected!")
 
     def filter(self):
         info = self.lineEditFilter.text()
