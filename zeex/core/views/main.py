@@ -32,7 +32,6 @@ from zeex.core.views.basic.directory import DropBoxViewDialog
 from zeex.core.views.sql.main import DatabasesMainWindow
 from zeex.core.views.ftp.main import FtpMainWindow
 from zeex.core.ctrls.main import MainController
-from zeex.icons import icons_rc
 import logging
 
 
@@ -54,29 +53,40 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
         self.connect_cloud_dialog()
 
         self.control.main_window = self
-        self.btnClearFilter.clicked.connect(lambda: self.lineEditFilter.setText(''))
-        self.btnOpenProject.clicked.\
-             connect(lambda: self.control.tree_set_project_from_file_path(self.comboBoxProject.currentText()))
         self.btnOpenFile.clicked.connect(self.open_combo_box_file)
-        self.control.register_tree_views(projects=self.treeView, project=self.treeView_2, configure=True)
+        self.btnClearFilter.clicked.connect(
+            lambda: self.lineEditFilter.setText(''))
+        self.btnOpenProject.clicked.connect(
+            lambda: self.control.tree_set_project_from_file_path(
+                self.comboBoxProject.currentText()))
+
+        self.control.register_tree_views(
+            projects=self.treeView, project=self.treeView_2, configure=True)
+
         self.lineEditFilter.textChanged.connect(self.filter)
         self.actionFTP.triggered.connect(self.window_ftp.show)
         self.actionGeneralSettings.triggered.connect(self.control.dialog_settings_main.show)
         self.actionProjectSettings.triggered.connect(self.open_project_settings)
+        self.actionClearAll.triggered.connect(self.clear_all)
         self.actionOpenProject.triggered.connect(self.control.tree_set_project)
         self.actionNewProject.triggered.connect(self.create_new_project)
         self.actionZip.triggered.connect(self.handle_compression)
         self.actionUnzip.triggered.connect(self.handle_compression)
         self.actionEdit.setVisible(False)
-        self.actionMergePurge.triggered.connect(lambda: self.control.current_project.get_dialog_merge_purge().show())
         self.actionSQL.triggered.connect(self.window_sql.show)
         self.actionOpenSheet.triggered.connect(self.open_sheet)
-        self.actionRename.triggered.connect(lambda: self.control.current_project.get_dialog_rename_path().show())
-        self.actionImportSheet.triggered.connect(lambda: self.control.current_project.dialog_import_df_model.show())
+
+        self.actionMergePurge.triggered.connect(
+            lambda: self.control.current_project.get_dialog_merge_purge().show())
+        self.actionRename.triggered.connect(
+            lambda: self.control.current_project.get_dialog_rename_path().show())
+        self.actionImportSheet.triggered.connect(
+            lambda: self.control.current_project.dialog_import_df_model.show())
+
         self.key_enter.setKey('return')
+        self.key_delete.setKey('del')
         self.key_enter.activated.connect(self.control.tree_set_project)
         self.key_enter.activated.connect(self.open_sheet)
-        self.key_delete.setKey('del')
         self.key_delete.activated.connect(self.remove_tree_selected_path)
         # TODO: Show these actions when they do something.
         self.actionSaveFile.setVisible(False)
@@ -161,3 +171,11 @@ class ZeexMainWindow(QtGui.QMainWindow, Ui_HomeWindow):
             model.setNameFilters([info])
         else:
             model.setNameFilters(['*'])
+
+    def clear_all(self):
+        self.treeView_2.setModel(None)
+        self.comboBoxFile.clear()
+        self.comboBoxProject.clear()
+        self.lineEditFilter.setText("")
+
+

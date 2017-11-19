@@ -64,8 +64,6 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.connect_actions()
         self.connect_icons()
 
-
-
     @property
     def widget(self):
         # Overrides the Ui_FileWindow.widget
@@ -83,7 +81,6 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
     @property
     def df(self):
         return self.df_model.dataFrame()
-
 
     def connect_actions(self):
         self.actionAnalyze.triggered.connect(self.dialog_analyze.show)
@@ -140,14 +137,18 @@ class FileTableWindow(QtGui.QMainWindow, Ui_FileWindow):
         self.df_model.dataChanged.emit()
 
     def sync(self):
-        self.setWindowTitle("{}".format(self.df_model.filePath))
-        self.dialog_export.comboBoxSource.setModel(create_standard_item_model([self.df_model.filePath]))
+        fp = self.df_model.filePath
+        self.setWindowTitle(fp)
+        cb_model = create_standard_item_model([fp])
+        self.dialog_export.comboBoxSource.setModel(cb_model)
         self._df_model_transposed = None
+        
         if self._df_model is not None:
             self.widget.setModel(self._df_model)
 
     def save(self):
         self.dialog_export.set_destination_path_from_source()
         self.dialog_export.export()
+
 
 

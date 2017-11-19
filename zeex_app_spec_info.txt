@@ -11,3 +11,8 @@ pyinstaller  --noconfirm --clean --noconsole zeex_app.spec
 # For typical build
 pyinstaller  --noconfirm --nowindowed --noconsole zeex_app.spec
 
+
+# Mac OSX
+sudo pyinstaller  --noconfirm --onefile --windowed zeex/zeex_app.py
+
+
